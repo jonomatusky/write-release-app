@@ -1,25 +1,26 @@
-import logo from './logo.svg';
-import './App.css';
+import React from 'react'
+import {
+  BrowserRouter as Router,
+  Route,
+  Routes,
+  Outlet,
+} from 'react-router-dom'
+import ViewProfile from './pages/ViewProfile/ViewProfile'
 
-function App() {
+const App = () => {
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+    <Router>
+      <Routes>
+        <Route path="/" element={<Outlet />}>
+          <Route path="/:id" element={<ViewProfile />} />
+          <Route path="/admin" element={<h1>admin</h1>}>
+            <Route path="/admin/:id" element={<ViewProfile />} />
+            <Route path="/admin/:id/edit" element={<h2>admin shmoe edit</h2>} />
+          </Route>
+        </Route>
+      </Routes>
+    </Router>
+  )
 }
 
-export default App;
+export default App
