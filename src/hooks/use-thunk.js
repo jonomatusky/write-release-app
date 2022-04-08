@@ -43,3 +43,5 @@ export const useThunk = () => {
 
   return dispatchThunk
 }
+
+export default useThunk

@@ -4,6 +4,8 @@ import { useSelector, useDispatch } from 'react-redux'
 import { useThunk } from 'hooks/use-thunk'
 import { fetch, create, update, remove, clear } from 'redux/individualsSlice'
 
+import { individual } from 'util/sampleData'
+
 export const useIndividualStore = () => {
   const dispatch = useDispatch()
   const dispatchThunk = useThunk()
@@ -45,7 +47,8 @@ export const useIndividualStore = () => {
     useSelector(state => state.individuals)
 
   const select = id => {
-    return (items || []).find(item => item.id === id)
+    // return (items || []).find(item => item.id === id) || {}
+    return individual
   }
 
   return {
