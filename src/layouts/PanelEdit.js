@@ -7,7 +7,7 @@ const PanelEdit = ({ dialog, children }) => {
   return (
     <Panel>
       <Box position="relative">
-        <Box position="absolute" zIndex="50" top="1px" right="1px">
+        <Box position="absolute" zIndex="50" top="3px" right="3px">
           <ButtonEditPanel dialog={dialog} />
         </Box>
         {children}

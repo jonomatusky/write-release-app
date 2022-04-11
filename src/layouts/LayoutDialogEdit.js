@@ -9,9 +9,18 @@ import {
   Divider,
   IconButton,
 } from '@mui/material'
-import { Cancel, Close } from '@mui/icons-material'
+import { Close, DeleteOutline } from '@mui/icons-material'
+import { LoadingButton } from '@mui/lab'
 
-const LayoutDialogEdit = ({ title, open, onClose, onSave, children }) => {
+const LayoutDialogEdit = ({
+  title,
+  open,
+  onClose,
+  onSave,
+  onRemove,
+  loading,
+  children,
+}) => {
   return (
     <Dialog open={open} onClose={onClose} fullWidth maxWidth="sm">
       <DialogTitle textAlign="center">
@@ -30,12 +39,35 @@ const LayoutDialogEdit = ({ title, open, onClose, onSave, children }) => {
       </DialogContent>
       <Divider />
       <DialogActions>
-        <Button variant="outlined" onClick={onClose} size="large">
-          Cancel
-        </Button>
-        <Button variant="contained" onClick={onSave} size="large">
-          Save
-        </Button>
+        <Box display="flex" width="100%" justifyContent="flex-start">
+          <Box flexGrow={1}>
+            {!!onRemove && (
+              <Button
+                variant="outlined"
+                onClick={onRemove}
+                size="large"
+                startIcon={<DeleteOutline />}
+              >
+                Remove
+              </Button>
+            )}
+          </Box>
+          <Box flexGrow={0}>
+            <Button variant="outlined" onClick={onClose} size="large">
+              Cancel
+            </Button>
+          </Box>
+          <Box flexGrow={0} pl={1}>
+            <LoadingButton
+              variant="contained"
+              onClick={onSave}
+              size="large"
+              loading={loading}
+            >
+              Save
+            </LoadingButton>
+          </Box>
+        </Box>
       </DialogActions>
     </Dialog>
   )

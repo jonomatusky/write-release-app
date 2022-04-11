@@ -50,7 +50,7 @@ const PanelContact = ({ individual: { email } }) => {
           /> */}
           <Box pt={0.5}>
             <ButtonEditPanel
-              sx={{ p: 0, pl: 0.5 }}
+              sx={{ p: 0, ml: 0.5 }}
               dialog={DialogEditSettings}
             />
           </Box>

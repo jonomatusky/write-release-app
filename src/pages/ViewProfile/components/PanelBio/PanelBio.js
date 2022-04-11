@@ -6,7 +6,6 @@ import PanelEdit from 'layouts/PanelEdit'
 import DialogEditBio from './DialogEditBio'
 
 const PanelBio = ({ individual }) => {
-  console.log(individual.bio)
   const contentState = convertFromRaw(individual.bio)
   let html = stateToHTML(contentState)
 

@@ -95,7 +95,7 @@ export const individual = {
   quotes: [
     {
       quote: `Given where valuations are, given where optimism is, given how fast and far we've come, it feels like the market is due for a little correction. There's a lot of good news out there but it really feels like it's all priced in,” says Spika.`,
-      source: 'Bloomberg.com',
+      outlet: 'Bloomberg.com',
     },
   ],
   hideHighlights: false,
@@ -104,16 +104,16 @@ export const individual = {
       id: 1,
       url: 'https://www.bloomberg.com/news/articles/2018-04-24/joe-shmoe-says-he-has-a-plan-to-make-the-world-a-better-place',
       title: 'Joe Shmoe Says He Has A Plan To Make The World A Better Place',
-      source: 'Bloomberg.com',
+      outlet: 'Bloomberg.com',
       image: 'https://picsum.photos/200/300',
     },
-    {
-      id: 2,
-      url: 'https://www.bloomberg.com/news/articles/2018-04-24/joe-shmoe-says-he-has-a-plan-to-make-the-world-a-better-place',
-      title: 'Joe Shmoe Says He Has A Plan To Make The World A Better Place',
-      source: 'Bloomberg.com',
-      image: 'https://picsum.photos/200/300',
-    },
+    // {
+    //   id: 2,
+    //   url: 'https://www.bloomberg.com/news/articles/2018-04-24/joe-shmoe-says-he-has-a-plan-to-make-the-world-a-better-place',
+    //   title: 'Joe Shmoe Says He Has A Plan To Make The World A Better Place',
+    //   outlet: 'Bloomberg.com',
+    //   image: 'https://picsum.photos/200/300',
+    // },
   ],
   hideNews: false,
   trackerUrl: 'https://www.covertracker.com/',

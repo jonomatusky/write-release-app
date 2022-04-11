@@ -8,12 +8,16 @@ const ChipTeam = ({ team }) => {
   return (
     <>
       <ButtonEditPanel
-        dialog={DialogEditSettings}
+        sx={{ ml: 0.5, visibility: 'hidden' }}
         fontSize="3px"
-        sx={{ visibility: 'hidden' }}
+        dialog={DialogEditSettings}
       />
       <Chip label={team} icon={<GroupWork />} color="secondary" />
-      <ButtonEditPanel dialog={DialogEditSettings} fontSize="3px" />
+      <ButtonEditPanel
+        sx={{ ml: 0.5 }}
+        fontSize="3px"
+        dialog={DialogEditSettings}
+      />
     </>
   )
 }

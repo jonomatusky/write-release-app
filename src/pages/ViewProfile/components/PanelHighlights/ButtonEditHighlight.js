@@ -3,18 +3,21 @@ import { IconButton } from '@mui/material'
 import { Edit } from '@mui/icons-material'
 
 import useSession from 'hooks/use-session'
+import DialogEditHighlight from './DialogEditHighlight'
 
-const ButtonEditPanel = ({ dialog, variant, ...props }) => {
+const ButtonEditHighlight = ({ variant, index, ...props }) => {
   const { user } = useSession()
   const [editIsOpen, setEditIsOpen] = useState(false)
   const handleOpen = () => setEditIsOpen(true)
   const handleClose = () => setEditIsOpen(false)
 
-  const Dialog = dialog || null
-
   return !!user ? (
     <>
-      {dialog && <Dialog open={editIsOpen} onClose={handleClose} />}
+      <DialogEditHighlight
+        open={editIsOpen}
+        onClose={handleClose}
+        index={index}
+      />
 
       <IconButton
         onClick={handleOpen}
@@ -33,4 +36,4 @@ const ButtonEditPanel = ({ dialog, variant, ...props }) => {
   )
 }
 
-export default ButtonEditPanel
+export default ButtonEditHighlight

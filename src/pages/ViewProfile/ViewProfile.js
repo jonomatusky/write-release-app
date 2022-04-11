@@ -1,27 +1,14 @@
-import React, { useEffect, useState } from 'react'
-import { useParams } from 'react-router-dom'
-import {
-  Container,
-  Grid,
-  Box,
-  Paper,
-  Typography,
-  Link,
-  Button,
-  Chip,
-  IconButton,
-} from '@mui/material'
-
-import useRequest from 'hooks/use-request'
-import LinkPreview from 'components/LinkPreview'
+import React from 'react'
+import { Container, Grid, Box, Paper, Typography } from '@mui/material'
 
 import { individual } from 'util/sampleData'
 import BasicInfo from './components/PanelBasics/PanelBasics'
 import PanelContact from './components/PanelContact/PanelContact'
-import { Edit } from '@mui/icons-material'
 import ChipTeam from './components/ChipTeam'
 import PanelTags from './components/PanelTags/PanelTags'
 import PanelBio from './components/PanelBio/PanelBio'
+import PanelHighlights from './components/PanelHighlights/PanelHighlights'
+import useSession from 'hooks/use-session'
 
 const ViewProfile = () => {
   // const [individual, setIndividual] = useState()
@@ -43,7 +30,8 @@ const ViewProfile = () => {
   //   setIndividual(res.individual)
   // })
 
-  const { bio, highlights } = individual || {}
+  const { bio, highlights } = individual
+  const { user } = useSession()
 
   return (
     <Container maxWidth="md">
@@ -71,38 +59,22 @@ const ViewProfile = () => {
         </Grid>
 
         <Grid item xs={12} sm={8} md={8} lg={9}>
-          <Grid container spacing={3}>
+          <Grid container spacing={2}>
             <Grid item xs={12}>
               <PanelTags individual={individual} />
             </Grid>
-            <Grid item xs={12}>
-              <PanelBio individual={individual} />
-            </Grid>
-            <Grid item xs={12}>
-              <Paper variant="outlined">
-                <Box p={2}>
-                  <Grid container spacing={1}>
-                    <Grid item xs={12}>
-                      <Typography color="primary" variant="h6">
-                        <b>Media Highlights</b>
-                      </Typography>
-                    </Grid>
-                    {highlights.map(({ url, image, title, source, id }) => {
-                      return (
-                        <Grid item xs={12} md={6} key={id}>
-                          <LinkPreview
-                            url={url}
-                            image={image}
-                            title={title}
-                            source={source}
-                          />
-                        </Grid>
-                      )
-                    })}
-                  </Grid>
-                </Box>
-              </Paper>
-            </Grid>
+
+            {(!!user || bio) && (
+              <Grid item xs={12}>
+                <PanelBio individual={individual} />
+              </Grid>
+            )}
+
+            {(!!user || (highlights && highlights.length > 0)) && (
+              <Grid item xs={12}>
+                <PanelHighlights individual={individual} />
+              </Grid>
+            )}
           </Grid>
         </Grid>
       </Grid>

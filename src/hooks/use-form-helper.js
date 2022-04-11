@@ -7,7 +7,7 @@ const useFormHelper = ({ formFields, initialValues, onSubmit }) => {
     formFields.reduce((p, c) => ({ ...p, [c.name]: c.validation }), {})
   )
 
-  const { control, handleSubmit } = useForm({
+  const { control, handleSubmit, setFocus } = useForm({
     defaultValues: formFields.reduce(
       (p, c) => ({ ...p, [c.name]: initialValues[c.name] || '' }),
       {}
@@ -18,7 +18,7 @@ const useFormHelper = ({ formFields, initialValues, onSubmit }) => {
 
   const submit = handleSubmit(onSubmit)
 
-  return { control, submit }
+  return { control, submit, setFocus }
 }
 
 export default useFormHelper
