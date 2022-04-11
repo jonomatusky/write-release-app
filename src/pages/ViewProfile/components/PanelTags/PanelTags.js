@@ -1,6 +1,7 @@
 import React from 'react'
 import { Box, Chip } from '@mui/material'
 import PanelEdit from 'layouts/PanelEdit'
+import DialogEditTags from './DialogEditTags'
 
 const PanelTags = ({ individual }) => {
   const tags = individual?.tags || []
@@ -20,7 +21,7 @@ const PanelTags = ({ individual }) => {
   })
 
   return (
-    <PanelEdit>
+    <PanelEdit dialog={DialogEditTags}>
       <Box display="flex" pr={2} pl={1}>
         {tags.map(tag => (
           <Box pt={2} pl={1} key={tag.name}>

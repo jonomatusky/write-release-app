@@ -1,66 +1,89 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import { useParams } from 'react-router-dom'
-import * as Yup from 'yup'
-import { Grid } from '@mui/material'
+import { Autocomplete, Grid } from '@mui/material'
 import useIndividualStore from 'hooks/store/individuals-store'
 import LayoutDialogEdit from 'layouts/LayoutDialogEdit'
-import Form from 'components/Form/Form'
-import useFormHelper from 'hooks/use-form-helper'
+import useTagsStore from 'hooks/store/tags-store'
+import TextFielder from 'components/TextFielder'
 
-const DialogEditSettings = ({ open, onClose }) => {
+const DialogEditTags = ({ open, onClose }) => {
   const { update, select } = useIndividualStore()
-  const { id } = useParams
+  const { fetch, items, create } = useTagsStore()
+  const { id } = useParams()
   const individual = select(id)
 
-  const formFields = [
-    {
-      name: 'team',
-      label: 'Team',
-      placeHolder: 'Team Awesome',
-      helpText:
-        'This is only shown internally, to help other teams reach out if they have an opportunity',
-      type: 'text',
-      validation: Yup.string().max(50, 'Must be under 50 characters'),
-    },
-    {
-      name: 'email',
-      label: 'Contact Email',
-      placeHolder: 'client@gregoryfca.com',
-      type: 'email',
-      helpText:
-        'This is the email journalists will use to reach out to you. It is shown publicly.',
-      validation: Yup.string().email('Must be a valid email address'),
-    },
-    {
-      name: 'isPrivate',
-      label: `Hide from Gregory FCA's internal list of contacts`,
-      placeHolder: 'client@gregoryfca.com',
-      type: 'boolean',
-      helpText: `The profile will remain publicly available via direct link. Check this box if you don't want any other teams to reach out about this contact, or if they is no long a client.`,
-      validation: Yup.string().email('Must be a valid email address'),
-    },
+  const [values, setValues] = useState(individual.tags.map(tag => tag.name))
+  const [inputValue, setInputValue] = useState('')
+  const [tags, setTags] = useState(items)
+
+  useEffect(() => {
+    setTags(items)
+  }, [items])
+
+  const tagNames = tags.map(tag => tag.name)
+
+  const addValue = `Add "${inputValue}"`
+
+  const options = [
+    ...tagNames,
+    ...(inputValue === '' || tagNames.includes(inputValue) ? [] : [addValue]),
   ]
 
-  const { control, submit } = useFormHelper({
-    formFields,
-    initialValues: individual,
-    onSubmit: update,
-  })
+  const handleSubmit = async () => {
+    const newTags = values.map(value => tags.find(tag => tag.name === value).id)
+    update({ id, tags: newTags })
+    onClose()
+  }
+
+  const handleAddTag = async () => {
+    let currentTags = [...tags]
+    currentTags.push({ name: inputValue })
+    let newTags = currentTags.sort()
+    setTags(newTags)
+
+    try {
+      await create({ name: inputValue })
+    } catch (err) {
+      console.log(err)
+    }
+  }
 
   return (
     <LayoutDialogEdit
       title="Edit Settings"
       open={open}
       onClose={onClose}
-      onSave={submit}
+      onSave={handleSubmit}
     >
       <Grid container spacing={2} justifyContent="center" pb={2} pt={2}>
         <Grid item xs={12}>
-          <Form
-            control={control}
-            onSubmit={submit}
-            formFields={formFields}
-            initialValues={individual}
+          <Autocomplete
+            multiple
+            options={options}
+            filterSelectedOptions
+            renderInput={params => <TextFielder {...params} />}
+            value={values}
+            onChange={(e, v) => {
+              console.log(v)
+              if (v.includes(addValue)) {
+                const newValues = [...v].filter(value => value !== addValue)
+                newValues.push(inputValue)
+                handleAddTag()
+                setValues(newValues)
+              } else {
+                setValues(v)
+              }
+
+              // if (!tagName.includes(v)) {
+              //   create(inputValue)
+              // } else {
+              //   setValues(v)
+              // }
+            }}
+            inputValue={inputValue}
+            onInputChange={(e, v) => {
+              setInputValue(v)
+            }}
           />
         </Grid>
       </Grid>
@@ -68,4 +91,4 @@ const DialogEditSettings = ({ open, onClose }) => {
   )
 }
 
-export default DialogEditSettings
+export default DialogEditTags

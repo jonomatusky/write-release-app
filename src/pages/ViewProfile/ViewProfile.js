@@ -21,6 +21,7 @@ import PanelContact from './components/PanelContact/PanelContact'
 import { Edit } from '@mui/icons-material'
 import ChipTeam from './components/ChipTeam'
 import PanelTags from './components/PanelTags/PanelTags'
+import PanelBio from './components/PanelBio/PanelBio'
 
 const ViewProfile = () => {
   // const [individual, setIndividual] = useState()
@@ -75,14 +76,7 @@ const ViewProfile = () => {
               <PanelTags individual={individual} />
             </Grid>
             <Grid item xs={12}>
-              <Paper variant="outlined">
-                <Box p={2}>
-                  <Typography color="primary" variant="h6">
-                    <b>Bio</b>
-                  </Typography>
-                  <Typography>{bio}</Typography>
-                </Box>
-              </Paper>
+              <PanelBio individual={individual} />
             </Grid>
             <Grid item xs={12}>
               <Paper variant="outlined">

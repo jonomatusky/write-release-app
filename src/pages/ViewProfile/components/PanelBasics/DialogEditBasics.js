@@ -10,7 +10,7 @@ import Form from 'components/Form/Form'
 
 const BasicInfoDialog = ({ open, onClose }) => {
   const { update, select } = useIndividualStore()
-  const { id } = useParams
+  const { id } = useParams()
   const individual = select(id)
 
   const formFields = [
@@ -89,7 +89,7 @@ const BasicInfoDialog = ({ open, onClose }) => {
   ]
 
   const updateImage = imageFilepath => {
-    update({ avatar: imageFilepath })
+    update({ id, avatar: imageFilepath })
   }
 
   const { control, submit } = useFormHelper({

@@ -2,13 +2,13 @@ import { combineReducers } from '@reduxjs/toolkit'
 import userReducer from './userSlice'
 import individualsReducer from './individualsSlice'
 import alertReducer from './alertSlice'
-import tagReducer from './tagSlice'
+import tagsReducer from './tagsSlice'
 
 const rootReducer = combineReducers({
   user: userReducer,
   individuals: individualsReducer,
   alert: alertReducer,
-  tag: tagReducer,
+  tags: tagsReducer,
 })
 
 export default rootReducer
