@@ -2,15 +2,15 @@ import React from 'react'
 import { useParams } from 'react-router-dom'
 import * as Yup from 'yup'
 import { Grid } from '@mui/material'
-import useIndividualStore from 'hooks/store/individuals-store'
+import useIndividualStore from 'hooks/store/use-individuals-store'
 import LayoutDialogEdit from 'layouts/LayoutDialogEdit'
 import Form from 'components/Form/Form'
 import useFormHelper from 'hooks/use-form-helper'
 
 const DialogEditSettings = ({ open, onClose }) => {
-  const { update, select } = useIndividualStore()
-  const { id } = useParams
-  const individual = select(id)
+  const { update, updateStatus, select } = useIndividualStore()
+  const { pid } = useParams()
+  const individual = select(pid)
 
   const formFields = [
     {
@@ -41,18 +41,31 @@ const DialogEditSettings = ({ open, onClose }) => {
     },
   ]
 
-  const { control, submit } = useFormHelper({
+  const handleSubmit = async values => {
+    try {
+      await update({ id: pid, ...values })
+      onClose()
+    } catch (err) {}
+  }
+
+  const { control, submit, reset } = useFormHelper({
     formFields,
     initialValues: individual,
-    onSubmit: update,
+    onSubmit: handleSubmit,
   })
+
+  const handleClose = () => {
+    onClose()
+    reset()
+  }
 
   return (
     <LayoutDialogEdit
       title="Edit Settings"
       open={open}
-      onClose={onClose}
+      onClose={handleClose}
       onSave={submit}
+      loading={updateStatus === 'loading'}
     >
       <Grid container spacing={2} justifyContent="center" pb={2} pt={2}>
         <Grid item xs={12}>

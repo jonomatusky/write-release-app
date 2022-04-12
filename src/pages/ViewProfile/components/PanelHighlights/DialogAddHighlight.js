@@ -2,7 +2,7 @@ import React from 'react'
 import { useParams } from 'react-router-dom'
 import * as Yup from 'yup'
 import { Grid } from '@mui/material'
-import useIndividualStore from 'hooks/store/individuals-store'
+import useIndividualStore from 'hooks/store/use-individuals-store'
 import LayoutDialogEdit from 'layouts/LayoutDialogEdit'
 import useFormHelper from 'hooks/use-form-helper'
 import Form from 'components/Form/Form'
@@ -11,8 +11,8 @@ import { useRequest } from 'hooks/use-request'
 const DialogAddHighlight = ({ index, open, onClose }) => {
   const { update, select } = useIndividualStore()
   const { request, status } = useRequest()
-  const { id } = useParams()
-  const individual = select(id)
+  const { pid } = useParams()
+  const individual = select(pid)
   const highlights = individual.highlights || []
 
   const formFields = [
@@ -43,7 +43,7 @@ const DialogAddHighlight = ({ index, open, onClose }) => {
 
     console.log(highlights)
 
-    update({ id, highlights: newHighlights })
+    update({ id: pid, highlights: newHighlights })
     onClose()
   }
 

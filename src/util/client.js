@@ -22,7 +22,7 @@ export const request = async config => {
     } else if (((err.response || {}).data || {}).message) {
       throw new Error(err.response.data.message)
     } else if (err.request) {
-      console.log(err)
+      // console.log(err)
       throw new Error(
         'Unable to connect to server. Please check your internet connection.'
       )

@@ -2,11 +2,9 @@ import { useCallback } from 'react'
 import { useSelector, useDispatch } from 'react-redux'
 
 import { useThunk } from 'hooks/use-thunk'
-import { fetch, create, update, remove, clear } from 'redux/tagsSlice'
+import { fetch, create, update, remove, clear } from 'redux/individualsSlice'
 
-import { tags } from 'util/sampleData'
-
-export const useTagsStore = () => {
+export const useIndividualStore = () => {
   const dispatch = useDispatch()
   const dispatchThunk = useThunk()
 
@@ -47,8 +45,7 @@ export const useTagsStore = () => {
     useSelector(state => state.individuals)
 
   const select = id => {
-    // return (items || []).find(item => item.id === id) || {}
-    return tags
+    return (items || []).find(item => item.id === id) || {}
   }
 
   return {
@@ -58,8 +55,7 @@ export const useTagsStore = () => {
     remove: _remove,
     clear: _clear,
     select,
-    //change this back
-    items: tags,
+    items,
     fetchStatus,
     updateStatus,
     createStatus,
@@ -68,4 +64,4 @@ export const useTagsStore = () => {
   }
 }
 
-export default useTagsStore
+export default useIndividualStore

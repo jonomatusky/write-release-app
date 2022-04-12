@@ -6,8 +6,14 @@ import PanelEdit from 'layouts/PanelEdit'
 import DialogEditBio from './DialogEditBio'
 
 const PanelBio = ({ individual }) => {
-  const contentState = convertFromRaw(individual.bio)
-  let html = stateToHTML(contentState)
+  let html
+
+  try {
+    const contentState = convertFromRaw(individual.bio)
+    html = stateToHTML(contentState)
+  } catch {
+    html = '<p></p>'
+  }
 
   return (
     <PanelEdit dialog={DialogEditBio}>

@@ -5,36 +5,30 @@ import { EditorState, convertFromRaw } from 'draft-js'
 import { Editor } from 'react-draft-wysiwyg'
 import 'react-draft-wysiwyg/dist/react-draft-wysiwyg.css'
 
-import useIndividualStore from 'hooks/store/individuals-store'
+import useIndividualStore from 'hooks/store/use-individuals-store'
 import LayoutDialogEdit from 'layouts/LayoutDialogEdit'
 
 const DialogEditBio = ({ open, onClose }) => {
-  // const formFields = [
-  //   {
-  //     name: 'bio',
-  //     label: 'Bio',
-  //     placeHolder: `Well! Here comes good ol' Joe Shmoe!`,
-  //     type: 'textarea',
-  //     validation: Yup.string().max(500, 'Must be under 500 characters'),
-  //   },
-  // ]
-
-  // open = true
-
   const { update, select } = useIndividualStore()
-  const { id } = useParams()
-  const individual = select(id)
+  const { pid } = useParams()
+  const individual = select(pid)
 
-  const [editorState, setEditorState] = useState(
-    EditorState.createWithContent(convertFromRaw(individual.bio))
-  )
+  let bio
+
+  try {
+    bio = EditorState.createWithContent(convertFromRaw(individual.bio))
+  } catch {
+    bio = EditorState.createEmpty()
+  }
+
+  const [editorState, setEditorState] = useState(bio)
 
   const handleEditorStateChange = editorState => {
     setEditorState(editorState)
   }
 
   const handleSubmit = async () => {
-    update({ id, bio: editorState })
+    update({ id: pid, bio: editorState })
     onClose()
   }
 

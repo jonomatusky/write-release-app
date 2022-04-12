@@ -3,15 +3,15 @@ import { useParams } from 'react-router-dom'
 import * as Yup from 'yup'
 import { Grid } from '@mui/material'
 import AvatarToEdit from './AvatarToEdit'
-import useIndividualStore from 'hooks/store/individuals-store'
+import useIndividualStore from 'hooks/store/use-individuals-store'
 import LayoutDialogEdit from 'layouts/LayoutDialogEdit'
 import useFormHelper from 'hooks/use-form-helper'
 import Form from 'components/Form/Form'
 
 const BasicInfoDialog = ({ open, onClose }) => {
-  const { update, select } = useIndividualStore()
-  const { id } = useParams()
-  const individual = select(id)
+  const { update, select, updateStatus } = useIndividualStore()
+  const { pid } = useParams()
+  const individual = select(pid)
 
   const formFields = [
     {
@@ -76,34 +76,47 @@ const BasicInfoDialog = ({ open, onClose }) => {
       type: 'text',
       validation: Yup.string().max(50, 'Must be under 50 characters'),
     },
-    {
-      name: 'gender',
-      label: 'Gender',
-      type: 'select',
-      options: [
-        { label: 'Female', value: 'female' },
-        { label: 'Male', value: 'male' },
-        { label: 'Other', value: 'other' },
-      ],
-    },
+    // {
+    //   name: 'gender',
+    //   label: 'Gender',
+    //   type: 'select',
+    //   options: [
+    //     { label: 'Female', value: 'female' },
+    //     { label: 'Male', value: 'male' },
+    //     { label: 'Other', value: 'other' },
+    //   ],
+    // },
   ]
 
   const updateImage = imageFilepath => {
-    update({ id, avatar: imageFilepath })
+    update({ id: pid, avatar: imageFilepath })
   }
 
-  const { control, submit } = useFormHelper({
+  const handleSubmit = async values => {
+    try {
+      await update({ id: pid, ...values })
+      onClose()
+    } catch (err) {}
+  }
+
+  const { control, submit, reset } = useFormHelper({
     formFields,
     initialValues: individual,
-    onSubmit: update,
+    onSubmit: handleSubmit,
   })
+
+  const handleClose = () => {
+    onClose()
+    reset()
+  }
 
   return (
     <LayoutDialogEdit
       title="Edit Basic Info"
       open={open}
-      onClose={onClose}
+      onClose={handleClose}
       onSave={submit}
+      loading={updateStatus === 'loading'}
     >
       <Grid container spacing={2} justifyContent="center" pb={2}>
         <Grid item xs={12}>

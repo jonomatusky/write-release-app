@@ -16,7 +16,15 @@ export const useThunk = () => {
         let token
 
         if (user) {
-          token = await user.getIdToken()
+          try {
+            token = await user.getIdToken()
+          } catch (err) {
+            // dispatch(
+            //   setError({
+            //     message: 'Unable to authenticate user. Please sign in again.',
+            //   })
+            // )
+          }
         }
 
         if (token) {
@@ -35,7 +43,7 @@ export const useThunk = () => {
               err.message || 'An unknown error occured. Please try again.',
           })
         )
-        // throw err
+        throw err
       }
     },
     [dispatch, user]

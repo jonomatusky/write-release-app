@@ -2,15 +2,15 @@ import React from 'react'
 import { useParams } from 'react-router-dom'
 import * as Yup from 'yup'
 import { Grid } from '@mui/material'
-import useIndividualStore from 'hooks/store/individuals-store'
+import useIndividualStore from 'hooks/store/use-individuals-store'
 import LayoutDialogEdit from 'layouts/LayoutDialogEdit'
 import useFormHelper from 'hooks/use-form-helper'
 import Form from 'components/Form/Form'
 
 const DialogEditHighlights = ({ index, open, onClose }) => {
   const { update, select } = useIndividualStore()
-  const { id } = useParams()
-  const individual = select(id)
+  const { pid } = useParams()
+  const individual = select(pid)
   const highlights = individual.highlights || []
 
   const formFields = [
@@ -54,7 +54,7 @@ const DialogEditHighlights = ({ index, open, onClose }) => {
     const newHighlights = [...highlights]
     newHighlights[index] = values
 
-    update({ id, highlights: newHighlights })
+    update({ id: pid, highlights: newHighlights })
     onClose()
   }
 
@@ -62,7 +62,7 @@ const DialogEditHighlights = ({ index, open, onClose }) => {
     const newHighlights = [...highlights]
     newHighlights.splice(index, 1)
 
-    update({ id, highlights: newHighlights })
+    update({ id: pid, highlights: newHighlights })
     onClose()
   }
 

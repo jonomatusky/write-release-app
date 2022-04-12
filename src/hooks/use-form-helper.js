@@ -1,24 +1,40 @@
 import { useForm } from 'react-hook-form'
 import { yupResolver } from '@hookform/resolvers/yup'
 import * as Yup from 'yup'
+// import { useEffect } from 'react'
 
 const useFormHelper = ({ formFields, initialValues, onSubmit }) => {
   const validationSchema = Yup.object(
     formFields.reduce((p, c) => ({ ...p, [c.name]: c.validation }), {})
   )
 
-  const { control, handleSubmit, setFocus } = useForm({
-    defaultValues: formFields.reduce(
-      (p, c) => ({ ...p, [c.name]: initialValues[c.name] || '' }),
-      {}
-    ),
+  const defaultValues = formFields.reduce(
+    (p, c) => ({ ...p, [c.name]: initialValues[c.name] }),
+    {}
+  )
+
+  const {
+    control,
+    handleSubmit,
+    setFocus,
+    reset: handleReset,
+  } = useForm({
+    defaultValues,
     resolver: yupResolver(validationSchema),
     mode: 'onBlur',
   })
 
+  const reset = () => {
+    handleReset(defaultValues)
+  }
+
+  // useEffect(() => {
+  //   reset(defaultValues)
+  // }, [initialValues, reset])
+
   const submit = handleSubmit(onSubmit)
 
-  return { control, submit, setFocus }
+  return { control, submit, setFocus, reset }
 }
 
 export default useFormHelper

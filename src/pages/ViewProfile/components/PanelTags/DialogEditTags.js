@@ -1,90 +1,83 @@
-import React, { useEffect, useState } from 'react'
+import React, { useState } from 'react'
 import { useParams } from 'react-router-dom'
-import { Autocomplete, Grid } from '@mui/material'
-import useIndividualStore from 'hooks/store/individuals-store'
+import { Grid } from '@mui/material'
+import useIndividualStore from 'hooks/store/use-individuals-store'
 import LayoutDialogEdit from 'layouts/LayoutDialogEdit'
-import useTagsStore from 'hooks/store/tags-store'
-import TextFielder from 'components/TextFielder'
+import useFormHelper from 'hooks/use-form-helper'
+import Form from 'components/Form/Form'
+import TagEntry from './TagEntry'
 
 const DialogEditTags = ({ open, onClose }) => {
   const { update, select } = useIndividualStore()
-  const { fetch, items, create } = useTagsStore()
-  const { id } = useParams()
-  const individual = select(id)
+  const { pid } = useParams()
+  const individual = select(pid)
 
-  const [values, setValues] = useState(individual.tags.map(tag => tag.name))
-  const [inputValue, setInputValue] = useState('')
-  const [tags, setTags] = useState(items)
+  const [individualTags, setIndividualTags] = useState(individual.tags)
 
-  useEffect(() => {
-    setTags(items)
-  }, [items])
-
-  const tagNames = tags.map(tag => tag.name)
-
-  const addValue = `Add "${inputValue}"`
-
-  const options = [
-    ...tagNames,
-    ...(inputValue === '' || tagNames.includes(inputValue) ? [] : [addValue]),
+  const formFields = [
+    {
+      name: 'mediaTrained',
+      label: 'Media Trained',
+      type: 'boolean',
+    },
+    {
+      name: 'quickToBook',
+      label: 'Quick to Book',
+      type: 'boolean',
+    },
+    {
+      name: 'frequentSource',
+      label: 'Frequent Source',
+      type: 'boolean',
+    },
   ]
 
-  const handleSubmit = async () => {
-    const newTags = values.map(value => tags.find(tag => tag.name === value).id)
-    update({ id, tags: newTags })
-    onClose()
-  }
+  const handleSubmit = async values => {
+    console.log('submitting')
+    console.log(values)
 
-  const handleAddTag = async () => {
-    let currentTags = [...tags]
-    currentTags.push({ name: inputValue })
-    let newTags = currentTags.sort()
-    setTags(newTags)
+    const tagIds = individualTags.map(tag => tag._id)
+
+    console.log(individualTags)
+    console.log(tagIds)
 
     try {
-      await create({ name: inputValue })
+      await update({ id: pid, ...values, tags: tagIds })
+      onClose()
     } catch (err) {
       console.log(err)
     }
   }
 
+  console.log(individual)
+
+  const { control, submit, reset } = useFormHelper({
+    formFields,
+    initialValues: individual,
+    onSubmit: handleSubmit,
+  })
+
+  const handleClose = () => {
+    onClose()
+    reset()
+  }
+
   return (
     <LayoutDialogEdit
-      title="Edit Settings"
+      title="Edit Tags"
       open={open}
-      onClose={onClose}
-      onSave={handleSubmit}
+      onClose={handleClose}
+      onSave={submit}
     >
-      <Grid container spacing={2} justifyContent="center" pb={2} pt={2}>
+      <Grid container spacing={2} justifyContent="center" pt={2}>
         <Grid item xs={12}>
-          <Autocomplete
-            multiple
-            options={options}
-            filterSelectedOptions
-            renderInput={params => <TextFielder {...params} />}
-            value={values}
-            onChange={(e, v) => {
-              console.log(v)
-              if (v.includes(addValue)) {
-                const newValues = [...v].filter(value => value !== addValue)
-                newValues.push(inputValue)
-                handleAddTag()
-                setValues(newValues)
-              } else {
-                setValues(v)
-              }
-
-              // if (!tagName.includes(v)) {
-              //   create(inputValue)
-              // } else {
-              //   setValues(v)
-              // }
-            }}
-            inputValue={inputValue}
-            onInputChange={(e, v) => {
-              setInputValue(v)
-            }}
+          <TagEntry
+            individualTags={individualTags}
+            setIndividualTags={setIndividualTags}
           />
+        </Grid>
+        <Grid item xs={12}>
+          <Form formFields={formFields} control={control} spacing={0} />
         </Grid>
       </Grid>
     </LayoutDialogEdit>

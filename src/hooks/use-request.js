@@ -23,7 +23,13 @@ export const useRequest = () => {
       let token
 
       if (user) {
-        token = await user.getIdToken()
+        try {
+          token = await user.getIdToken()
+        } catch (err) {
+          console.log(err)
+          setStatus('failed')
+          // throw new Error('Unable to authenticate user')
+        }
       }
 
       try {

@@ -16,13 +16,19 @@ const FormField = ({ formField, control }) => {
     const { onChange, onBlur, value } = field
     const { error } = fieldState
 
+    const handleCheckboxChange = event => {
+      onChange(event.target.checked)
+    }
+
     switch (type) {
       case 'boolean':
         return (
-          <Box pl={1}>
+          <Box pl={2}>
             <FormGroup>
               <FormControlLabel
-                control={<Checkbox {...field} />}
+                control={
+                  <Checkbox checked={value} onChange={handleCheckboxChange} />
+                }
                 label={label}
               />
             </FormGroup>

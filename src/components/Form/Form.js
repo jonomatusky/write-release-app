@@ -2,10 +2,10 @@ import React from 'react'
 import { Grid } from '@mui/material'
 import FormField from 'components/Form/FormField'
 
-const Form = ({ formFields, onSubmit, control }) => {
+const Form = ({ formFields, onSubmit, control, spacing }) => {
   return (
     <form onSubmit={onSubmit}>
-      <Grid container spacing={3}>
+      <Grid container spacing={spacing === 0 ? 0 : spacing || 3}>
         {formFields.map(formField => {
           const { name } = formField
 

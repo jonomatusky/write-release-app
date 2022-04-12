@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import { getStorage, ref, getDownloadURL } from 'firebase/storage'
 import { Box } from '@mui/material'
+import { AccountCircle } from '@mui/icons-material'
 
 const ResponsiveAvatar = ({ image, ...props }) => {
   const [imageUrl, setImageUrl] = useState(null)
@@ -31,17 +32,35 @@ const ResponsiveAvatar = ({ image, ...props }) => {
         '&:after': { content: '""', display: 'block', paddingBottom: '100%' },
       }}
     >
-      <Box
-        width="100%"
-        height="100%"
-        position="absolute"
-        borderRadius="50%"
-        sx={{
-          backgroundImage: `url(${imageUrl})`,
-          backgroundSize: 'cover',
-          backgroundPosition: 'center',
-        }}
-      />
+      {imageUrl ? (
+        <Box
+          width="100%"
+          height="100%"
+          position="absolute"
+          borderRadius="50%"
+          sx={{
+            backgroundImage: `url(${imageUrl})`,
+            backgroundSize: 'cover',
+            backgroundPosition: 'center',
+          }}
+        />
+      ) : (
+        <Box
+          width="100%"
+          height="100%"
+          position="absolute"
+          borderRadius="50%"
+          color="grey.300"
+          sx={{
+            backgroundColor: 'grey.100',
+          }}
+        >
+          <AccountCircle
+            color="inherit"
+            sx={{ width: '100%', height: '100%' }}
+          />
+        </Box>
+      )}
     </Box>
   )
 }
