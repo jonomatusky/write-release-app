@@ -8,7 +8,6 @@ import ChipTeam from './components/ChipTeam'
 import PanelTags from './components/PanelTags/PanelTags'
 import PanelBio from './components/PanelBio/PanelBio'
 import PanelHighlights from './components/PanelHighlights/PanelHighlights'
-import useSession from 'hooks/use-session'
 import useIndividualsStore from 'hooks/store/use-individuals-store'
 import useRequest from 'hooks/use-request'
 import Loading from 'pages/Loading/Loading'
@@ -50,9 +49,6 @@ const ViewProfile = () => {
     }
   }, [pid, fetchStatus, request, reduxIndividual, requestStatus])
 
-  const { bio, highlights } = individual
-  const { user } = useSession()
-
   const showError = !individual && fetchStatus === 'failed'
   const showLoading = !showError && !individual.id
 
@@ -63,32 +59,34 @@ const ViewProfile = () => {
       {!showLoading && !showError && (
         <Container maxWidth="md">
           <Grid container spacing={2} justifyContent="center" pt={2}>
-            {!!user && (
-              <Grid item xs={12} textAlign="end">
-                <ChipTeam team={individual.team} />
-              </Grid>
-            )}
-            <Grid item xs={12} sm={4} md={4} lg={3} container spacing={2}>
+            <ChipTeam team={individual.team} />
+
+            <Grid
+              item
+              xs={12}
+              sm={4}
+              md={4}
+              lg={3}
+              container
+              spacing={2}
+              alignContent="start"
+            >
               <BasicInfo individual={individual} />
               <PanelContact individual={individual} />
             </Grid>
-
-            <Grid item xs={12} sm={8} md={8} lg={9} container spacing={2}>
-              <Grid item xs={12}>
-                <PanelTags individual={individual} />
-              </Grid>
-
-              {(!!user || bio) && (
-                <Grid item xs={12}>
-                  <PanelBio individual={individual} />
-                </Grid>
-              )}
-
-              {(!!user || (highlights && highlights.length > 0)) && (
-                <Grid item xs={12}>
-                  <PanelHighlights individual={individual} />
-                </Grid>
-              )}
+            <Grid
+              item
+              xs={12}
+              sm={8}
+              md={8}
+              lg={9}
+              container
+              spacing={2}
+              alignContent="start"
+            >
+              <PanelTags individual={individual} />
+              <PanelBio individual={individual} />
+              <PanelHighlights individual={individual} />
             </Grid>
           </Grid>
         </Container>

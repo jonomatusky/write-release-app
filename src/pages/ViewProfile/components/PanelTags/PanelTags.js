@@ -1,10 +1,14 @@
 import React from 'react'
-import { Box, Chip } from '@mui/material'
+import { Box, Chip, Grid, Typography } from '@mui/material'
 import { Mic, TimerOutlined, OfflineBolt } from '@mui/icons-material'
+
+import useSession from 'hooks/use-session'
 import PanelEdit from 'layouts/PanelEdit'
 import DialogEditTags from './DialogEditTags'
 
 const PanelTags = ({ individual }) => {
+  const { user } = useSession()
+  const { mediaTrained, quickToBook, frequentSource } = individual
   const individualTags = individual?.tags || []
 
   const qualities = [
@@ -21,31 +25,55 @@ const PanelTags = ({ individual }) => {
     }
   })
 
-  return (
-    <PanelEdit dialog={DialogEditTags}>
-      <Box display="flex" pr={2} pl={1}>
-        {individualTags.map(tag => (
-          <Box pt={2} pl={1} key={tag.id}>
-            <Chip label={tag.name} color="primary" />
-          </Box>
-        ))}
-      </Box>
-      <Box display="flex" pr={2} pb={2} pl={1}>
-        {qualities.map(quality => {
-          const { Icon, name, label } = quality
+  const hasTags = individualTags.length > 0
+  const hasQualities = mediaTrained || quickToBook || frequentSource
 
-          return individual[quality.name] ? (
-            <Box pt={2} pl={1} key={name}>
-              <Chip
-                label={label}
-                color="secondary"
-                icon={<Icon fontSize="small" />}
-              />
+  const showPanel = hasTags || hasQualities
+
+  return (
+    <>
+      {(!!user || showPanel) && (
+        <Grid item xs={12}>
+          <PanelEdit dialog={DialogEditTags}>
+            <Box p={2} pb={1}>
+              {!showPanel && (
+                <Box pb={1}>
+                  <Typography color="primary" variant="h6">
+                    <b>Tags</b>
+                  </Typography>
+                </Box>
+              )}
+              {hasTags && (
+                <Box display="flex">
+                  {individualTags.map(tag => (
+                    <Box pb={1} pr={1} key={tag.id}>
+                      <Chip label={tag.name} color="primary" />
+                    </Box>
+                  ))}
+                </Box>
+              )}
+              {hasQualities && (
+                <Box display="flex">
+                  {qualities.map(quality => {
+                    const { Icon, name, label } = quality
+
+                    return individual[quality.name] ? (
+                      <Box pb={1} pr={1} key={name}>
+                        <Chip
+                          label={label}
+                          color="secondary"
+                          icon={<Icon fontSize="small" />}
+                        />
+                      </Box>
+                    ) : null
+                  })}
+                </Box>
+              )}
             </Box>
-          ) : null
-        })}
-      </Box>
-    </PanelEdit>
+          </PanelEdit>
+        </Grid>
+      )}
+    </>
   )
 }
 

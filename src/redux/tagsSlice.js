@@ -109,7 +109,7 @@ const tagsSlice = createSlice({
     [create.fulfilled]: (state, action) => {
       state.createStatus = 'idle'
       const item = action.payload
-      state.items = [item, ...state.itemss]
+      state.items = [item, ...state.items]
     },
     [create.rejected]: (state, action) => {
       state.createStatus = 'failed'
@@ -121,7 +121,7 @@ const tagsSlice = createSlice({
       const matchingIndex = state.items.findIndex(item => item.id === id)
 
       if (matchingIndex >= 0) {
-        state.itemss = [
+        state.items = [
           ...state.items.slice(0, matchingIndex),
           ...state.items.slice(matchingIndex + 1),
         ]

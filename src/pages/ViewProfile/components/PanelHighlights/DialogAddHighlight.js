@@ -29,35 +29,52 @@ const DialogAddHighlight = ({ index, open, onClose }) => {
 
   const handleSubmit = async values => {
     const { url } = values
+
     let highlight = { url }
+    let siteInfo
 
     try {
-      const { siteInfo } = await request({ urls: [url] })
-      Object.assign(highlight, siteInfo)
+      const { data } = await request({
+        url: '/site-info',
+        method: 'POST',
+        data: { urls: [url] },
+      })
+      siteInfo = (data || [])[0]
     } catch (err) {
       console.log(err)
     }
 
-    const newHighlights = [...highlights]
-    newHighlights[index] = values
+    try {
+      Object.assign(highlight, siteInfo)
 
-    console.log(highlights)
+      console.log(highlight)
 
-    update({ id: pid, highlights: newHighlights })
-    onClose()
+      const newHighlights = [...highlights]
+      newHighlights[index] = highlight
+
+      update({ id: pid, highlights: newHighlights })
+      onClose()
+    } catch (err) {
+      console.log(err)
+    }
   }
 
-  const { control, submit } = useFormHelper({
+  const { control, submit, reset } = useFormHelper({
     formFields,
     initialValues: { url: '' },
     onSubmit: handleSubmit,
   })
 
+  const handleClose = () => {
+    onClose()
+    reset()
+  }
+
   return (
     <LayoutDialogEdit
       title="Edit Basic Info"
       open={open}
-      onClose={onClose}
+      onClose={handleClose}
       onSave={submit}
       loading={status === 'loading'}
     >

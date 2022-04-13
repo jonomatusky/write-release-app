@@ -1,15 +1,15 @@
 import { useState, useEffect, useCallback, useRef } from 'react'
-// import { useDispatch } from 'react-redux'
+import { useDispatch } from 'react-redux'
 import axios from 'axios'
 
 import * as client from 'util/client'
 import { useSession } from './use-session'
-// import { setError } from 'redux/alertSlice'
+import { setError } from 'redux/alertSlice'
 
 export const useRequest = () => {
   const { user } = useSession()
 
-  // const dispatch = useDispatch()
+  const dispatch = useDispatch()
   const [status, setStatus] = useState('idle')
 
   let activeAxiosSources = useRef([])
@@ -57,18 +57,18 @@ export const useRequest = () => {
         return response
       } catch (err) {
         if (!quiet) {
-          // dispatch(
-          //   setError({
-          //     message:
-          //       err.message || 'An unknown error occured. Please try again.',
-          //   })
-          // )
+          dispatch(
+            setError({
+              message:
+                err.message || 'An unknown error occured. Please try again.',
+            })
+          )
         }
         setStatus('failed')
         throw err
       }
     },
-    [user]
+    [user, dispatch]
   )
 
   useEffect(() => {

@@ -7,11 +7,12 @@ import LayoutDialogEdit from 'layouts/LayoutDialogEdit'
 import useFormHelper from 'hooks/use-form-helper'
 import Form from 'components/Form/Form'
 
-const DialogEditHighlights = ({ index, open, onClose }) => {
-  const { update, select } = useIndividualStore()
+const DialogEditHighlight = ({ index, open, onClose }) => {
+  const { update, updateStatus, select } = useIndividualStore()
   const { pid } = useParams()
   const individual = select(pid)
   const highlights = individual.highlights || []
+  const highlight = highlights[index] || {}
 
   const formFields = [
     {
@@ -21,7 +22,8 @@ const DialogEditHighlights = ({ index, open, onClose }) => {
       type: 'text',
       validation: Yup.string()
         .url(`Must be a valid URL, including http:// or https://`)
-        .max(200, 'Must be under 200 characters'),
+        .max(200, 'Must be under 200 characters')
+        .required('Link is required'),
     },
     {
       name: 'title',
@@ -29,7 +31,7 @@ const DialogEditHighlights = ({ index, open, onClose }) => {
       placeholder: 'Great News Everyone!',
       type: 'text',
       validation: Yup.string()
-        .required('Last name is required')
+        .required('Headline is required')
         .max(100, 'Must be under 100 characters'),
     },
     {
@@ -50,14 +52,6 @@ const DialogEditHighlights = ({ index, open, onClose }) => {
     },
   ]
 
-  const handleSubmit = async values => {
-    const newHighlights = [...highlights]
-    newHighlights[index] = values
-
-    update({ id: pid, highlights: newHighlights })
-    onClose()
-  }
-
   const handleDelete = () => {
     const newHighlights = [...highlights]
     newHighlights.splice(index, 1)
@@ -66,19 +60,35 @@ const DialogEditHighlights = ({ index, open, onClose }) => {
     onClose()
   }
 
-  const { control, submit } = useFormHelper({
+  const handleSubmit = async values => {
+    const newHighlights = [...highlights]
+    newHighlights[index] = values
+
+    try {
+      await update({ id: pid, highlights: newHighlights })
+      onClose()
+    } catch (err) {}
+  }
+
+  const { control, submit, reset } = useFormHelper({
     formFields,
-    initialValues: highlights[index],
+    initialValues: highlight,
     onSubmit: handleSubmit,
   })
 
+  const handleClose = () => {
+    onClose()
+    reset()
+  }
+
   return (
     <LayoutDialogEdit
-      title="Edit Basic Info"
+      title="Edit Highlight"
       open={open}
-      onClose={onClose}
+      onClose={handleClose}
       onSave={submit}
       onRemove={handleDelete}
+      loading={updateStatus === 'loading'}
     >
       <Grid container spacing={2} justifyContent="center" pb={2} pt={2}>
         <Grid item xs={12}>
@@ -89,4 +99,4 @@ const DialogEditHighlights = ({ index, open, onClose }) => {
   )
 }
 
-export default DialogEditHighlights
+export default DialogEditHighlight

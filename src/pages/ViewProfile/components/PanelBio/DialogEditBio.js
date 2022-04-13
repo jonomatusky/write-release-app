@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import { Grid } from '@mui/material'
 import { useParams } from 'react-router-dom'
-import { EditorState, convertFromRaw } from 'draft-js'
+import { EditorState, convertFromRaw, convertToRaw } from 'draft-js'
 import { Editor } from 'react-draft-wysiwyg'
 import 'react-draft-wysiwyg/dist/react-draft-wysiwyg.css'
 
@@ -28,7 +28,11 @@ const DialogEditBio = ({ open, onClose }) => {
   }
 
   const handleSubmit = async () => {
-    update({ id: pid, bio: editorState })
+    const contentState = editorState.getCurrentContent()
+    const raw = convertToRaw(contentState)
+    const bioJSON = JSON.stringify(raw)
+
+    update({ id: pid, bio: bioJSON })
     onClose()
   }
 

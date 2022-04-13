@@ -1,25 +1,31 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useRef } from 'react'
 import { getStorage, ref, getDownloadURL } from 'firebase/storage'
 import { Box } from '@mui/material'
 import { AccountCircle } from '@mui/icons-material'
 
 const ResponsiveAvatar = ({ image, ...props }) => {
   const [imageUrl, setImageUrl] = useState(null)
-
-  const storage = getStorage()
-
-  const storageRef = ref(storage, image)
+  const isCancelled = useRef(false)
 
   useEffect(() => {
     const getImage = async () => {
       if (image) {
         try {
-          const url = await getDownloadURL(storageRef)
-          setImageUrl(url)
+          let url
+          if (!isCancelled.current) {
+            const storage = getStorage()
+            const storageRef = ref(storage, image)
+            url = await getDownloadURL(storageRef)
+          }
+          if (!isCancelled.current) {
+            setImageUrl(url)
+          }
         } catch (err) {
           console.log(err)
         }
       }
+
+      return () => (isCancelled.current = true)
     }
     getImage()
   })

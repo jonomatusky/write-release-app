@@ -100,7 +100,7 @@ const individualsSlice = createSlice({
       )
       const newItems = state.items
       newItems[matchingIndex] = updatedItem
-      state.items = newItems
+      state.items = newItems.filter(item => !item.isRemoved)
     },
     [update.rejected]: (state, action) => {
       state.updateStatus = 'failed'
@@ -112,7 +112,7 @@ const individualsSlice = createSlice({
     [create.fulfilled]: (state, action) => {
       state.createStatus = 'idle'
       const item = action.payload
-      state.items = [item, ...state.itemss]
+      state.items = [item, ...state.items]
     },
     [create.rejected]: (state, action) => {
       state.createStatus = 'failed'
@@ -124,7 +124,7 @@ const individualsSlice = createSlice({
       const matchingIndex = state.items.findIndex(item => item.id === id)
 
       if (matchingIndex >= 0) {
-        state.itemss = [
+        state.items = [
           ...state.items.slice(0, matchingIndex),
           ...state.items.slice(matchingIndex + 1),
         ]

@@ -4,14 +4,11 @@ import Panel from 'layouts/Panel'
 import ButtonEditPanel from 'components/ButtonEditPanel'
 import DialogEditSettings from '../DialogEditSettings'
 import { Mail } from '@mui/icons-material'
-import useSession from 'hooks/use-session'
 
 const PanelContact = ({ individual: { email } }) => {
-  const { user } = useSession()
-
   return (
     <>
-      {(!!email || !!user) && (
+      {!!email && (
         <Grid item xs={12}>
           <Panel>
             <Box p={2} textAlign="center">
@@ -23,6 +20,8 @@ const PanelContact = ({ individual: { email } }) => {
                 fullWidth
                 variant="contained"
                 endIcon={<Mail />}
+                href={'mailto:' + email}
+                target="_blank"
               >
                 Contact
               </Button>

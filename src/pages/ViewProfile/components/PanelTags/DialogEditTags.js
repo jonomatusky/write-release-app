@@ -6,13 +6,17 @@ import LayoutDialogEdit from 'layouts/LayoutDialogEdit'
 import useFormHelper from 'hooks/use-form-helper'
 import Form from 'components/Form/Form'
 import TagEntry from './TagEntry'
+import useTagsStore from 'hooks/store/use-tags-store'
 
 const DialogEditTags = ({ open, onClose }) => {
+  const { items: tags } = useTagsStore()
   const { update, select } = useIndividualStore()
   const { pid } = useParams()
   const individual = select(pid)
 
-  const [individualTags, setIndividualTags] = useState(individual.tags)
+  const [individualTags, setIndividualTags] = useState(
+    individual.tags.map(tag => tag.name)
+  )
 
   const formFields = [
     {
@@ -33,13 +37,9 @@ const DialogEditTags = ({ open, onClose }) => {
   ]
 
   const handleSubmit = async values => {
-    console.log('submitting')
-    console.log(values)
-
-    const tagIds = individualTags.map(tag => tag._id)
-
-    console.log(individualTags)
-    console.log(tagIds)
+    const tagIds = individualTags.map(
+      tagName => tags.find(tag => tag.name === tagName).id
+    )
 
     try {
       await update({ id: pid, ...values, tags: tagIds })
@@ -48,8 +48,6 @@ const DialogEditTags = ({ open, onClose }) => {
       console.log(err)
     }
   }
-
-  console.log(individual)
 
   const { control, submit, reset } = useFormHelper({
     formFields,

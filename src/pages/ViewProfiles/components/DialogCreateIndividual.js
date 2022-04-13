@@ -1,33 +1,28 @@
 import React from 'react'
-import { useParams } from 'react-router-dom'
+import { useNavigate } from 'react-router-dom'
 import { Grid } from '@mui/material'
-import AvatarToEdit from './AvatarToEdit'
 import useIndividualStore from 'hooks/store/use-individuals-store'
 import LayoutDialogEdit from 'layouts/LayoutDialogEdit'
 import useFormHelper from 'hooks/use-form-helper'
 import Form from 'components/Form/Form'
 import { getFields } from 'util/formFields'
 
-const BasicInfoDialog = ({ open, onClose }) => {
-  const { update, select, updateStatus } = useIndividualStore()
-  const { pid } = useParams()
-  const individual = select(pid)
-  const formFields = getFields('basic')
-
-  const updateImage = imageFilepath => {
-    update({ id: pid, avatar: imageFilepath })
-  }
+const DialogCreateIndividual = ({ open, onClose }) => {
+  const navigate = useNavigate()
+  const { create, createStatus } = useIndividualStore()
 
   const handleSubmit = async values => {
+    console.log(values)
     try {
-      await update({ id: pid, ...values })
-      onClose()
+      const individual = await create(values)
+      navigate(`/profiles/${individual.id}`)
     } catch (err) {}
   }
 
+  const formFields = [...getFields('basic'), ...getFields('settings')]
+
   const { control, submit, reset } = useFormHelper({
     formFields,
-    initialValues: individual,
     onSubmit: handleSubmit,
   })
 
@@ -38,16 +33,13 @@ const BasicInfoDialog = ({ open, onClose }) => {
 
   return (
     <LayoutDialogEdit
-      title="Edit Basic Info"
+      title="Create New Profile"
       open={open}
       onClose={handleClose}
       onSave={submit}
-      loading={updateStatus === 'loading'}
+      loading={createStatus === 'loading'}
     >
-      <Grid container spacing={2} justifyContent="center" pb={2}>
-        <Grid item xs={12}>
-          <AvatarToEdit avatar={individual.avatar} updateImage={updateImage} />
-        </Grid>
+      <Grid container spacing={2} justifyContent="center" pb={2} mt={1} mb={1}>
         <Grid item xs={12}>
           <Form formFields={formFields} control={control} />
         </Grid>
@@ -56,4 +48,4 @@ const BasicInfoDialog = ({ open, onClose }) => {
   )
 }
 
-export default BasicInfoDialog
+export default DialogCreateIndividual

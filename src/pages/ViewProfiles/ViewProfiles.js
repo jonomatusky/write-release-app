@@ -1,11 +1,19 @@
 import React, { useState } from 'react'
-import { Container, Grid, Box, Autocomplete } from '@mui/material'
+import {
+  Container,
+  Grid,
+  Box,
+  Autocomplete,
+  CircularProgress,
+} from '@mui/material'
 import useIndividualsStore from 'hooks/store/use-individuals-store'
 import IndividualCard from './components/IndividualCard'
 import Panel from 'layouts/Panel'
 import TextFielder from 'components/TextFielder'
 import useTagsStore from 'hooks/store/use-tags-store'
 import FuzzySearch from 'fuzzy-search'
+import InfiniteScroll from 'react-infinite-scroll-component'
+import ButtonAddIndividual from './components/ButtonAddIndividual'
 
 const ViewProfiles = () => {
   const { items: individuals } = useIndividualsStore()
@@ -15,63 +23,101 @@ const ViewProfiles = () => {
 
   const [search, setSearch] = useState('')
   const [values, setValues] = useState([])
+  const [chunkCount, setChunkCount] = useState(1)
   const [inputValue, setInputValue] = useState('')
 
-  const searcher = new FuzzySearch(individuals, [
-    'name',
-    'company',
-    'title',
-    'tags',
-  ])
+  const searcher = new FuzzySearch(individuals, ['name'])
   const result = searcher.search(search)
 
+  let list = result
+
+  if (values.length > 0) {
+    list = result.filter(individual =>
+      values.some(value => individual.tags.map(tag => tag.name).includes(value))
+    )
+  }
+
+  const chunks = []
+  const chunkSize = 12
+
+  for (let i = 0; i < list.length; i += chunkSize) {
+    const chunk = list.slice(i, i + chunkSize)
+    chunks.push(chunk)
+  }
+
+  const individualsOnScreen = []
+
+  chunks.forEach((chunk, index) => {
+    if (index < chunkCount) {
+      individualsOnScreen.push(...chunk)
+    }
+  })
+
+  const addMoreIndividuals = () => {
+    setChunkCount(chunkCount + 1)
+  }
+
   return (
-    <Container maxWidth="xl">
-      <Grid container spacing={2} mt={2}>
-        <Grid item xs={12} sm={4} md={3}>
-          <Panel>
-            <Box p={2}>
-              <Grid container spacing={2}>
-                <Grid item xs={12}>
-                  <TextFielder
-                    label="Search"
-                    value={search}
-                    onChange={e => setSearch(e.target.value)}
-                  />
+    <Container maxWidth="lg">
+      <ButtonAddIndividual />
+      <InfiniteScroll
+        dataLength={individualsOnScreen.length}
+        next={addMoreIndividuals}
+        hasMore={individualsOnScreen.length < list.length}
+        loader={
+          <Grid container mt={2} mb={2}>
+            <Grid item xs={12} textAlign="center">
+              <CircularProgress />
+            </Grid>
+          </Grid>
+        }
+      >
+        <Grid container spacing={2} mt={2} mb={2}>
+          <Grid item xs={12}>
+            <Panel>
+              <Box p={2}>
+                <Grid container spacing={2}>
+                  <Grid item xs={12} md={6}>
+                    <Autocomplete
+                      label="Tags"
+                      multiple
+                      options={options}
+                      filterSelectedOptions
+                      renderInput={params => (
+                        <TextFielder label="Tags" {...params} />
+                      )}
+                      value={values}
+                      onChange={(e, v) => {
+                        setValues(v)
+                      }}
+                      inputValue={inputValue}
+                      onInputChange={(e, v) => {
+                        setInputValue(v)
+                      }}
+                    />
+                  </Grid>
+                  <Grid item xs={12} md={6}>
+                    <TextFielder
+                      label="Search"
+                      value={search}
+                      onChange={e => setSearch(e.target.value)}
+                    />
+                  </Grid>
                 </Grid>
-                <Grid item xs={12}>
-                  <Autocomplete
-                    label="Tags"
-                    multiple
-                    options={options}
-                    filterSelectedOptions
-                    renderInput={params => (
-                      <TextFielder label="Tags" {...params} />
-                    )}
-                    value={values}
-                    onChange={(e, v) => {
-                      setValues(v)
-                    }}
-                    inputValue={inputValue}
-                    onInputChange={(e, v) => {
-                      setInputValue(v)
-                    }}
-                  />
+              </Box>
+            </Panel>
+          </Grid>
+          <Grid item xs={12}>
+            <Grid container spacing={2}>
+              {individualsOnScreen.map(individual => (
+                <Grid item xs={12} md={6} lg={4} key={individual.id}>
+                  <IndividualCard individual={individual} />
                 </Grid>
-              </Grid>
-            </Box>
-          </Panel>
-        </Grid>
-        <Grid item xs={12} sm={8} md={9}>
-          <Grid container spacing={2}>
-            {result.map(individual => (
-              <Grid item xs={12} md={6} lg={4} key={individual.id}>
-                <IndividualCard individual={individual} />
-              </Grid>
-            ))}
+              ))}
+            </Grid>
           </Grid>
         </Grid>
-      </Grid>
+      </InfiniteScroll>
     </Container>
   )
 }

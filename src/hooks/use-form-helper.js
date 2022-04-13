@@ -8,8 +8,19 @@ const useFormHelper = ({ formFields, initialValues, onSubmit }) => {
     formFields.reduce((p, c) => ({ ...p, [c.name]: c.validation }), {})
   )
 
-  const defaultValues = formFields.reduce(
-    (p, c) => ({ ...p, [c.name]: initialValues[c.name] }),
+  if (!initialValues) {
+    initialValues = {}
+  }
+
+  let defaultValues = formFields.reduce(
+    (p, c) => ({
+      ...p,
+      [c.name]: initialValues[c.name]
+        ? initialValues[c.name]
+        : c.type === 'boolean'
+        ? false
+        : '',
+    }),
     {}
   )
 
