@@ -26,7 +26,11 @@ const ViewProfiles = () => {
   const [chunkCount, setChunkCount] = useState(1)
   const [inputValue, setInputValue] = useState('')
 
-  const searcher = new FuzzySearch(individuals, ['name'])
+  const individualsSorted = [...individuals].sort((a, b) => {
+    return b.createdAt - a.createdAt
+  })
+
+  const searcher = new FuzzySearch(individualsSorted, ['name'])
   const result = searcher.search(search)
 
   let list = result

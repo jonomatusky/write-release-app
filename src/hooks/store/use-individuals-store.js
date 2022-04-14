@@ -4,6 +4,7 @@ import { useSelector, useDispatch } from 'react-redux'
 import { useThunk } from 'hooks/use-thunk'
 import {
   fetch,
+  get,
   create,
   update,
   remove,
@@ -18,6 +19,13 @@ export const useIndividualStore = () => {
   const _fetch = useCallback(async () => {
     await dispatchThunk(fetch)
   }, [dispatchThunk])
+
+  const _get = useCallback(
+    async id => {
+      await dispatchThunk(get, { id })
+    },
+    [dispatchThunk]
+  )
 
   const _create = useCallback(
     async experience => {
@@ -64,6 +72,7 @@ export const useIndividualStore = () => {
 
   return {
     fetch: _fetch,
+    get: _get,
     create: _create,
     update: _update,
     remove: _remove,

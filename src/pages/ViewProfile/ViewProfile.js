@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef } from 'react'
+import React, { useEffect } from 'react'
 import { useParams } from 'react-router-dom'
 import { Container, Grid } from '@mui/material'
 
@@ -9,54 +9,17 @@ import PanelTags from './components/PanelTags/PanelTags'
 import PanelBio from './components/PanelBio/PanelBio'
 import PanelHighlights from './components/PanelHighlights/PanelHighlights'
 import useIndividualsStore from 'hooks/store/use-individuals-store'
-import useRequest from 'hooks/use-request'
 import Loading from 'pages/Loading/Loading'
 import NotFound from 'pages/NotFound/NotFound'
 
 const ViewProfile = () => {
-  const { fetchStatus, select } = useIndividualsStore()
+  const { fetchStatus, get, select } = useIndividualsStore()
   const { pid } = useParams()
-  const reduxIndividual = select(pid)
-
-  const { request, status: requestStatus } = useRequest()
-  const [stateIndividual, setStateIndividual] = useState({})
-
-  const individual = reduxIndividual.id ? reduxIndividual : stateIndividual
-
-  const mountedRef = useRef(true)
+  const individual = select(pid)
 
   useEffect(() => {
-    const get = async i => {
-      let individual
-
-      try {
-        const { data } = await request({
-          url: `/individuals/${i}`,
-          method: 'GET',
-        })
-        individual = data
-      } catch (err) {
-        console.log(err)
-      }
-
-      if (!mountedRef.current) {
-        setStateIndividual(individual)
-      }
-    }
-
-    if (
-      !!pid &&
-      !reduxIndividual.id &&
-      requestStatus === 'idle' &&
-      fetchStatus !== 'loading'
-    ) {
-      get(pid)
-    }
-
-    return () => {
-      mountedRef.current = false
-    }
-  }, [pid, fetchStatus, request, reduxIndividual, requestStatus])
+    get(pid)
+  }, [pid, get])
 
   const showError = !individual && fetchStatus === 'failed'
   const showLoading = !showError && !individual.id

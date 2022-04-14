@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from 'react'
+import React, { useCallback, useEffect } from 'react'
 import { getStorage, ref, getDownloadURL } from 'firebase/storage'
 import { Box } from '@mui/material'
 import { AccountCircle } from '@mui/icons-material'
@@ -6,34 +6,32 @@ import useIndividualStore from 'hooks/store/use-individuals-store'
 
 const ResponsiveAvatar = ({ id }) => {
   const { select } = useIndividualStore()
-  const individual = select(id) || {}
-  const { avatar, avatarUrl } = individual
+  const individual = select(id)
+  const { avatar, avatarUrl } = individual || {}
 
-  const isCancelled = useRef(false)
   const { setAvatar } = useIndividualStore()
 
-  useEffect(() => {
-    const getImage = async () => {
-      if (avatar) {
+  const getUrl = useCallback(
+    async a => {
+      if (a) {
         try {
           let url
-          if (!isCancelled.current) {
-            const storage = getStorage()
-            const storageRef = ref(storage, avatar)
-            url = await getDownloadURL(storageRef)
-          }
-          if (!isCancelled.current) {
-            setAvatar({ id, avatarUrl: url })
-          }
+          const storage = getStorage()
+          const storageRef = ref(storage, a)
+          url = await getDownloadURL(storageRef)
+
+          setAvatar({ id, avatarUrl: url })
         } catch (err) {
           console.log(err)
         }
       }
+    },
+    [id, setAvatar]
+  )
 
-      return () => (isCancelled.current = true)
-    }
-    getImage()
-  }, [avatar, id, setAvatar])
+  useEffect(() => {
+    getUrl(avatar)
+  }, [avatar, getUrl])
 
   return (
     <Box
