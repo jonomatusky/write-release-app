@@ -6,7 +6,7 @@ import { Box } from '@mui/system'
 import ButtonCopy from 'components/ButtonCopy'
 import { useSession } from 'hooks/use-session'
 
-const { PUBLIC_URL } = process.env
+const { REACT_APP_PUBLIC_URL } = process.env
 
 const Header = () => {
   const { user, logout } = useSession()
@@ -47,7 +47,7 @@ const Header = () => {
                   color="inherit"
                   fontSize="small"
                   size="small"
-                  text={`${PUBLIC_URL}/profiles/${pid}`}
+                  text={`${REACT_APP_PUBLIC_URL}/profiles/${pid}`}
                 >
                   Copy Link
                 </ButtonCopy>

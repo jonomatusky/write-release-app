@@ -7,7 +7,7 @@ const ButtonCopy = ({ children, text, ...props }) => {
   const { copy, isCopied } = useCopy()
 
   return (
-    <Button endIcon={<FilterNone />} {...props} onClick={copy}>
+    <Button endIcon={<FilterNone />} {...props} onClick={() => copy(text)}>
       {isCopied ? 'Copied!' : children}
     </Button>
   )
