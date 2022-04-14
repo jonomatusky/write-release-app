@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState, useRef } from 'react'
 import { useParams } from 'react-router-dom'
 import { Container, Grid } from '@mui/material'
 
@@ -23,23 +23,24 @@ const ViewProfile = () => {
 
   const individual = reduxIndividual.id ? reduxIndividual : stateIndividual
 
-  useEffect(() => {
-    let isCanceled = false
+  const mountedRef = useRef(true)
 
+  useEffect(() => {
     const get = async i => {
-      let res
+      let individual
 
       try {
-        res = await request({
+        const { data } = await request({
           url: `/individuals/${i}`,
           method: 'GET',
         })
+        individual = data
       } catch (err) {
         console.log(err)
       }
 
-      if (!isCanceled) {
-        setStateIndividual((res || {}).individual)
+      if (!mountedRef.current) {
+        setStateIndividual(individual)
       }
     }
 
@@ -53,7 +54,7 @@ const ViewProfile = () => {
     }
 
     return () => {
-      isCanceled = true
+      mountedRef.current = false
     }
   }, [pid, fetchStatus, request, reduxIndividual, requestStatus])
 
