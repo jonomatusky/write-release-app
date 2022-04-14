@@ -12,9 +12,12 @@ const BasicInfoDialog = ({ open, onClose }) => {
   const { update, select, updateStatus } = useIndividualStore()
   const { pid } = useParams()
   const individual = select(pid)
+  const { avatarUrl } = individual || {}
+
   const formFields = getFields('basic')
 
   const updateImage = imageFilepath => {
+    console.log(imageFilepath)
     update({ id: pid, avatar: imageFilepath })
   }
 
@@ -46,7 +49,7 @@ const BasicInfoDialog = ({ open, onClose }) => {
     >
       <Grid container spacing={2} justifyContent="center" pb={2}>
         <Grid item xs={12}>
-          <AvatarToEdit id={pid} updateImage={updateImage} />
+          <AvatarToEdit avatarUrl={avatarUrl} updateImage={updateImage} />
         </Grid>
         <Grid item xs={12}>
           <Form formFields={formFields} control={control} />

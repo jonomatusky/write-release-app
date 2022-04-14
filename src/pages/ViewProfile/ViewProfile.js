@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react'
+import React from 'react'
 import { useParams } from 'react-router-dom'
 import { Container, Grid } from '@mui/material'
 
@@ -8,21 +8,18 @@ import ChipTeam from './components/ChipTeam'
 import PanelTags from './components/PanelTags/PanelTags'
 import PanelBio from './components/PanelBio/PanelBio'
 import PanelHighlights from './components/PanelHighlights/PanelHighlights'
-import useIndividualsStore from 'hooks/store/use-individuals-store'
 import Loading from 'pages/Loading/Loading'
 import NotFound from 'pages/NotFound/NotFound'
+import useFetchIndividual from 'hooks/use-fetch-individual'
+import useFetchAvatar from 'hooks/use-fetch-avatar'
 
 const ViewProfile = () => {
-  const { fetchStatus, get, select } = useIndividualsStore()
   const { pid } = useParams()
-  const individual = select(pid)
+  const { individual, status } = useFetchIndividual(pid)
+  useFetchAvatar(pid)
 
-  useEffect(() => {
-    get(pid)
-  }, [pid, get])
-
-  const showError = !individual && fetchStatus === 'failed'
-  const showLoading = !showError && !individual.id
+  const showError = !individual && status === 'failed'
+  const showLoading = !showError && !individual
 
   return (
     <>

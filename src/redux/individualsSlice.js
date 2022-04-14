@@ -20,26 +20,6 @@ export const fetch = createAsyncThunk(
   }
 )
 
-export const get = createAsyncThunk(
-  'individuals/get',
-  async ({ headers, id }, { getState }) => {
-    const state = getState()
-    const individuals = state.individuals.items
-
-    let individual = individuals.find(item => item.id === id)
-
-    if (!individual) {
-      const { data } = await client.request({
-        headers,
-        url: `/individuals/${id}`,
-      })
-      individual = data
-    }
-
-    return individual
-  }
-)
-
 export const create = createAsyncThunk(
   'individuals/create',
   async ({ headers, ...inputs }) => {
@@ -96,9 +76,8 @@ const individualsSlice = createSlice({
     setAvatar(state, action) {
       const { id, avatarUrl } = action.payload
       let individuals = state.items
-      individuals[
-        individuals.findIndex(individual => individual.id === id)
-      ].avatarUrl = avatarUrl
+      const index = individuals.findIndex(item => item.id === id)
+      individuals[index].avatarUrl = avatarUrl
       state.items = individuals
     },
   },
@@ -112,27 +91,6 @@ const individualsSlice = createSlice({
     },
     [fetch.rejected]: (state, action) => {
       state.fetchStatus = 'failed'
-      state.error = action.error.message
-    },
-    [get.pending]: (state, action) => {
-      state.getStatus = 'loading'
-    },
-    [get.fulfilled]: (state, action) => {
-      state.getStatus = 'succeeded'
-      const gottenItem = action.payload
-      const matchingIndex = state.items.findIndex(
-        item => item.id === gottenItem.id
-      )
-      const newItems = state.items
-      if (matchingIndex !== -1) {
-        newItems[matchingIndex] = gottenItem
-      } else {
-        newItems.push(gottenItem)
-      }
-      state.items = newItems.filter(item => !item.isRemoved)
-    },
-    [get.rejected]: (state, action) => {
-      state.getStatus = 'failed'
       state.error = action.error.message
     },
     [update.pending]: (state, action) => {

@@ -12,9 +12,16 @@ import {
 import { Mic, TimerOutlined, OfflineBolt } from '@mui/icons-material'
 
 import ResponsiveAvatar from 'components/ResponsiveAvatar'
+import useIndividualStore from 'hooks/store/use-individuals-store'
+import useFetchAvatar from 'hooks/use-fetch-avatar'
 
-const IndividualCard = ({ individual }) => {
-  const { id, name, location, title, company, companyUrl } = individual || {}
+const IndividualCard = ({ id }) => {
+  const { select } = useIndividualStore()
+  const individual = select(id)
+  const { name, location, title, company, companyUrl, avatarUrl } =
+    individual || {}
+
+  useFetchAvatar(id)
 
   const tags = individual?.tags || []
 
@@ -42,7 +49,7 @@ const IndividualCard = ({ individual }) => {
             <Grid item xs={6} textAlign="center">
               <Box width="100%">
                 <Box maxWidth="150px" margin="auto" p={1}>
-                  <ResponsiveAvatar id={id} />
+                  <ResponsiveAvatar avatarUrl={avatarUrl} />
                 </Box>
               </Box>
             </Grid>

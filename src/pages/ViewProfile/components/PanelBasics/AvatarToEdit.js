@@ -6,7 +6,7 @@ import ResponsiveAvatar from 'components/ResponsiveAvatar'
 import ImageUploadDialog from './ImageUploadDialog'
 import ImageCropDialog from './ImageCropDialog'
 
-const AvatarToEdit = ({ id, updateImage }) => {
+const AvatarToEdit = ({ avatarUrl, updateImage }) => {
   const [uploadIsOpen, setUploadIsOpen] = useState(false)
   const [cropIsOpen, setCropIsOpen] = useState(false)
   const [imageToCrop, setImageToCrop] = useState({})
@@ -61,7 +61,7 @@ const AvatarToEdit = ({ id, updateImage }) => {
         <Grid item xs={12}>
           <IconButton onClick={handleOpenUploadDialog}>
             <Box width="125px" height="125px" position="relative">
-              <ResponsiveAvatar id={id} />
+              <ResponsiveAvatar avatarUrl={avatarUrl} />
             </Box>
           </IconButton>
         </Grid>

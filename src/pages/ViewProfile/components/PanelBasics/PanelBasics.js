@@ -8,11 +8,11 @@ import useSession from 'hooks/use-session'
 
 const PanelBasic = ({ individual }) => {
   const { user } = useSession()
-  const { id, avatar, name, location, title, company, companyUrl } =
+  const { avatarUrl, name, location, title, company, companyUrl } =
     individual || {}
 
   const showPanel =
-    !!avatar ||
+    !!avatarUrl ||
     !!name ||
     !!location ||
     !!title ||
@@ -30,7 +30,7 @@ const PanelBasic = ({ individual }) => {
                 <Grid item xs={12} textAlign="center" pb={1}>
                   <Box width="100%">
                     <Box maxWidth="250px" margin="auto">
-                      <ResponsiveAvatar id={id} />
+                      <ResponsiveAvatar avatarUrl={avatarUrl} />
                     </Box>
                   </Box>
                 </Grid>

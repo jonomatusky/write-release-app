@@ -1,38 +1,8 @@
-import React, { useCallback, useEffect } from 'react'
-import { getStorage, ref, getDownloadURL } from 'firebase/storage'
+import React from 'react'
 import { Box } from '@mui/material'
 import { AccountCircle } from '@mui/icons-material'
-import useIndividualStore from 'hooks/store/use-individuals-store'
 
-const ResponsiveAvatar = ({ id }) => {
-  const { select } = useIndividualStore()
-  const individual = select(id)
-  const { avatar, avatarUrl } = individual || {}
-
-  const { setAvatar } = useIndividualStore()
-
-  const getUrl = useCallback(
-    async a => {
-      if (a) {
-        try {
-          let url
-          const storage = getStorage()
-          const storageRef = ref(storage, a)
-          url = await getDownloadURL(storageRef)
-
-          setAvatar({ id, avatarUrl: url })
-        } catch (err) {
-          console.log(err)
-        }
-      }
-    },
-    [id, setAvatar]
-  )
-
-  useEffect(() => {
-    getUrl(avatar)
-  }, [avatar, getUrl])
-
+const ResponsiveAvatar = ({ avatarUrl }) => {
   return (
     <Box
       width="100%"
