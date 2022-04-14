@@ -2,7 +2,14 @@ import { useCallback } from 'react'
 import { useSelector, useDispatch } from 'react-redux'
 
 import { useThunk } from 'hooks/use-thunk'
-import { fetch, create, update, remove, clear } from 'redux/individualsSlice'
+import {
+  fetch,
+  create,
+  update,
+  remove,
+  clear,
+  setAvatar,
+} from 'redux/individualsSlice'
 
 export const useIndividualStore = () => {
   const dispatch = useDispatch()
@@ -41,6 +48,13 @@ export const useIndividualStore = () => {
     [dispatch]
   )
 
+  const _setAvatar = useCallback(
+    async ({ id, avatarUrl }) => {
+      dispatch(setAvatar({ id, avatarUrl }))
+    },
+    [dispatch]
+  )
+
   const { items, fetchStatus, error, updateStatus, createStatus, filter } =
     useSelector(state => state.individuals)
 
@@ -55,6 +69,7 @@ export const useIndividualStore = () => {
     remove: _remove,
     clear: _clear,
     select,
+    setAvatar: _setAvatar,
     items,
     fetchStatus,
     updateStatus,

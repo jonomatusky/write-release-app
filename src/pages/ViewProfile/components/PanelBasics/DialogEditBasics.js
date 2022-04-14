@@ -46,7 +46,7 @@ const BasicInfoDialog = ({ open, onClose }) => {
     >
       <Grid container spacing={2} justifyContent="center" pb={2}>
         <Grid item xs={12}>
-          <AvatarToEdit avatar={individual.avatar} updateImage={updateImage} />
+          <AvatarToEdit id={pid} updateImage={updateImage} />
         </Grid>
         <Grid item xs={12}>
           <Form formFields={formFields} control={control} />

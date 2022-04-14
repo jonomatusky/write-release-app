@@ -73,8 +73,13 @@ const individualsSlice = createSlice({
       state.updateStatus = 'idle'
       state.createStatus = 'idle'
     },
-    setFilter(state, action) {
-      state.filter = action.payload
+    setAvatar(state, action) {
+      const { id, avatarUrl } = action.payload
+      let individuals = state.items
+      individuals[
+        individuals.findIndex(individual => individual.id === id)
+      ].avatarUrl = avatarUrl
+      state.items = individuals
     },
   },
   extraReducers: {
@@ -133,6 +138,6 @@ const individualsSlice = createSlice({
   },
 })
 
-export const { set, clear, setFilter } = individualsSlice.actions
+export const { set, clear, setFilter, setAvatar } = individualsSlice.actions
 
 export default individualsSlice.reducer

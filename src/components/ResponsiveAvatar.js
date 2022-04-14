@@ -1,24 +1,29 @@
-import React, { useState, useEffect, useRef } from 'react'
+import React, { useEffect, useRef } from 'react'
 import { getStorage, ref, getDownloadURL } from 'firebase/storage'
 import { Box } from '@mui/material'
 import { AccountCircle } from '@mui/icons-material'
+import useIndividualStore from 'hooks/store/use-individuals-store'
 
-const ResponsiveAvatar = ({ image, ...props }) => {
-  const [imageUrl, setImageUrl] = useState(null)
+const ResponsiveAvatar = ({ id }) => {
+  const { select } = useIndividualStore()
+  const individual = select(id) || {}
+  const { avatar, avatarUrl } = individual
+
   const isCancelled = useRef(false)
+  const { setAvatar } = useIndividualStore()
 
   useEffect(() => {
     const getImage = async () => {
-      if (image) {
+      if (avatar) {
         try {
           let url
           if (!isCancelled.current) {
             const storage = getStorage()
-            const storageRef = ref(storage, image)
+            const storageRef = ref(storage, avatar)
             url = await getDownloadURL(storageRef)
           }
           if (!isCancelled.current) {
-            setImageUrl(url)
+            setAvatar({ id, avatarUrl: url })
           }
         } catch (err) {
           console.log(err)
@@ -28,7 +33,7 @@ const ResponsiveAvatar = ({ image, ...props }) => {
       return () => (isCancelled.current = true)
     }
     getImage()
-  })
+  }, [avatar, id, setAvatar])
 
   return (
     <Box
@@ -38,14 +43,14 @@ const ResponsiveAvatar = ({ image, ...props }) => {
         '&:after': { content: '""', display: 'block', paddingBottom: '100%' },
       }}
     >
-      {imageUrl ? (
+      {avatarUrl ? (
         <Box
           width="100%"
           height="100%"
           position="absolute"
           borderRadius="50%"
           sx={{
-            backgroundImage: `url(${imageUrl})`,
+            backgroundImage: `url(${avatarUrl})`,
             backgroundSize: 'cover',
             backgroundPosition: 'center',
           }}

@@ -8,7 +8,7 @@ import useSession from 'hooks/use-session'
 
 const PanelBasic = ({ individual }) => {
   const { user } = useSession()
-  const { avatar, name, location, title, company, companyUrl } =
+  const { id, avatar, name, location, title, company, companyUrl } =
     individual || {}
 
   const showPanel =
@@ -27,15 +27,14 @@ const PanelBasic = ({ individual }) => {
           <PanelEdit dialog={BasicInfoDialog}>
             <Box p={2}>
               <Grid container>
-                {avatar && (
-                  <Grid item xs={12} textAlign="center" pb={1}>
-                    <Box width="100%">
-                      <Box maxWidth="250px" margin="auto">
-                        <ResponsiveAvatar image={avatar} />
-                      </Box>
+                <Grid item xs={12} textAlign="center" pb={1}>
+                  <Box width="100%">
+                    <Box maxWidth="250px" margin="auto">
+                      <ResponsiveAvatar id={id} />
                     </Box>
-                  </Grid>
-                )}
+                  </Box>
+                </Grid>
+
                 <Grid item xs={12}>
                   {name && (
                     <Typography variant="h6">

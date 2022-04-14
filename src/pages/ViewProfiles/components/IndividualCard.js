@@ -14,8 +14,7 @@ import { Mic, TimerOutlined, OfflineBolt } from '@mui/icons-material'
 import ResponsiveAvatar from 'components/ResponsiveAvatar'
 
 const IndividualCard = ({ individual }) => {
-  const { avatar, name, location, title, company, companyUrl } =
-    individual || {}
+  const { id, name, location, title, company, companyUrl } = individual || {}
 
   const tags = individual?.tags || []
 
@@ -43,7 +42,7 @@ const IndividualCard = ({ individual }) => {
             <Grid item xs={6} textAlign="center">
               <Box width="100%">
                 <Box maxWidth="150px" margin="auto" p={1}>
-                  <ResponsiveAvatar image={avatar} />
+                  <ResponsiveAvatar id={id} />
                 </Box>
               </Box>
             </Grid>
