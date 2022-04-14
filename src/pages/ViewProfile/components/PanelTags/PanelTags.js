@@ -44,7 +44,7 @@ const PanelTags = ({ individual }) => {
                 </Box>
               )}
               {hasTags && (
-                <Box display="flex">
+                <Box display="flex" flexWrap="wrap">
                   {individualTags.map(tag => (
                     <Box pb={1} pr={1} key={tag.id}>
                       <Chip label={tag.name} color="primary" />
@@ -53,7 +53,7 @@ const PanelTags = ({ individual }) => {
                 </Box>
               )}
               {hasQualities && (
-                <Box display="flex">
+                <Box display="flex" flexWrap="wrap">
                   {qualities.map(quality => {
                     const { Icon, name, label } = quality
 

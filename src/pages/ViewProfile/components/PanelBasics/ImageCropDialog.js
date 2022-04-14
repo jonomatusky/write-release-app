@@ -12,6 +12,7 @@ import ReactCrop, { centerCrop, makeAspectCrop } from 'react-image-crop'
 import 'react-image-crop/dist/ReactCrop.css'
 
 const ImageCropDialog = ({ open, onClose, image, upload }) => {
+  const [isLoading, setIsLoading] = useState(false)
   const [crop, setCrop] = useState()
 
   const handleCropChange = (crop, percentCrop) => setCrop(percentCrop)
@@ -52,10 +53,12 @@ const ImageCropDialog = ({ open, onClose, image, upload }) => {
     })
   }
 
-  const handleSetImage = async image => {
+  const handleSetImage = async () => {
+    setIsLoading(true)
     let blob = await cropImage()
 
     await upload(blob)
+    setIsLoading(false)
     onClose()
   }
 
@@ -68,8 +71,8 @@ const ImageCropDialog = ({ open, onClose, image, upload }) => {
           // You don't need to pass a complete crop into
           // makeAspectCrop or centerCrop.
           unit: '%',
-          width: width > height ? null : 90,
-          height: width > height ? 90 : null,
+          width: width > height ? null : 100,
+          height: width > height ? 100 : null,
         },
         1,
         width,
@@ -113,7 +116,11 @@ const ImageCropDialog = ({ open, onClose, image, upload }) => {
         <Button variant="outlined" onClick={onClose}>
           Cancel
         </Button>
-        <LoadingButton variant="contained" onClick={handleSetImage}>
+        <LoadingButton
+          variant="contained"
+          onClick={handleSetImage}
+          loading={isLoading}
+        >
           Save
         </LoadingButton>
       </DialogActions>

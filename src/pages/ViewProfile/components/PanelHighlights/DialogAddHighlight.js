@@ -47,8 +47,6 @@ const DialogAddHighlight = ({ index, open, onClose }) => {
     try {
       Object.assign(highlight, siteInfo)
 
-      console.log(highlight)
-
       const newHighlights = [...highlights]
       newHighlights[index] = highlight
 

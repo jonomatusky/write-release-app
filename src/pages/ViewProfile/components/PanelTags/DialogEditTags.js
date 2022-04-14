@@ -10,7 +10,7 @@ import useTagsStore from 'hooks/store/use-tags-store'
 
 const DialogEditTags = ({ open, onClose }) => {
   const { items: tags } = useTagsStore()
-  const { update, select } = useIndividualStore()
+  const { update, updateStatus, select } = useIndividualStore()
   const { pid } = useParams()
   const individual = select(pid)
 
@@ -66,6 +66,7 @@ const DialogEditTags = ({ open, onClose }) => {
       open={open}
       onClose={handleClose}
       onSave={submit}
+      loading={updateStatus === 'loading'}
     >
       <Grid container spacing={2} justifyContent="center" pt={2}>
         <Grid item xs={12}>

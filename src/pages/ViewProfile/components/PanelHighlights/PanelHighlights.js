@@ -3,7 +3,7 @@ import { Box, Typography, Grid } from '@mui/material'
 import DialogEditHighlights from './DialogEditHighlight'
 import Highlight from './Highlight'
 import Panel from 'layouts/Panel'
-import ButtonAddHighlight from './ButtonAddHighligh'
+import ButtonAddHighlight from './ButtonAddHighlight'
 import useSession from 'hooks/use-session'
 
 const PanelHighlights = ({ individual }) => {

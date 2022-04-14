@@ -38,7 +38,7 @@ const IndividualCard = ({ individual }) => {
   return (
     <Card variant="outlined">
       <CardActionArea onClick={() => navigate('/profiles/' + individual.id)}>
-        <Box p={1} height="300px">
+        <Box p={1} height="320px">
           <Grid container>
             <Grid item xs={6} textAlign="center">
               <Box width="100%">
@@ -70,7 +70,7 @@ const IndividualCard = ({ individual }) => {
             <Grid item xs={12}>
               <Box display="flex" width="100%" flexWrap="wrap">
                 {tags.map(tag => (
-                  <Box pt={0.5} pl={0.5} key={tag.name}>
+                  <Box pt={0.5} pl={0.5} key={tag.name} maxHeight="112px">
                     <Chip label={tag.name} color="primary" size="small" />
                   </Box>
                 ))}
@@ -79,16 +79,11 @@ const IndividualCard = ({ individual }) => {
             <Grid item xs={12}>
               <Box display="flex" width="100%" flexWrap="wrap">
                 {qualities.map(quality => {
-                  const { Icon, name, label } = quality
+                  const { name, label } = quality
 
                   return individual[quality.name] ? (
                     <Box pt={0.5} pl={0.5} key={name}>
-                      <Chip
-                        label={label}
-                        color="secondary"
-                        size="small"
-                        icon={<Icon fontSize="small" />}
-                      />
+                      <Chip label={label} color="secondary" size="small" />
                     </Box>
                   ) : null
                 })}

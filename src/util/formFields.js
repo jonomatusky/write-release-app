@@ -35,6 +35,7 @@ export const allFields = [
     placeholder: 'ACME',
     type: 'text',
     validation: Yup.string().max(50, 'Must be under 50 characters'),
+    category: 'basic',
   },
   {
     name: 'companyUrl',
@@ -52,6 +53,7 @@ export const allFields = [
     placeholder: 'Metropolis',
     type: 'text',
     validation: Yup.string().max(50, 'Must be under 50 characters'),
+    category: 'basic',
   },
   {
     name: 'state',

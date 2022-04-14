@@ -1,4 +1,4 @@
-import React, { useCallback } from 'react'
+import React, { useState, useCallback } from 'react'
 import {
   Button,
   Box,
@@ -8,13 +8,17 @@ import {
   DialogContent,
   DialogTitle,
 } from '@mui/material'
+import { LoadingButton } from '@mui/lab'
 import { Upload } from '@mui/icons-material'
 import { useDropzone } from 'react-dropzone'
 import 'react-image-crop/dist/ReactCrop.css'
 
 const ImageUploadDialog = ({ setNewImage, open, onClose }) => {
+  const [isLoading, setIsLoading] = useState(false)
+
   const onDrop = useCallback(
     acceptedFiles => {
+      setIsLoading(true)
       acceptedFiles.forEach(file => {
         let imageSrc = URL.createObjectURL(file)
 
@@ -25,6 +29,7 @@ const ImageUploadDialog = ({ setNewImage, open, onClose }) => {
           const width = this.width
           // you'll need the dimensions of the original image file in order to crop it
           setNewImage({ src: imageSrc, width, height })
+          setIsLoading(false)
           onClose()
         }
 
@@ -75,9 +80,13 @@ const ImageUploadDialog = ({ setNewImage, open, onClose }) => {
         </div>
       </DialogContent>
       <DialogActions>
-        <Button variant="contained" onClick={onClose}>
+        <LoadingButton
+          variant="contained"
+          onClick={onClose}
+          loading={isLoading}
+        >
           Cancel
-        </Button>
+        </LoadingButton>
       </DialogActions>
     </Dialog>
   )

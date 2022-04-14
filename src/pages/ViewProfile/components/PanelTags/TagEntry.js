@@ -50,7 +50,6 @@ const TagEntry = ({ individualTags, setIndividualTags }) => {
       onChange={handleChange}
       inputValue={inputValue}
       onInputChange={(e, v) => {
-        console.log(v)
         setInputValue(v)
       }}
       renderInput={params => {

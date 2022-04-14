@@ -28,12 +28,13 @@ const DialogEditBio = ({ open, onClose }) => {
   }
 
   const handleSubmit = async () => {
-    const contentState = editorState.getCurrentContent()
-    const raw = convertToRaw(contentState)
-    const bioJSON = JSON.stringify(raw)
-
-    update({ id: pid, bio: bioJSON })
-    onClose()
+    try {
+      const contentState = editorState.getCurrentContent()
+      const raw = convertToRaw(contentState)
+      const bioJSON = JSON.stringify(raw)
+      await update({ id: pid, bio: bioJSON })
+      onClose()
+    } catch (err) {}
   }
 
   const toolbarOptions = ['inline', 'list', 'history']

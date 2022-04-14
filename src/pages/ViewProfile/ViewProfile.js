@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import { useParams } from 'react-router-dom'
 import { Container, Grid } from '@mui/material'
 
@@ -24,6 +24,8 @@ const ViewProfile = () => {
   const individual = reduxIndividual.id ? reduxIndividual : stateIndividual
 
   useEffect(() => {
+    let isCanceled = false
+
     const get = async i => {
       let res
 
@@ -36,7 +38,9 @@ const ViewProfile = () => {
         console.log(err)
       }
 
-      setStateIndividual(res.individual)
+      if (!isCanceled) {
+        setStateIndividual((res || {}).individual)
+      }
     }
 
     if (
@@ -46,6 +50,10 @@ const ViewProfile = () => {
       fetchStatus !== 'loading'
     ) {
       get(pid)
+    }
+
+    return () => {
+      isCanceled = true
     }
   }, [pid, fetchStatus, request, reduxIndividual, requestStatus])
 
@@ -58,7 +66,7 @@ const ViewProfile = () => {
       {showError && <NotFound />}
       {!showLoading && !showError && (
         <Container maxWidth="md">
-          <Grid container spacing={2} justifyContent="center" pt={2}>
+          <Grid container spacing={2} justifyContent="center" pt={2} pb={2}>
             <ChipTeam team={individual.team} />
 
             <Grid

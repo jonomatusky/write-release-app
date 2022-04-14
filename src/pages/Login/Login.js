@@ -40,8 +40,8 @@ const Login = ({ title, text }) => {
               </Grid>
               <Grid item xs={12} mb={2}>
                 <Typography>
-                  Access is restricted to users in the @gregoryfca.com domian.
-                  Pleae log in to continue.
+                  Pleae log in to continue. Access is restricted to
+                  @gregoryfca.com users.
                 </Typography>
               </Grid>
 
