@@ -39,6 +39,25 @@ const FormField = ({ formField, control }) => {
             )}
           </Box>
         )
+      case 'date':
+        return (
+          <>
+            <TextFielder
+              label={label}
+              value={value.toString().slice(0, 10)}
+              onChange={onChange}
+              onBlur={onBlur}
+              error={Boolean(error)}
+              helperText={error?.message}
+              type="date"
+            />
+            {!!helpText && (
+              <Typography fontSize="14px" color="secondary" pt={1}>
+                <i>{helpText}</i>
+              </Typography>
+            )}
+          </>
+        )
       default:
         return (
           <>

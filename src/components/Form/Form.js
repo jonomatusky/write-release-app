@@ -16,6 +16,7 @@ const Form = ({ formFields, onSubmit, control, spacing }) => {
           )
         })}
       </Grid>
+      <button type="submit" style={{ display: 'none' }} />
     </form>
   )
 }

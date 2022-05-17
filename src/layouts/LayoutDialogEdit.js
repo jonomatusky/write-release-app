@@ -20,9 +20,16 @@ const LayoutDialogEdit = ({
   onRemove,
   loading,
   children,
+  noScroll,
 }) => {
   return (
-    <Dialog open={open} onClose={onClose} fullWidth maxWidth="sm">
+    <Dialog
+      open={open}
+      onClose={onClose}
+      fullWidth
+      maxWidth="sm"
+      transitionDuration={{ appear: 250, exit: 0 }}
+    >
       <DialogTitle textAlign="center">
         <Box position="relative" maxHeight="100%">
           <Box position="absolute" zIndex="50" top="-3px" right="-10px">
@@ -35,7 +42,7 @@ const LayoutDialogEdit = ({
       </DialogTitle>
       <Divider />
       <DialogContent>
-        <Box overflow="scroll">{children}</Box>
+        <Box overflow={noScroll ? null : 'scroll'}>{children}</Box>
       </DialogContent>
       <Divider />
       <DialogActions>

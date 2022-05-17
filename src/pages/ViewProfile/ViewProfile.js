@@ -1,64 +1,81 @@
 import React from 'react'
 import { useParams } from 'react-router-dom'
-import { Container, Grid } from '@mui/material'
+import { Container, Grid, Box } from '@mui/material'
 
 import BasicInfo from './components/PanelBasics/PanelBasics'
-import PanelContact from './components/PanelContact/PanelContact'
 import ChipTeam from './components/ChipTeam'
 import PanelTags from './components/PanelTags/PanelTags'
-import PanelBio from './components/PanelBio/PanelBio'
 import PanelHighlights from './components/PanelHighlights/PanelHighlights'
 import Loading from 'pages/Loading/Loading'
 import NotFound from 'pages/NotFound/NotFound'
-import useFetchIndividual from 'hooks/use-fetch-individual'
-import useFetchAvatar from 'hooks/use-fetch-avatar'
+import useGetIndividual from 'hooks/use-get-individual'
+// import useFetchAvatar from 'hooks/use-fetch-avatar'
+import PanelFacts from './components/PanelFacts/PanelFacts'
+import ButtonContact from './components/ButtonContact'
+import PanelPoints from './components/PanelPoints/PanelPoints'
+// import useIndividualsStore from 'hooks/store/use-individuals-store'
 
 const ViewProfile = () => {
   const { pid } = useParams()
-  const { individual, status } = useFetchIndividual(pid)
-  useFetchAvatar(pid)
 
-  const showError = !individual && status === 'failed'
-  const showLoading = !showError && !individual
+  const { status } = useGetIndividual(pid)
 
   return (
     <>
-      {showLoading && <Loading />}
-      {showError && <NotFound />}
-      {!showLoading && !showError && (
-        <Container maxWidth="md">
-          <Grid container spacing={2} justifyContent="center" pt={2} pb={2}>
-            <ChipTeam team={individual.team} />
+      {(status === 'loading' || status === 'idle') && <Loading />}
+      {status === 'failed' && <NotFound />}
+      {status === 'succeeded' && (
+        <>
+          <Box
+            color="primary"
+            position="absolute"
+            // top={24}
+            right={12}
+            zIndex="100"
+            variant="extended"
+            pt={2}
+          >
+            <ChipTeam id={pid} />
+          </Box>
 
-            <Grid
-              item
-              xs={12}
-              sm={4}
-              md={4}
-              lg={3}
-              container
-              spacing={2}
-              alignContent="start"
-            >
-              <BasicInfo individual={individual} />
-              <PanelContact individual={individual} />
+          <Container maxWidth="md">
+            <Grid container spacing={2} justifyContent="center" pt={2} pb={2}>
+              <Grid
+                item
+                xs={12}
+                textAlign="end"
+                sx={{ display: { xs: 'flex', lg: 'none' } }}
+              >
+                <ChipTeam id={pid} sx={{ visibility: 'hidden' }} />
+              </Grid>
+              <Grid
+                item
+                xs={12}
+                sm={4}
+                container
+                spacing={2}
+                alignContent="start"
+              >
+                <BasicInfo id={pid} />
+                <PanelTags id={pid} />
+              </Grid>
+              <Grid
+                item
+                xs={12}
+                sm={8}
+                md={8}
+                container
+                spacing={2}
+                alignContent="start"
+              >
+                <PanelFacts id={pid} />
+                <PanelPoints id={pid} />
+                <PanelHighlights id={pid} />
+              </Grid>
             </Grid>
-            <Grid
-              item
-              xs={12}
-              sm={8}
-              md={8}
-              lg={9}
-              container
-              spacing={2}
-              alignContent="start"
-            >
-              <PanelTags individual={individual} />
-              <PanelBio individual={individual} />
-              <PanelHighlights individual={individual} />
-            </Grid>
-          </Grid>
-        </Container>
+          </Container>
+          <ButtonContact id={pid} />
+        </>
       )}
     </>
   )

@@ -5,6 +5,7 @@ import { Coffee, ArrowBackIos } from '@mui/icons-material'
 import { Box } from '@mui/system'
 import ButtonCopy from 'components/ButtonCopy'
 import { useSession } from 'hooks/use-session'
+import ScrollToTop from 'components/ScrollToTop'
 
 const { REACT_APP_PUBLIC_URL } = process.env
 
@@ -14,6 +15,7 @@ const Header = () => {
 
   return (
     <>
+      <ScrollToTop />
       <AppBar color="secondary">
         <Toolbar variant="dense">
           <Box display="flex" width="100%" alignItems="center">

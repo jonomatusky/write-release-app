@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import { Button, Typography, Box } from '@mui/material'
 import { Add } from '@mui/icons-material'
-import DialogAddHighlight from './DialogAddHighlight'
+import DialogAddHighlight from 'components/DialogAddCoverage'
 
 const ButtonAddHighlight = ({ disabled, index }) => {
   const [open, setOpen] = useState(false)

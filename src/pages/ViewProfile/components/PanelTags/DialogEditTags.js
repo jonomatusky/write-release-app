@@ -14,9 +14,9 @@ const DialogEditTags = ({ open, onClose }) => {
   const { pid } = useParams()
   const individual = select(pid)
 
-  const [individualTags, setIndividualTags] = useState(
-    individual.tags.map(tag => tag.name)
-  )
+  const startingTags = individual.tags.map(tag => tag.name)
+
+  const [individualTags, setIndividualTags] = useState(startingTags)
 
   const formFields = [
     {
@@ -57,6 +57,7 @@ const DialogEditTags = ({ open, onClose }) => {
 
   const handleClose = () => {
     onClose()
+    setIndividualTags(startingTags)
     reset()
   }
 

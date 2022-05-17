@@ -2,43 +2,42 @@ import { createSlice, createAsyncThunk } from '@reduxjs/toolkit'
 import * as client from 'util/client'
 
 let initialState = {
+  object: null,
+  id: null,
   items: [],
   error: null,
-  getStatus: 'idle',
   fetchStatus: 'idle',
+  getStatus: 'idle',
   updateStatus: 'idle',
   createStatus: 'idle',
-  getCoverageStatus: 'idle',
 }
 
 export const fetch = createAsyncThunk(
-  'individuals/fetch',
-  async ({ headers }) => {
+  'coverage/fetch',
+  async ({ headers, object, id }) => {
+    const url = object && id ? `/${object}s/${id}/coverage` : '/coverage'
     const { data } = await client.request({
       headers,
-      url: '/individuals',
+      url,
     })
-    return data
+    return { data, object, id }
   }
 )
 
-export const get = createAsyncThunk(
-  'individuals/get',
-  async ({ headers, id }) => {
-    const { data } = await client.request({
-      headers,
-      url: '/individuals/' + id,
-    })
-    return data
-  }
-)
+export const get = createAsyncThunk('coverage/get', async ({ headers, id }) => {
+  const { data } = await client.request({
+    headers,
+    url: `/coverage/${id}`,
+  })
+  return data
+})
 
 export const create = createAsyncThunk(
-  'individuals/create',
+  'coverage/create',
   async ({ headers, ...inputs }) => {
     const { data } = await client.request({
       headers,
-      url: `/individuals`,
+      url: `/coverage`,
       method: 'POST',
       data: inputs,
     })
@@ -47,11 +46,11 @@ export const create = createAsyncThunk(
 )
 
 export const update = createAsyncThunk(
-  'individuals/update',
+  'coverage/update',
   async ({ headers, id, ...inputs }) => {
     const { data } = await client.request({
       headers,
-      url: `/individuals/${id}`,
+      url: `/coverage/${id}`,
       method: 'PATCH',
       data: inputs,
     })
@@ -60,30 +59,19 @@ export const update = createAsyncThunk(
 )
 
 export const remove = createAsyncThunk(
-  'individuals/remove',
+  'coverage/remove',
   async ({ headers, id }) => {
     await client.request({
       headers,
-      url: `/individuals/${id}`,
+      url: `/coverage/${id}`,
       method: 'DELETE',
     })
     return id
   }
 )
 
-export const getCoverage = createAsyncThunk(
-  'individuals/getCoverage',
-  async ({ headers, id }) => {
-    const { data } = await client.request({
-      headers,
-      url: `/individuals/${id}/coverage`,
-    })
-    return data
-  }
-)
-
-const individualsSlice = createSlice({
-  name: 'individuals',
+const coverageSlice = createSlice({
+  name: 'coverage',
   initialState,
   reducers: {
     set(state, action) {
@@ -97,21 +85,16 @@ const individualsSlice = createSlice({
       state.updateStatus = 'idle'
       state.createStatus = 'idle'
     },
-    setAvatar(state, action) {
-      const { id, avatarUrl } = action.payload
-      let individuals = state.items
-      const index = individuals.findIndex(item => item.id === id)
-      individuals[index].avatarUrl = avatarUrl
-      state.items = individuals
-    },
   },
   extraReducers: {
     [fetch.pending]: (state, action) => {
       state.fetchStatus = 'loading'
     },
     [fetch.fulfilled]: (state, action) => {
-      state.fetchStatus = 'succeeded'
-      state.items = action.payload
+      state.fetchStatus = 'idle'
+      state.items = action.payload.data
+      state.object = action.payload.object
+      state.id = action.payload.id
     },
     [fetch.rejected]: (state, action) => {
       state.fetchStatus = 'failed'
@@ -121,18 +104,8 @@ const individualsSlice = createSlice({
       state.getStatus = 'loading'
     },
     [get.fulfilled]: (state, action) => {
-      const newItems = state.items
-      const newItem = action.payload
-      const matchingIndex = state.items.findIndex(
-        item => item.id === newItem.id
-      )
-      if (matchingIndex === -1) {
-        newItems.push(newItem)
-      } else {
-        newItems[matchingIndex] = newItem
-      }
-      state.items = newItems
       state.getStatus = 'succeeded'
+      state.items = [action.payload, ...state.items]
     },
     [get.rejected]: (state, action) => {
       state.getStatus = 'failed'
@@ -147,14 +120,11 @@ const individualsSlice = createSlice({
       const matchingIndex = state.items.findIndex(
         item => item.id === updatedItem.id
       )
-      const newItems = state.items
-      const existingItem = newItems[matchingIndex]
-      const avatarUrl =
-        updatedItem.avatar === existingItem.avatar
-          ? existingItem.avatarUrl
-          : null
-      newItems[matchingIndex] = { ...updatedItem, avatarUrl }
-      state.items = newItems.filter(item => !item.isRemoved)
+      if (matchingIndex !== -1) {
+        const newItems = state.items
+        newItems[matchingIndex] = updatedItem
+        state.items = newItems.filter(item => !item.isRemoved)
+      }
     },
     [update.rejected]: (state, action) => {
       state.updateStatus = 'failed'
@@ -172,21 +142,6 @@ const individualsSlice = createSlice({
       state.createStatus = 'failed'
       state.error = action.error.message
     },
-    [getCoverage.pending]: (state, action) => {
-      state.getCoverageStatus = 'loading'
-    },
-    [getCoverage.fulfilled]: (state, action) => {
-      state.getCoverageStatus = 'idle'
-      const { id, coverage } = action.payload
-      const matchingIndex = state.items.findIndex(item => item.id === id)
-      const newItems = state.items
-      newItems[matchingIndex].coverage = coverage
-      state.items = newItems
-    },
-    [getCoverage.rejected]: (state, action) => {
-      state.getCoverageStatus = 'failed'
-      state.error = action.error.message
-    },
     [remove.fulfilled]: (state, action) => {
       const id = action.payload
       const matchingIndex = state.items.findIndex(item => item.id === id)
@@ -201,6 +156,6 @@ const individualsSlice = createSlice({
   },
 })
 
-export const { set, clear, setFilter, setAvatar } = individualsSlice.actions
+export const { set, clear, setFilter } = coverageSlice.actions
 
-export default individualsSlice.reducer
+export default coverageSlice.reducer

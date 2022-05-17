@@ -5,9 +5,12 @@ import { convertFromRaw } from 'draft-js'
 import PanelEdit from 'layouts/PanelEdit'
 import DialogEditBio from './DialogEditBio'
 import useSession from 'hooks/use-session'
+import useIndividualsStore from 'hooks/store/use-individuals-store'
 
-const PanelBio = ({ individual }) => {
+const PanelBio = ({ id }) => {
   const { user } = useSession()
+  const { select } = useIndividualsStore()
+  const individual = select(id)
 
   const bio = individual.bio
 

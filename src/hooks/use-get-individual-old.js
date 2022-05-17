@@ -4,11 +4,32 @@ import { getStorage, ref, getDownloadURL } from 'firebase/storage'
 import useIndividualStore from './store/use-individuals-store'
 import useRequest from './use-request'
 
+// import { useEffect } from 'react'
+// import useCoverageStore from './store/use-coverage-store'
+
+// const useFetchIndividual = (id) => {
+//   const { fetch, fetchStatus, id: individualId, items } = useIndividualsStore()
+
+//   useEffect(() => {
+//     if (individualId !== id && fetchStatus === 'idle') {
+//       fetch(id)
+//     }
+//   }, [id, object, fetchStatus, coverageId, fetch])
+
+//   if (coverageId !== id) {
+//     return { coverage: [], fetchStatus }
+//   } else {
+//     return { coverage: items, fetchStatus }
+//   }
+// }
+
+// export default useFetchIndividual
+
 const useFetchIndividual = id => {
   const { request, status } = useRequest()
   const [fetchedIndividual, setFetchedIndividual] = useState(null)
-  const { items: individuals } = useIndividualStore()
-  let reduxIndividual = individuals.find(item => !!item.id && item.id === id)
+  const { select } = useIndividualStore()
+  let reduxIndividual = select(id)
 
   let individual = reduxIndividual || fetchedIndividual
 
@@ -28,16 +49,14 @@ const useFetchIndividual = id => {
       }
 
       setFetchedIndividual({ ...data, avatarUrl: url })
-    } catch (err) {
-      console.log(err)
-    }
+    } catch (err) {}
   }, [id, request])
 
   useEffect(() => {
-    if (!individual && status === 'idle') {
+    if (!individual.id && status === 'idle') {
       getIndividual()
     }
-  })
+  }, [status, getIndividual, individual.id])
 
   return { individual, status }
 }

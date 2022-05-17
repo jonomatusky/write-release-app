@@ -30,7 +30,7 @@ const ViewProfiles = () => {
     return b.createdAt - a.createdAt
   })
 
-  const searcher = new FuzzySearch(individualsSorted, ['name'])
+  const searcher = new FuzzySearch(individualsSorted, ['name', 'company'])
   const result = searcher.search(search)
 
   let list = result

@@ -6,7 +6,7 @@ import useSession from 'hooks/use-session'
 import useIndividualsStore from 'hooks/store/use-individuals-store'
 import DialogEditHighlight from './DialogEditHighlight'
 
-const ButtonEditHighlight = ({ variant, index, ...props }) => {
+const ButtonEditHighlight = ({ variant, highlight, ...props }) => {
   const { user } = useSession()
   const { fetchStatus } = useIndividualsStore()
   const [editIsOpen, setEditIsOpen] = useState(false)
@@ -18,7 +18,7 @@ const ButtonEditHighlight = ({ variant, index, ...props }) => {
       <DialogEditHighlight
         open={editIsOpen}
         onClose={handleClose}
-        index={index}
+        highlight={highlight}
       />
 
       <IconButton

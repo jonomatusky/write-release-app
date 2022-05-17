@@ -5,7 +5,7 @@ import { Edit } from '@mui/icons-material'
 import useSession from 'hooks/use-session'
 import useIndividualsStore from 'hooks/store/use-individuals-store'
 
-const ButtonEditPanel = ({ dialog, icon, variant, ...props }) => {
+const ButtonEditPanel = ({ dialog, icon, variant, dialogProps, ...props }) => {
   const { user } = useSession()
   const { fetchStatus } = useIndividualsStore()
   const [editIsOpen, setEditIsOpen] = useState(false)
@@ -17,7 +17,9 @@ const ButtonEditPanel = ({ dialog, icon, variant, ...props }) => {
 
   return !!user && fetchStatus === 'succeeded' ? (
     <>
-      {dialog && <Dialog open={editIsOpen} onClose={handleClose} />}
+      {dialog && (
+        <Dialog open={editIsOpen} onClose={handleClose} {...dialogProps} />
+      )}
 
       <IconButton
         onClick={handleOpen}
