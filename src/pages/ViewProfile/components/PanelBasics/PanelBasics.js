@@ -1,5 +1,5 @@
 import React from 'react'
-import { Grid, Box, Typography, Link } from '@mui/material'
+import { Grid, Box, Typography, Link, Fab } from '@mui/material'
 
 import ResponsiveAvatar from 'components/ResponsiveAvatar'
 import PanelEdit from 'layouts/PanelEdit'
@@ -7,6 +7,7 @@ import BasicInfoDialog from './DialogEditBasics'
 import useSession from 'hooks/use-session'
 import useIndividualsStore from 'hooks/store/use-individuals-store'
 import { Business, Email, LocationOn } from '@mui/icons-material'
+import usePageTitle from 'hooks/use-page-title'
 
 const PanelBasic = ({ id }) => {
   const { user } = useSession()
@@ -24,6 +25,8 @@ const PanelBasic = ({ id }) => {
     !!companyUrl ||
     !!user
 
+  usePageTitle(name + ' | SourceOn')
+
   return (
     <>
       {(!!user || showPanel) && (
@@ -33,8 +36,21 @@ const PanelBasic = ({ id }) => {
               <Grid container>
                 <Grid item xs={12} textAlign="center" pb={1}>
                   <Box width="100%">
-                    <Box maxWidth="200px" margin="auto">
+                    <Box maxWidth="200px" margin="auto" position="relative">
                       <ResponsiveAvatar avatarUrl={avatarUrl} />
+                      {email && (
+                        <Box position="absolute" bottom={0} right={0}>
+                          <Fab
+                            color="primary"
+                            href={
+                              'mailto:' + email + '?subject=Contacting ' + name
+                            }
+                            target="_blank"
+                          >
+                            <Email />
+                          </Fab>
+                        </Box>
+                      )}
                     </Box>
                   </Box>
                 </Grid>

@@ -52,7 +52,7 @@ const BasicInfoDialog = ({ open, onClose }) => {
           <AvatarToEdit avatarUrl={avatarUrl} updateImage={updateImage} />
         </Grid>
         <Grid item xs={12}>
-          <Form formFields={formFields} control={control} />
+          <Form formFields={formFields} control={control} submit={submit} />
         </Grid>
       </Grid>
     </LayoutDialogEdit>

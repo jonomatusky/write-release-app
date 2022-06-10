@@ -1,6 +1,9 @@
 import { useState, useEffect, useCallback } from 'react'
 import firebase from 'config/firebase'
+import posthog from 'posthog-js'
 // import useUserStore from 'hooks/store/use-user-store'
+
+const { REACT_APP_POSTHOG_KEY } = process.env
 
 export const useAuth = () => {
   // const { clearUser } = useUserStore()
@@ -17,7 +20,7 @@ export const useAuth = () => {
     try {
       await firebase.auth().signOut()
       // clearUser()
-      // posthog.reset()
+      !!REACT_APP_POSTHOG_KEY && posthog.reset()
     } catch (err) {}
   }, [])
 
@@ -26,10 +29,11 @@ export const useAuth = () => {
     const unsubscribe = firebase.auth().onAuthStateChanged(user => {
       setState({ initializing: false, user })
       if (!!user && user.email) {
-        // posthog.identify(user.uid, {
-        //   email: user.email,
-        //   displayName: user.displayName,
-        // })
+        !!REACT_APP_POSTHOG_KEY &&
+          posthog.identify(user.uid, {
+            email: user.email,
+            displayName: user.displayName,
+          })
       }
     })
 

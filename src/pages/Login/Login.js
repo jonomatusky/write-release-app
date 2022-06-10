@@ -5,6 +5,7 @@ import firebase from 'config/firebase'
 
 import useAlertStore from 'hooks/store/use-alert-store'
 import GoogleLogo from 'assets/images/google_logo.svg'
+import usePageTitle from 'hooks/use-page-title'
 
 const Login = ({ title, text }) => {
   const navigate = useNavigate()
@@ -26,6 +27,8 @@ const Login = ({ title, text }) => {
       setError({ message: 'Unable to sign in' })
     }
   }
+
+  usePageTitle('Login | SourceOn')
 
   return (
     <Container maxWidth="xs">

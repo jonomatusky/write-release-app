@@ -44,8 +44,8 @@ export const useIndividualsStore = () => {
 
   const _create = useCallback(
     async experience => {
-      const newExperience = await dispatchThunk(create, experience)
-      return newExperience
+      const item = await dispatchThunk(create, experience)
+      return item
     },
     [dispatchThunk]
   )

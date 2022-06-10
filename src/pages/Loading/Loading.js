@@ -2,8 +2,11 @@ import React from 'react'
 import { Box, CircularProgress } from '@mui/material'
 
 import Div100vh from 'components/Div100vh'
+import usePageTitle from 'hooks/use-page-title'
 
 const Loading = () => {
+  usePageTitle()
+
   return (
     <Div100vh width="100%">
       <Box

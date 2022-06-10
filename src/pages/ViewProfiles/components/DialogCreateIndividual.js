@@ -12,7 +12,6 @@ const DialogCreateIndividual = ({ open, onClose }) => {
   const { create, createStatus } = useIndividualStore()
 
   const handleSubmit = async values => {
-    console.log(values)
     try {
       const individual = await create(values)
       navigate(`/profiles/${individual.id}`)
@@ -41,7 +40,7 @@ const DialogCreateIndividual = ({ open, onClose }) => {
     >
       <Grid container spacing={2} justifyContent="center" pb={2} mt={1} mb={1}>
         <Grid item xs={12}>
-          <Form formFields={formFields} control={control} />
+          <Form formFields={formFields} control={control} submit={submit} />
         </Grid>
       </Grid>
     </LayoutDialogEdit>

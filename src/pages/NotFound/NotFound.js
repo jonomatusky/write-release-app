@@ -1,8 +1,11 @@
 import React from 'react'
 import { Link as RouterLink } from 'react-router-dom'
 import { Container, Grid, Typography, Link, Box } from '@mui/material'
+import usePageTitle from 'hooks/use-page-title'
 
 const NotFound = () => {
+  usePageTitle('Not Found | SourceOn')
+
   return (
     <Container maxWidth="md">
       <Grid

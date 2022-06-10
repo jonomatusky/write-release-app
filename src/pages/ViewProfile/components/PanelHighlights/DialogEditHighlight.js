@@ -140,7 +140,7 @@ const DialogEditHighlight = ({ open, onClose, highlight }) => {
       >
         <Grid container spacing={2} justifyContent="center" pb={2} pt={2}>
           <Grid item xs={12}>
-            <Form formFields={formFields} control={control} />
+            <Form formFields={formFields} control={control} submit={submit} />
           </Grid>
 
           <Grid item xs={12}>

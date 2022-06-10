@@ -14,10 +14,13 @@ import useTagsStore from 'hooks/store/use-tags-store'
 import FuzzySearch from 'fuzzy-search'
 import InfiniteScroll from 'react-infinite-scroll-component'
 import ButtonAddIndividual from './components/ButtonAddIndividual'
+import usePageTitle from 'hooks/use-page-title'
 
 const ViewProfiles = () => {
   const { items: individuals } = useIndividualsStore()
   const { items: tags } = useTagsStore()
+
+  usePageTitle()
 
   const options = tags.map(tag => tag.name)
 

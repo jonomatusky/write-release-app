@@ -45,7 +45,7 @@ const DialogEditSettings = ({ open, onClose }) => {
         <Grid item xs={12}>
           <Form
             control={control}
-            onSubmit={submit}
+            submit={submit}
             formFields={formFields}
             initialValues={individual}
           />

@@ -14,7 +14,7 @@ const DialogEditTags = ({ open, onClose }) => {
   const { pid } = useParams()
   const individual = select(pid)
 
-  const startingTags = individual.tags.map(tag => tag.name)
+  const startingTags = (individual.tags || []).map(tag => tag.name)
 
   const [individualTags, setIndividualTags] = useState(startingTags)
 
@@ -77,7 +77,12 @@ const DialogEditTags = ({ open, onClose }) => {
           />
         </Grid>
         <Grid item xs={12}>
-          <Form formFields={formFields} control={control} spacing={0} />
+          <Form
+            formFields={formFields}
+            control={control}
+            submit={submit}
+            spacing={0}
+          />
         </Grid>
       </Grid>
     </LayoutDialogEdit>

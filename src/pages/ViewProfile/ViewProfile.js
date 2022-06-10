@@ -13,6 +13,7 @@ import useGetIndividual from 'hooks/use-get-individual'
 import PanelFacts from './components/PanelFacts/PanelFacts'
 import ButtonContact from './components/ButtonContact'
 import PanelPoints from './components/PanelPoints/PanelPoints'
+import PanelContact from './components/PanelContact/PanelContact'
 // import useIndividualsStore from 'hooks/store/use-individuals-store'
 
 const ViewProfile = () => {
@@ -58,6 +59,7 @@ const ViewProfile = () => {
               >
                 <BasicInfo id={pid} />
                 <PanelTags id={pid} />
+                <PanelContact id={pid} />
               </Grid>
               <Grid
                 item
