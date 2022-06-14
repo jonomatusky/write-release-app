@@ -6,6 +6,7 @@ import PanelEdit from 'layouts/PanelEdit'
 import BasicInfoDialog from './DialogEditBasics'
 import useSession from 'hooks/use-session'
 import useIndividualsStore from 'hooks/store/use-individuals-store'
+import useInquiryStore from 'hooks/store/use-inquiries-store'
 import { Business, Email, LocationOn } from '@mui/icons-material'
 import usePageTitle from 'hooks/use-page-title'
 
@@ -15,6 +16,8 @@ const PanelBasic = ({ id }) => {
   const individual = select(id)
   const { avatarUrl, name, location, title, company, companyUrl, email } =
     individual || {}
+
+  const { setEntity } = useInquiryStore()
 
   const showPanel =
     !!avatarUrl ||
@@ -26,6 +29,13 @@ const PanelBasic = ({ id }) => {
     !!user
 
   usePageTitle(name + ' | SourceOn')
+
+  const handleContact = () => {
+    setEntity({
+      entityType: 'individual',
+      entityId: id,
+    })
+  }
 
   return (
     <>
@@ -40,13 +50,7 @@ const PanelBasic = ({ id }) => {
                       <ResponsiveAvatar avatarUrl={avatarUrl} />
                       {email && (
                         <Box position="absolute" bottom={0} right={0}>
-                          <Fab
-                            color="primary"
-                            href={
-                              'mailto:' + email + '?subject=Contacting ' + name
-                            }
-                            target="_blank"
-                          >
+                          <Fab color="primary" onClick={handleContact}>
                             <Email />
                           </Fab>
                         </Box>

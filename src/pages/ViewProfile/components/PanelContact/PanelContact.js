@@ -1,12 +1,20 @@
 import React from 'react'
 import { Grid, Button } from '@mui/material'
-import { OpenInNew } from '@mui/icons-material'
 import useIndividualsStore from 'hooks/store/use-individuals-store'
+import useInquiriesStore from 'hooks/store/use-inquiries-store'
 
 const PanelContact = ({ id }) => {
   const { select } = useIndividualsStore()
   const individual = select(id)
   const { email, firstName } = individual || {}
+
+  const { setEntity } = useInquiriesStore()
+  const handleContact = () => {
+    setEntity({
+      entityType: 'individual',
+      entityId: id,
+    })
+  }
 
   return (
     <>
@@ -23,10 +31,8 @@ const PanelContact = ({ id }) => {
               color="primary"
               fullWidth
               variant="contained"
-              endIcon={<OpenInNew />}
-              href={'mailto:' + email}
-              target="_blank"
-              sx={{ borderRadius: 28 }}
+              onClick={handleContact}
+              sx={{ borderRadius: 28, paddingLeft: 3, paddingRight: 3 }}
             >
               Interview {firstName}
             </Button>

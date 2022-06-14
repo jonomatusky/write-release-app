@@ -40,7 +40,7 @@ const AlertBar = props => {
       >
         <SnackbarContent
           sx={{
-            backgroundColor: 'secondary.main',
+            backgroundColor: 'primary.main',
             borderRadius: 0,
             fontWeight: 'bold',
           }}

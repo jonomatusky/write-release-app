@@ -19,6 +19,7 @@ import Login from 'pages/Login/Login'
 import Fetch from 'components/Fetch'
 import AlertBar from 'components/AlertBar'
 import NotFound from 'pages/NotFound/NotFound'
+import DialogContactForm from 'components/DialogContactForm'
 
 const { REACT_APP_POSTHOG_KEY } = process.env
 
@@ -41,6 +42,7 @@ const App = () => {
       <Router>
         <Fetch />
         <AlertBar />
+        <DialogContactForm />
         <Routes>
           <Route path="/" element={<Header />}>
             <Route path="/login" element={<Login />} />

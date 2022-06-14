@@ -1,7 +1,7 @@
 import React from 'react'
 import { Outlet, Link, useParams } from 'react-router-dom'
 import { AppBar, Toolbar, Typography, Button } from '@mui/material'
-import { ArrowBackIos } from '@mui/icons-material'
+import { ArrowBackIos, Email } from '@mui/icons-material'
 import { Box } from '@mui/system'
 import ButtonCopy from 'components/ButtonCopy'
 import { useSession } from 'hooks/use-session'
@@ -9,6 +9,7 @@ import ScrollToTop from 'components/ScrollToTop'
 import Logo from 'assets/images/sourceon_logo.svg'
 import ButtonReportBug from 'components/ButtonReportBug'
 import useIndividualsStore from 'hooks/store/use-individuals-store'
+import useInquiriesStore from 'hooks/store/use-inquiries-store'
 
 const { REACT_APP_PUBLIC_URL } = process.env
 
@@ -17,6 +18,14 @@ const Header = () => {
   const { pid } = useParams()
   const { select } = useIndividualsStore()
   const individual = select(pid)
+
+  const { setEntity } = useInquiriesStore()
+  const handleContact = () => {
+    setEntity({
+      entityType: 'individual',
+      entityId: pid,
+    })
+  }
 
   return (
     <>
@@ -79,18 +88,13 @@ const Header = () => {
                   color="inherit"
                   fontSize="small"
                   size="small"
-                  href={
-                    'mailto:' +
-                    individual.email +
-                    '?subject=Contacting ' +
-                    individual.name
-                  }
-                  target="_blank"
+                  onClick={handleContact}
                   sx={{
                     borderRadius: 28,
-                    paddingLeft: '0.5rem',
-                    paddingRight: '0.5rem',
+                    paddingLeft: 2,
+                    paddingRight: 2,
                   }}
+                  endIcon={<Email />}
                 >
                   Contact
                 </Button>

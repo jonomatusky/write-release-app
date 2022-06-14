@@ -8,6 +8,7 @@ import {
   Box,
 } from '@mui/material'
 import TextFielder from 'components/TextFielder'
+import MuiPhoneNumber from 'material-ui-phone-number'
 
 const FormField = ({ formField, control }) => {
   const { name, label, type, helpText, placeholder } = formField
@@ -50,6 +51,55 @@ const FormField = ({ formField, control }) => {
               error={Boolean(error)}
               helperText={error?.message}
               type="date"
+            />
+            {!!helpText && (
+              <Typography fontSize="14px" color="secondary" pt={1}>
+                <i>{helpText}</i>
+              </Typography>
+            )}
+          </>
+        )
+      case 'tel':
+        return (
+          <>
+            <MuiPhoneNumber
+              disableDropdown
+              fullWidth
+              variant="outlined"
+              autoComplete="off"
+              InputLabelProps={{
+                shrink: true,
+              }}
+              defaultCountry={'us'}
+              label={label}
+              value={value.toString().slice(0, 10)}
+              onChange={onChange}
+              onBlur={onBlur}
+              error={Boolean(error)}
+              helperText={error?.message}
+              type="tel"
+            />
+            {!!helpText && (
+              <Typography fontSize="14px" color="secondary" pt={1}>
+                <i>{helpText}</i>
+              </Typography>
+            )}
+          </>
+        )
+      case 'textarea':
+        return (
+          <>
+            <TextFielder
+              label={label}
+              placeholder={placeholder}
+              value={value}
+              onChange={onChange}
+              onBlur={onBlur}
+              error={Boolean(error)}
+              helperText={error?.message}
+              type={type}
+              multiline
+              rows={4}
             />
             {!!helpText && (
               <Typography fontSize="14px" color="secondary" pt={1}>

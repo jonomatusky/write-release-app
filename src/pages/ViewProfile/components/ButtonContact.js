@@ -3,12 +3,21 @@ import { Fab } from '@mui/material'
 import { Send } from '@mui/icons-material'
 
 import useIndividualsStore from 'hooks/store/use-individuals-store'
+import useInquiriesStore from 'hooks/store/use-inquiries-store'
 
 const ButtonContact = ({ id }) => {
   const { select } = useIndividualsStore()
   const individual = select(id)
 
-  const { email, name } = individual || {}
+  const { email } = individual || {}
+
+  const { setEntity } = useInquiriesStore()
+  const handleContact = () => {
+    setEntity({
+      entityType: 'individual',
+      entityId: id,
+    })
+  }
 
   return (
     <>
@@ -16,8 +25,7 @@ const ButtonContact = ({ id }) => {
         <Fab
           color="primary"
           sx={{ position: 'fixed', zIndex: '100', bottom: 24, right: 24 }}
-          href={'mailto:' + email + '?subject=Contacting ' + name}
-          target="_blank"
+          onClick={handleContact}
           variant="extended"
         >
           Book Now

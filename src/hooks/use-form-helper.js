@@ -9,7 +9,7 @@ const useFormHelper = ({ formFields, initialValues, onSubmit }) => {
   )
 
   if (!initialValues) {
-    initialValues = {}
+    initialValues = formFields.map(field => field.initialValue) || {}
   }
 
   let defaultValues = formFields.reduce(
