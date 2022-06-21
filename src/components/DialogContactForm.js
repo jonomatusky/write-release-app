@@ -69,11 +69,9 @@ const DialogContactForm = ({ noScroll }) => {
   const { setMessage } = useAlertStore()
 
   const handleSubmit = async values => {
-    console.log(values)
     try {
       await create({ entityType, entity, ...values })
       clearEntity()
-      reset()
       setMessage({
         message: `Your message has been sent! We'll get back to you as soon as possible.`,
       })
