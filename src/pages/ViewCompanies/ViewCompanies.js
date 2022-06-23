@@ -6,19 +6,19 @@ import {
   Autocomplete,
   CircularProgress,
 } from '@mui/material'
-import useIndividualsStore from 'hooks/store/use-individuals-store'
-import IndividualCard from './components/IndividualCard'
+import useOrganizationsStore from 'hooks/store/use-organizations-store'
+import OrganizationCard from './components/OrganizationCard'
 import Panel from 'layouts/Panel'
 import TextFielder from 'components/TextFielder'
 import useTagsStore from 'hooks/store/use-tags-store'
 import FuzzySearch from 'fuzzy-search'
 import InfiniteScroll from 'react-infinite-scroll-component'
-import ButtonAddIndividual from './components/ButtonAddIndividual'
+import ButtonAddCompany from './components/ButtonAddCompany'
 import usePageTitle from 'hooks/use-page-title'
 import LayoutDrawer from 'layouts/LayoutDrawer'
 
-const ViewProfiles = () => {
-  const { items: individuals } = useIndividualsStore()
+const ViewCompanies = () => {
+  const { items: organizations } = useOrganizationsStore()
   const { items: tags } = useTagsStore()
 
   usePageTitle()
@@ -30,18 +30,20 @@ const ViewProfiles = () => {
   const [chunkCount, setChunkCount] = useState(1)
   const [inputValue, setInputValue] = useState('')
 
-  const individualsSorted = [...individuals].sort((a, b) => {
+  const organizationsSorted = [...organizations].sort((a, b) => {
     return b.createdAt - a.createdAt
   })
 
-  const searcher = new FuzzySearch(individualsSorted, ['name', 'company'])
+  const searcher = new FuzzySearch(organizationsSorted, ['name', 'company'])
   const result = searcher.search(search)
 
   let list = result
 
   if (values.length > 0) {
-    list = result.filter(individual =>
-      values.some(value => individual.tags.map(tag => tag.name).includes(value))
+    list = result.filter(organization =>
+      values.some(value =>
+        organization.tags.map(tag => tag.name).includes(value)
+      )
     )
   }
 
@@ -53,26 +55,26 @@ const ViewProfiles = () => {
     chunks.push(chunk)
   }
 
-  const individualsOnScreen = []
+  const organizationsOnScreen = []
 
   chunks.forEach((chunk, index) => {
     if (index < chunkCount) {
-      individualsOnScreen.push(...chunk)
+      organizationsOnScreen.push(...chunk)
     }
   })
 
-  const addMoreIndividuals = () => {
+  const addMoreOrganizations = () => {
     setChunkCount(chunkCount + 1)
   }
 
   return (
     <LayoutDrawer>
       <Container maxWidth="lg">
-        <ButtonAddIndividual />
+        <ButtonAddCompany />
         <InfiniteScroll
-          dataLength={individualsOnScreen.length}
-          next={addMoreIndividuals}
-          hasMore={individualsOnScreen.length < list.length}
+          dataLength={organizationsOnScreen.length}
+          next={addMoreOrganizations}
+          hasMore={organizationsOnScreen.length < list.length}
           loader={
             <Grid container mt={2} mb={2}>
               <Grid item xs={12} textAlign="center">
@@ -118,9 +120,9 @@ const ViewProfiles = () => {
             </Grid>
             <Grid item xs={12}>
               <Grid container spacing={2}>
-                {individualsOnScreen.map(individual => (
-                  <Grid item xs={12} md={6} lg={4} key={individual.id}>
-                    <IndividualCard id={individual.id} />
+                {organizationsOnScreen.map(organization => (
+                  <Grid item xs={12} md={6} lg={4} key={organization.id}>
+                    <OrganizationCard id={organization.id} />
                   </Grid>
                 ))}
               </Grid>
@@ -132,4 +134,4 @@ const ViewProfiles = () => {
   )
 }
 
-export default ViewProfiles
+export default ViewCompanies

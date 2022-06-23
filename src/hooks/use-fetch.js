@@ -2,6 +2,7 @@ import { useEffect } from 'react'
 
 // import { useUserStore } from './store/use-user-store'
 import useIndividualsStore from './store/use-individuals-store'
+import useOrganizationsStore from './store/use-organizations-store'
 import useTagsStore from './store/use-tags-store'
 import useSession from './use-session'
 import useAlertStore from './store/use-alert-store'
@@ -10,29 +11,11 @@ export const useFetch = () => {
   const { user } = useSession()
   const { setError } = useAlertStore()
 
-  // const {
-  //   fetchUser,
-  //   fetchStatus: fetchUserStatus,
-  //   user: storeUser,
-  //   subscribe,
-  // } = useUserStore()
   const { fetch: fetchIndividuals, fetchStatus: individualsStatus } =
     useIndividualsStore()
+  const { fetch: fetchOrganizations, fetchStatus: organizationsStatus } =
+    useOrganizationsStore()
   const { fetch: fetchTags, fetchStatus: tagsStatus } = useTagsStore()
-
-  // useEffect(() => {
-  //   const fetch = async () => {
-  //     try {
-  //       await fetchUser()
-  //     } catch (err) {
-  //       setError({ message: err.message })
-  //     }
-  //   }
-
-  //   if (!!user && fetchUserStatus === 'idle') {
-  //     fetch()
-  //   }
-  // }, [user, fetchUser, fetchUserStatus, setError, subscribe])
 
   useEffect(() => {
     const get = async () => {
@@ -54,6 +37,31 @@ export const useFetch = () => {
     // fetchUserStatus,
     individualsStatus,
     fetchIndividuals,
+    // storeUser,
+    setError,
+    user,
+  ])
+
+  useEffect(() => {
+    const get = async () => {
+      try {
+        await fetchOrganizations()
+      } catch (err) {
+        setError({ message: err.message })
+      }
+    }
+    if (
+      !!user &&
+      // fetchUserStatus === 'succeeded' &&
+      organizationsStatus === 'idle'
+      // && !!storeUser._id
+    ) {
+      get()
+    }
+  }, [
+    // fetchUserStatus,
+    organizationsStatus,
+    fetchOrganizations,
     // storeUser,
     setError,
     user,

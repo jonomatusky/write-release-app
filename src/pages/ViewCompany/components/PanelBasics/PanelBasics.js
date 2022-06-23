@@ -1,41 +1,23 @@
 import React from 'react'
-import { Grid, Box, Typography, Link, Fab } from '@mui/material'
+import { Grid, Box, Typography, Link } from '@mui/material'
 
-import ResponsiveAvatar from 'components/ResponsiveAvatar'
 import PanelEdit from 'layouts/PanelEdit'
 import BasicInfoDialog from './DialogEditBasics'
 import useSession from 'hooks/use-session'
-import useIndividualsStore from 'hooks/store/use-individuals-store'
-import useInquiryStore from 'hooks/store/use-inquiries-store'
-import { Business, Email, LocationOn } from '@mui/icons-material'
+import useOrganizationsStore from 'hooks/store/use-organizations-store'
+import { Email, LocationOn } from '@mui/icons-material'
 import usePageTitle from 'hooks/use-page-title'
+import Image from 'components/Image'
 
 const PanelBasic = ({ id }) => {
   const { user } = useSession()
-  const { select } = useIndividualsStore()
-  const individual = select(id)
-  const { avatarUrl, name, location, title, company, companyUrl, email } =
-    individual || {}
+  const { select } = useOrganizationsStore()
+  const organization = select(id)
+  const { logoUrl, name, location, website, email } = organization || {}
 
-  const { setEntity } = useInquiryStore()
-
-  const showPanel =
-    !!avatarUrl ||
-    !!name ||
-    !!location ||
-    !!title ||
-    !!company ||
-    !!companyUrl ||
-    !!user
+  const showPanel = !!logoUrl || !!name || !!location || !!website || !!user
 
   usePageTitle(name + ' | SourceOn')
-
-  const handleContact = () => {
-    setEntity({
-      entityType: 'individual',
-      entityId: id,
-    })
-  }
 
   return (
     <>
@@ -46,15 +28,18 @@ const PanelBasic = ({ id }) => {
               <Grid container>
                 <Grid item xs={12} textAlign="center" pb={1}>
                   <Box width="100%">
-                    <Box maxWidth="200px" margin="auto" position="relative">
-                      <ResponsiveAvatar avatarUrl={avatarUrl} />
-                      {email && (
-                        <Box position="absolute" bottom={0} right={0}>
-                          <Fab color="primary" onClick={handleContact}>
-                            <Email />
-                          </Fab>
-                        </Box>
-                      )}
+                    <Box
+                      maxWidth="200px"
+                      minHeight="100px"
+                      margin="auto"
+                      position="relative"
+                    >
+                      <Image
+                        width="100%"
+                        height="100%"
+                        src={logoUrl}
+                        alt={name}
+                      />
                     </Box>
                   </Box>
                 </Grid>
@@ -64,29 +49,6 @@ const PanelBasic = ({ id }) => {
                     <Typography variant="h6">
                       <b>{name}</b>
                     </Typography>
-                  )}
-                  {title && <Typography>{title}</Typography>}
-                  {company && (
-                    <Box display="flex" alignItems="center" pt={1}>
-                      <Box pr={0.5} display="flex" alignItems="center">
-                        <Business color="primary" fontSize="10" />
-                      </Box>
-                      <Typography variant="subtitle" color="text.secondary">
-                        <b>
-                          {companyUrl ? (
-                            <Link
-                              href={companyUrl}
-                              target="_blank"
-                              underline="none"
-                            >
-                              {company}
-                            </Link>
-                          ) : (
-                            company
-                          )}
-                        </b>
-                      </Typography>
-                    </Box>
                   )}
                   {location && (
                     <Box display="flex" alignItems="center">
@@ -98,7 +60,7 @@ const PanelBasic = ({ id }) => {
                       </Typography>
                     </Box>
                   )}
-                  {/* {email && (
+                  {email && (
                     <Box
                       display="flex"
                       flexWrap="none"
@@ -124,7 +86,7 @@ const PanelBasic = ({ id }) => {
                         </Link>
                       </Typography>
                     </Box>
-                  )} */}
+                  )}
                 </Grid>
               </Grid>
             </Box>

@@ -31,7 +31,11 @@ const Header = () => {
     <>
       <ScrollToTop />
       <ButtonReportBug />
-      <AppBar color="secondary">
+      <AppBar
+        color="secondary"
+        position="fixed"
+        sx={{ zIndex: theme => theme.zIndex.drawer + 1 }}
+      >
         <Toolbar variant="dense">
           <Box display="flex" width="100%" alignItems="center">
             <Box flexGrow={1}>

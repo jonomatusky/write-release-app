@@ -20,6 +20,8 @@ import Fetch from 'components/Fetch'
 import AlertBar from 'components/AlertBar'
 import NotFound from 'pages/NotFound/NotFound'
 import DialogContactForm from 'components/DialogContactForm'
+import ViewCompanies from 'pages/ViewCompanies/ViewCompanies'
+import ViewCompany from 'pages/ViewCompany/ViewCompany'
 
 const { REACT_APP_POSTHOG_KEY } = process.env
 
@@ -47,9 +49,11 @@ const App = () => {
           <Route path="/" element={<Header />}>
             <Route path="/login" element={<Login />} />
             <Route path="/profiles/:pid" element={<ViewProfile />} />
+            <Route path="/companies/:id" element={<ViewCompany />} />
             <Route path="/" element={<Navigate replace to="/profiles" />} />
             <Route path="/" element={<PrivateRoute component={Outlet} />}>
               <Route path="/profiles" element={<ViewProfiles />} />
+              <Route path="/companies" element={<ViewCompanies />} />
               <Route path="*" element={<NotFound />} />
             </Route>
             <Route path="*" element={<NotFound />} />

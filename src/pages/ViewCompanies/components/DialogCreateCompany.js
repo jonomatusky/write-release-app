@@ -1,20 +1,20 @@
 import React from 'react'
 import { useNavigate } from 'react-router-dom'
 import { Grid } from '@mui/material'
-import useIndividualStore from 'hooks/store/use-individuals-store'
+import useOrganizationsStore from 'hooks/store/use-organizations-store'
 import LayoutDialogEdit from 'layouts/LayoutDialogEdit'
 import useFormHelper from 'hooks/use-form-helper'
 import Form from 'components/Form/Form'
-import { getFields } from 'util/formFieldsIndividual'
+import { getFields } from 'util/formFieldsOrganization'
 
-const DialogCreateIndividual = ({ open, onClose }) => {
+const DialogCreateCompany = ({ open, onClose }) => {
   const navigate = useNavigate()
-  const { create, createStatus } = useIndividualStore()
+  const { create, createStatus } = useOrganizationsStore()
 
   const handleSubmit = async values => {
     try {
-      const individual = await create(values)
-      navigate(`/profiles/${individual.id}`)
+      const company = await create(values)
+      navigate(`/companies/${company.id}`)
     } catch (err) {}
   }
 
@@ -47,4 +47,4 @@ const DialogCreateIndividual = ({ open, onClose }) => {
   )
 }
 
-export default DialogCreateIndividual
+export default DialogCreateCompany

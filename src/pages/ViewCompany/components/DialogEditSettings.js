@@ -1,30 +1,30 @@
 import React from 'react'
 import { useParams } from 'react-router-dom'
 import { Grid } from '@mui/material'
-import useIndividualStore from 'hooks/store/use-individuals-store'
+import useOrganizationStore from 'hooks/store/use-organizations-store'
 import LayoutDialogEdit from 'layouts/LayoutDialogEdit'
 import Form from 'components/Form/Form'
 import useFormHelper from 'hooks/use-form-helper'
-import { getFields } from 'util/formFieldsIndividual'
-import ButtonDeleteIndividual from './ButtonDeleteIndividual'
+import { getFields } from 'util/formFieldsOrganization'
+import ButtonDeleteOrganization from './ButtonDeleteOrganization'
 
 const DialogEditSettings = ({ open, onClose }) => {
-  const { update, updateStatus, select } = useIndividualStore()
-  const { pid } = useParams()
-  const individual = select(pid)
+  const { update, updateStatus, select } = useOrganizationStore()
+  const { id } = useParams()
+  const organization = select(id)
 
   const formFields = getFields('settings')
 
   const handleSubmit = async values => {
     try {
-      await update({ id: pid, ...values })
+      await update({ id, ...values })
       onClose()
     } catch (err) {}
   }
 
   const { control, submit, reset } = useFormHelper({
     formFields,
-    initialValues: individual,
+    initialValues: organization,
     onSubmit: handleSubmit,
   })
 
@@ -47,11 +47,11 @@ const DialogEditSettings = ({ open, onClose }) => {
             control={control}
             submit={submit}
             formFields={formFields}
-            initialValues={individual}
+            initialValues={organization}
           />
         </Grid>
         <Grid item xs={12} textAlign="center">
-          <ButtonDeleteIndividual id={pid} />
+          <ButtonDeleteOrganization id={id} />
         </Grid>
       </Grid>
     </LayoutDialogEdit>

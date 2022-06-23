@@ -1,36 +1,37 @@
 import React from 'react'
 import { useParams } from 'react-router-dom'
 import { Grid } from '@mui/material'
-import AvatarToEdit from './AvatarToEdit'
-import useIndividualStore from 'hooks/store/use-individuals-store'
+import LogoToEdit from './LogoToEdit'
+import useOrganizationStore from 'hooks/store/use-organizations-store'
 import LayoutDialogEdit from 'layouts/LayoutDialogEdit'
 import useFormHelper from 'hooks/use-form-helper'
 import Form from 'components/Form/Form'
-import { getFields } from 'util/formFieldsIndividual'
+import { getFields } from 'util/formFieldsOrganization'
 
 const BasicInfoDialog = ({ open, onClose }) => {
-  const { update, select, updateStatus } = useIndividualStore()
-  const { pid } = useParams()
-  const individual = select(pid)
-  const { avatarUrl } = individual || {}
+  const { update, select, updateStatus } = useOrganizationStore()
+  const { id } = useParams()
+  const organization = select(id)
+  const { logoUrl } = organization || {}
 
   const formFields = getFields('basic')
 
   const updateImage = imageFilepath => {
+    console.log('updating logo')
     console.log(imageFilepath)
-    update({ id: pid, avatar: imageFilepath })
+    update({ id, logo: imageFilepath })
   }
 
   const handleSubmit = async values => {
     try {
-      await update({ id: pid, ...values })
+      await update({ id, ...values })
       onClose()
     } catch (err) {}
   }
 
   const { control, submit, reset } = useFormHelper({
     formFields,
-    initialValues: individual,
+    initialValues: organization,
     onSubmit: handleSubmit,
   })
 
@@ -49,7 +50,7 @@ const BasicInfoDialog = ({ open, onClose }) => {
     >
       <Grid container spacing={2} justifyContent="center" pb={2}>
         <Grid item xs={12}>
-          <AvatarToEdit avatarUrl={avatarUrl} updateImage={updateImage} />
+          <LogoToEdit src={logoUrl} updateImage={updateImage} />
         </Grid>
         <Grid item xs={12}>
           <Form formFields={formFields} control={control} submit={submit} />

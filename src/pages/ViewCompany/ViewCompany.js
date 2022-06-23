@@ -8,17 +8,18 @@ import PanelTags from './components/PanelTags/PanelTags'
 import PanelHighlights from './components/PanelHighlights/PanelHighlights'
 import Loading from 'pages/Loading/Loading'
 import NotFound from 'pages/NotFound/NotFound'
-import useGetIndividual from 'hooks/use-get-individual'
+import useGetOrganization from 'hooks/use-get-organization'
+// import useFetchAvatar from 'hooks/use-fetch-avatar'
 import PanelFacts from './components/PanelFacts/PanelFacts'
 import ButtonContact from './components/ButtonContact'
 import PanelPoints from './components/PanelPoints/PanelPoints'
 import PanelContact from './components/PanelContact/PanelContact'
-// import useIndividualsStore from 'hooks/store/use-individuals-store'
+// import useOrganizationsStore from 'hooks/store/use-organizations-store'
 
-const ViewProfile = () => {
-  const { pid } = useParams()
+const ViewCompany = () => {
+  const { id } = useParams()
 
-  const { status } = useGetIndividual(pid)
+  const { status } = useGetOrganization(id)
 
   return (
     <>
@@ -35,7 +36,7 @@ const ViewProfile = () => {
             variant="extended"
             pt={2}
           >
-            <ChipTeam id={pid} />
+            <ChipTeam id={id} />
           </Box>
 
           <Container maxWidth="md">
@@ -46,7 +47,7 @@ const ViewProfile = () => {
                 textAlign="end"
                 sx={{ display: { xs: 'flex', lg: 'none' } }}
               >
-                <ChipTeam id={pid} sx={{ visibility: 'hidden' }} />
+                <ChipTeam id={id} sx={{ visibility: 'hidden' }} />
               </Grid>
               <Grid
                 item
@@ -56,9 +57,9 @@ const ViewProfile = () => {
                 spacing={2}
                 alignContent="start"
               >
-                <BasicInfo id={pid} />
-                <PanelTags id={pid} />
-                <PanelContact id={pid} />
+                <BasicInfo id={id} />
+                <PanelTags id={id} />
+                <PanelContact id={id} />
               </Grid>
               <Grid
                 item
@@ -69,16 +70,15 @@ const ViewProfile = () => {
                 spacing={2}
                 alignContent="start"
               >
-                <PanelFacts id={pid} />
-                <PanelPoints id={pid} />
-                <PanelHighlights id={pid} />
+                <PanelFacts id={id} />
+                <PanelHighlights id={id} />
               </Grid>
             </Grid>
           </Container>
-          <ButtonContact id={pid} />
+          <ButtonContact id={id} />
         </>
       )}
     </>
   )
 }
-export default ViewProfile
+export default ViewCompany

@@ -22,6 +22,12 @@ export const allFields = [
     category: 'basic',
   },
   {
+    name: 'organization',
+    label: 'Company',
+    type: 'select',
+    category: 'basic',
+  },
+  {
     name: 'title',
     label: 'Title',
     placeholder: 'CEO',
@@ -111,6 +117,13 @@ export const allFields = [
   // },
 ]
 
-export const getFields = category => {
-  return allFields.filter(field => field.category === category)
+// the second 'options' input is optional and of the form { FIELDNAME: [...OPTIONS]}
+export const getFields = (category, options) => {
+  const fields = allFields.filter(field => field.category === category)
+  const optionKeys = Object.keys(options || {})
+  optionKeys.forEach(optionKey => {
+    fields[optionKey].options = options[optionKey]
+  })
+
+  return fields
 }
