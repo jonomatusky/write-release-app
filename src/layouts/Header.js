@@ -14,7 +14,7 @@ import ButtonReportBug from 'components/ButtonReportBug'
 const { REACT_APP_PUBLIC_URL } = process.env
 
 const Header = () => {
-  const { user, logout } = useSession()
+  const { logout } = useSession()
   const { id } = useParams()
   // const { select } = useIndividualsStore()
   // const individual = select(id)

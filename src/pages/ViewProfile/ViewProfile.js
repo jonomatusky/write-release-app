@@ -204,7 +204,7 @@ const ViewProfile = () => {
                       <PanelBullets
                         title="Talking Points"
                         bullets={points}
-                        field="facts"
+                        field="points"
                         update={handleUpdate}
                         updateStatus={updateStatus}
                       />
