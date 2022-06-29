@@ -3,7 +3,7 @@ import * as Yup from 'yup'
 export const allFields = [
   {
     name: 'firstName',
-    label: 'First Name',
+    label: 'First Name*',
     placeholder: 'Joe',
     type: 'text',
     validation: Yup.string()
@@ -13,7 +13,7 @@ export const allFields = [
   },
   {
     name: 'lastName',
-    label: 'Last Name',
+    label: 'Last Name*',
     placeholder: 'Shmoe',
     type: 'text',
     validation: Yup.string()
@@ -21,38 +21,38 @@ export const allFields = [
       .max(50, 'Must be under 50 characters'),
     category: 'basic',
   },
-  {
-    name: 'organization',
-    label: 'Company',
-    type: 'select',
-    category: 'basic',
-  },
+  // {
+  //   name: 'organization',
+  //   label: 'Company',
+  //   type: 'select',
+  //   category: 'basic',
+  // },
   {
     name: 'title',
     label: 'Title',
     placeholder: 'CEO',
     type: 'text',
-    validation: Yup.string().max(50, 'Must be under 50 characters'),
+    validation: Yup.string().max(100, 'Must be under 100 characters'),
     category: 'basic',
   },
-  {
-    name: 'company',
-    label: 'Company',
-    placeholder: 'ACME',
-    type: 'text',
-    validation: Yup.string().max(50, 'Must be under 50 characters'),
-    category: 'basic',
-  },
-  {
-    name: 'companyUrl',
-    label: 'Company Website',
-    placeholder: 'https://acme.com',
-    type: 'text',
-    validation: Yup.string()
-      .url(`Must be a valid URL, including http:// or https://`)
-      .max(100, 'Must be under 100 characters'),
-    category: 'basic',
-  },
+  // {
+  //   name: 'company',
+  //   label: 'Company',
+  //   placeholder: 'ACME',
+  //   type: 'text',
+  //   validation: Yup.string().max(50, 'Must be under 50 characters'),
+  //   category: 'basic',
+  // },
+  // {
+  //   name: 'companyUrl',
+  //   label: 'Company Website',
+  //   placeholder: 'https://acme.com',
+  //   type: 'text',
+  //   validation: Yup.string()
+  //     .url(`Must be a valid URL, including http:// or https://`)
+  //     .max(100, 'Must be under 100 characters'),
+  //   category: 'basic',
+  // },
   {
     name: 'city',
     label: 'City',
@@ -87,18 +87,18 @@ export const allFields = [
   //     { label: 'Other', value: 'other' },
   //   ],
   // },
-  {
-    name: 'team',
-    label: 'Team',
-    placeHolder: 'Team Awesome',
-    helpText:
-      'This is only shown internally, to help other teams reach out if they have an opportunity',
-    type: 'text',
-    validation: Yup.string()
-      .max(50, 'Must be under 50 characters')
-      .required('Team is required'),
-    category: 'settings',
-  },
+  // {
+  //   name: 'team',
+  //   label: 'Team',
+  //   placeHolder: 'Team Awesome',
+  //   helpText:
+  //     'This is only shown internally, to help other teams reach out if they have an opportunity',
+  //   type: 'text',
+  //   validation: Yup.string()
+  //     .max(50, 'Must be under 50 characters')
+  //     .required('Team is required'),
+  //   category: 'settings',
+  // },
   {
     name: 'email',
     label: 'Contact Email',

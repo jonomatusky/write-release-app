@@ -7,17 +7,24 @@ import Form from 'components/Form/Form'
 import useFormHelper from 'hooks/use-form-helper'
 import { getFields } from 'util/formFieldsIndividual'
 import ButtonDeleteIndividual from './ButtonDeleteIndividual'
+import useOrganizationsStore from 'hooks/store/use-organizations-store'
 
 const DialogEditSettings = ({ open, onClose }) => {
   const { update, updateStatus, select } = useIndividualStore()
-  const { pid } = useParams()
-  const individual = select(pid)
+  const { select: selectOrganization } = useOrganizationsStore()
+  const { id } = useParams()
+  const individual = select(id)
+  const { organization } = individual || {}
 
-  const formFields = getFields('settings')
+  const org = selectOrganization(organization)
+  const { email } = org || {}
+
+  let formFields = getFields('settings')
+  formFields[formFields.findIndex(f => f.name === 'email')].placeholder = email
 
   const handleSubmit = async values => {
     try {
-      await update({ id: pid, ...values })
+      await update({ id, ...values })
       onClose()
     } catch (err) {}
   }
@@ -51,7 +58,7 @@ const DialogEditSettings = ({ open, onClose }) => {
           />
         </Grid>
         <Grid item xs={12} textAlign="center">
-          <ButtonDeleteIndividual id={pid} />
+          <ButtonDeleteIndividual id={id} />
         </Grid>
       </Grid>
     </LayoutDialogEdit>

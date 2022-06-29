@@ -64,7 +64,9 @@ export const allFields = [
     type: 'email',
     helpText:
       'This is the email journalists will use to reach out to you. It is shown publicly.',
-    validation: Yup.string().email('Must be a valid email address'),
+    validation: Yup.string()
+      .email('Must be a valid email address')
+      .required('Email is required'),
     category: 'settings',
   },
   // {

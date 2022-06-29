@@ -9,7 +9,7 @@ import {
   Divider,
   IconButton,
 } from '@mui/material'
-import { Close, DeleteOutline } from '@mui/icons-material'
+import { ArrowBackIos, Close, DeleteOutline } from '@mui/icons-material'
 import { LoadingButton } from '@mui/lab'
 
 const LayoutDialogEdit = ({
@@ -18,6 +18,7 @@ const LayoutDialogEdit = ({
   onClose,
   onSave,
   onRemove,
+  onBack,
   loading,
   children,
   noScroll,
@@ -56,6 +57,15 @@ const LayoutDialogEdit = ({
                 startIcon={<DeleteOutline />}
               >
                 Remove
+              </Button>
+            )}
+            {!!onBack && (
+              <Button
+                onClick={onBack}
+                size="large"
+                startIcon={<ArrowBackIos />}
+              >
+                Back
               </Button>
             )}
           </Box>

@@ -10,6 +10,7 @@ import {
   clear,
   setLogo,
   getCoverage,
+  getIndividuals,
 } from 'redux/organizationsSlice'
 
 export const useOrganizationsStore = () => {
@@ -25,6 +26,7 @@ export const useOrganizationsStore = () => {
     createStatus,
     filter,
     getCoverageStatus,
+    getIndividualsStatus,
   } = useSelector(state => state.organizations)
 
   const select = id => {
@@ -75,6 +77,13 @@ export const useOrganizationsStore = () => {
     [dispatchThunk]
   )
 
+  const _getIndividuals = useCallback(
+    async id => {
+      await dispatchThunk(getIndividuals, { id })
+    },
+    [dispatchThunk]
+  )
+
   const _setLogo = useCallback(
     async ({ id, logoUrl }) => {
       dispatch(setLogo({ id, logoUrl }))
@@ -92,12 +101,14 @@ export const useOrganizationsStore = () => {
     select,
     setLogo: _setLogo,
     getCoverage: _getCoverage,
+    getIndividuals: _getIndividuals,
     items,
     fetchStatus,
     getStatus,
     updateStatus,
     createStatus,
     getCoverageStatus,
+    getIndividualsStatus,
     error,
     filter,
   }

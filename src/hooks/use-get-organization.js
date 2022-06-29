@@ -2,9 +2,11 @@ import { useEffect, useCallback } from 'react'
 import { getStorage, ref, getDownloadURL } from 'firebase/storage'
 
 import useOrganizationsStore from './store/use-organizations-store'
+import useIndividualsStore from './store/use-individuals-store'
 
 const useGetOrganization = id => {
   const { getStatus, select, get, setLogo } = useOrganizationsStore()
+  const { getByOrganization, getByOrganizationStatus } = useIndividualsStore()
   const organization = select(id)
   const { logo, logoUrl } = organization || {}
 
@@ -18,7 +20,7 @@ const useGetOrganization = id => {
   )
 
   useEffect(() => {
-    if (getStatus === 'idle') {
+    if (getStatus === 'idle' && !!id) {
       try {
         getOrganization(id)
       } catch (err) {}
@@ -38,6 +40,14 @@ const useGetOrganization = id => {
       getLogo()
     }
   }, [logo, logoUrl, setLogo, getLogo])
+
+  useEffect(() => {
+    if (getByOrganizationStatus === 'idle' && !!id) {
+      try {
+        getByOrganization(id)
+      } catch (err) {}
+    }
+  }, [id, getByOrganization, getByOrganizationStatus])
 
   return { organization, status: getStatus }
 }

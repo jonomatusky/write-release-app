@@ -1,25 +1,35 @@
 import React from 'react'
-import { useNavigate } from 'react-router-dom'
+import { Link as RouterLink } from 'react-router-dom'
 import {
   Grid,
   Box,
   Typography,
-  Link,
   Chip,
   Card,
   CardActionArea,
 } from '@mui/material'
-import { Mic, TimerOutlined, OfflineBolt } from '@mui/icons-material'
+import {
+  Mic,
+  TimerOutlined,
+  OfflineBolt,
+  LocalOffer,
+  LocationOn,
+  Business,
+} from '@mui/icons-material'
 
 import ResponsiveAvatar from 'components/ResponsiveAvatar'
 import useIndividualStore from 'hooks/store/use-individuals-store'
 import useFetchAvatar from 'hooks/use-fetch-avatar'
+import useOrganizationsStore from 'hooks/store/use-organizations-store'
 
 const IndividualCard = ({ id }) => {
   const { select } = useIndividualStore()
+  const { select: selectOrganization } = useOrganizationsStore()
   const individual = select(id)
-  const { name, location, title, company, companyUrl, avatarUrl } =
-    individual || {}
+  const { name, location, organization, title, avatarUrl } = individual || {}
+
+  const company = selectOrganization(organization) || {}
+  const { industry } = company
 
   useFetchAvatar(id)
 
@@ -39,60 +49,67 @@ const IndividualCard = ({ id }) => {
     }
   })
 
-  const navigate = useNavigate()
-
   return (
     <Card variant="outlined">
-      <CardActionArea onClick={() => navigate('/profiles/' + individual.id)}>
-        <Box p={1} height="320px">
-          <Grid container>
-            <Grid item xs={6} textAlign="center">
-              <Box width="100%">
-                <Box maxWidth="150px" margin="auto" p={1}>
-                  <ResponsiveAvatar avatarUrl={avatarUrl} />
-                </Box>
+      <CardActionArea component={RouterLink} to={'/profiles/' + id}>
+        <Box p={2} overflow="hidden" width="100%">
+          <Grid container sx={{ width: '100%', overflow: 'hidden' }}>
+            <Grid item xs={6} sm={3} textAlign="center">
+              <Box p={1} pr={3} height="100%" alignItems="center">
+                <ResponsiveAvatar avatarUrl={avatarUrl} />
               </Box>
             </Grid>
-            <Grid item xs={6}>
-              <Typography variant="h6">
-                <b>{name}</b>
-              </Typography>
-              <Typography variant="subtitle" color="text.secondary">
-                <i>{location}</i>
-              </Typography>
-              <Typography>{title}</Typography>
-              {
-                <Typography>
-                  {companyUrl ? (
-                    <Link href={companyUrl} target="_blank">
-                      {company}
-                    </Link>
-                  ) : (
-                    company
-                  )}
+            <Grid item xs={6} sm={9}>
+              <Box pl={1} overflow="hidden">
+                <Typography variant="h6">
+                  <b>{name}</b>
                 </Typography>
-              }
-            </Grid>
-            <Grid item xs={12}>
-              <Box display="flex" width="100%" flexWrap="wrap">
-                {tags.map(tag => (
-                  <Box pt={0.5} pl={0.5} key={tag.name} maxHeight="112px">
-                    <Chip label={tag.name} color="primary" size="small" />
-                  </Box>
-                ))}
-              </Box>
-            </Grid>
-            <Grid item xs={12}>
-              <Box display="flex" width="100%" flexWrap="wrap">
-                {qualities.map(quality => {
-                  const { name, label } = quality
-
-                  return individual[quality.name] ? (
-                    <Box pt={0.5} pl={0.5} key={name}>
-                      <Chip label={label} color="secondary" size="small" />
+                {organization && (
+                  <Box display="flex" alignItems="center">
+                    <Box pr={0.5} display="flex" alignItems="center">
+                      <Business color="primary" fontSize="10" />
                     </Box>
-                  ) : null
-                })}
+                    <Typography color="primary">
+                      <b>{company.name}</b>
+                    </Typography>
+                  </Box>
+                )}
+                {title && <Typography>{title}</Typography>}
+                {industry && industry.name !== 'Other' && (
+                  <Box display="flex" alignItems="center">
+                    <Box pr={0.5} display="flex" alignItems="center">
+                      <LocalOffer color="primary" fontSize="12" />
+                    </Box>
+                    <Typography>{industry.name}</Typography>
+                  </Box>
+                )}
+                {location && (
+                  <Box display="flex" alignItems="center">
+                    <Box pr={0.5} display="flex" alignItems="center">
+                      <LocationOn color="primary" fontSize="12" />
+                    </Box>
+                    <Typography color="text.secondary">
+                      <i>{location}</i>
+                    </Typography>
+                  </Box>
+                )}
+                <Box display="flex" width="100%" overflow="auto">
+                  {tags.map(tag => (
+                    <Box pt={0.5} pr={0.5} key={tag.name} maxHeight="112px">
+                      <Chip label={tag.name} color="primary" size="small" />
+                    </Box>
+                  ))}
+                </Box>
+                <Box display="flex" width="100%" overflow="auto">
+                  {qualities.map(quality => {
+                    const { name, label } = quality
+                    return individual[quality.name] ? (
+                      <Box pt={0.5} pr={0.5} key={name}>
+                        <Chip label={label} color="secondary" size="small" />
+                      </Box>
+                    ) : null
+                  })}
+                </Box>
               </Box>
             </Grid>
           </Grid>

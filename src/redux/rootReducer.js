@@ -6,6 +6,8 @@ import tagsReducer from './tagsSlice'
 import coverageReducer from './coverageSlice'
 import inquiryReducer from './inquiriesSlice'
 import organizationsReducer from './organizationsSlice'
+import industriesReducer from './industriesSlice'
+import historyReducer from './historySlice'
 
 const rootReducer = combineReducers({
   user: userReducer,
@@ -15,6 +17,8 @@ const rootReducer = combineReducers({
   tags: tagsReducer,
   coverage: coverageReducer,
   inquiries: inquiryReducer,
+  industries: industriesReducer,
+  history: historyReducer,
 })
 
 export default rootReducer

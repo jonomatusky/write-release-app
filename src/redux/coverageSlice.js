@@ -135,8 +135,14 @@ const coverageSlice = createSlice({
     },
     [create.fulfilled]: (state, action) => {
       state.createStatus = 'idle'
-      const item = action.payload
-      state.items = [item, ...state.items]
+      const newItems = [...state.items]
+      newItems.push(action.payload)
+      const uniqueItems = Array.from(new Set(newItems.map(a => a.id))).map(
+        id => {
+          return newItems.find(a => a.id === id)
+        }
+      )
+      state.items = uniqueItems
     },
     [create.rejected]: (state, action) => {
       state.createStatus = 'failed'

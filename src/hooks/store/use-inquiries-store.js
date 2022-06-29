@@ -4,6 +4,7 @@ import { useSelector, useDispatch } from 'react-redux'
 import { useThunk } from 'hooks/use-thunk'
 import { setEntity, create } from 'redux/inquiriesSlice'
 import useIndividualsStore from './use-individuals-store'
+import useOrganizationsStore from './use-organizations-store'
 
 export const useInquiriesStore = () => {
   const dispatch = useDispatch()
@@ -33,11 +34,17 @@ export const useInquiriesStore = () => {
   )
 
   const { select: selectIndividual } = useIndividualsStore()
+  const { select: selectOrganization } = useOrganizationsStore()
   let entity
 
   switch (entityType) {
     case 'individual':
-      entity = selectIndividual(entityId)
+      let individual = selectIndividual(entityId)
+      let organization = selectOrganization(individual.organization)
+      entity = { ...individual, email: individual.email || organization.email }
+      break
+    case 'organization':
+      entity = selectOrganization(entityId)
       break
     default:
       break

@@ -4,7 +4,7 @@ import { useSelector, useDispatch } from 'react-redux'
 import { useThunk } from 'hooks/use-thunk'
 import { fetch, create, update, remove, clear } from 'redux/industriesSlice'
 
-export const useIndustrysStore = () => {
+export const useIndustriesStore = () => {
   const dispatch = useDispatch()
   const dispatchThunk = useThunk()
 
@@ -64,4 +64,4 @@ export const useIndustrysStore = () => {
   }
 }
 
-export default useIndustrysStore
+export default useIndustriesStore

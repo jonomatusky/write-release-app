@@ -10,6 +10,7 @@ import {
   clear,
   setAvatar,
   getCoverage,
+  getByOrganization,
 } from 'redux/individualsSlice'
 
 export const useIndividualsStore = () => {
@@ -25,6 +26,7 @@ export const useIndividualsStore = () => {
     createStatus,
     filter,
     getCoverageStatus,
+    getByOrganizationStatus,
   } = useSelector(state => state.individuals)
 
   const select = id => {
@@ -75,6 +77,13 @@ export const useIndividualsStore = () => {
     [dispatchThunk]
   )
 
+  const _getByOrganization = useCallback(
+    async id => {
+      await dispatchThunk(getByOrganization, { id })
+    },
+    [dispatchThunk]
+  )
+
   const _setAvatar = useCallback(
     async ({ id, avatarUrl }) => {
       dispatch(setAvatar({ id, avatarUrl }))
@@ -92,12 +101,14 @@ export const useIndividualsStore = () => {
     select,
     setAvatar: _setAvatar,
     getCoverage: _getCoverage,
+    getByOrganization: _getByOrganization,
     items,
     fetchStatus,
     getStatus,
     updateStatus,
     createStatus,
     getCoverageStatus,
+    getByOrganizationStatus,
     error,
     filter,
   }

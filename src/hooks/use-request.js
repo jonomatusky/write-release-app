@@ -56,6 +56,7 @@ export const useRequest = () => {
         setStatus('succeeded')
         return response
       } catch (err) {
+        // console.log(err)
         if (!quiet) {
           dispatch(
             setError({

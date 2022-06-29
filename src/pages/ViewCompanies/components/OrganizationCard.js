@@ -1,25 +1,29 @@
 import React from 'react'
-import { useNavigate } from 'react-router-dom'
+import { Link as RouterLink } from 'react-router-dom'
 import {
   Grid,
   Box,
   Typography,
-  Link,
   Chip,
   Card,
   CardActionArea,
 } from '@mui/material'
-import { Mic, TimerOutlined, OfflineBolt } from '@mui/icons-material'
+import {
+  Mic,
+  TimerOutlined,
+  OfflineBolt,
+  LocalOffer,
+  LocationOn,
+} from '@mui/icons-material'
 
-import ResponsiveAvatar from 'components/ResponsiveAvatar'
 import useOrganizationsStore from 'hooks/store/use-organizations-store'
 import useFetchLogo from 'hooks/use-fetch-logo'
+import ResponsiveLogo from 'components/ResponsiveLogo'
 
 const OrganizationCard = ({ id }) => {
   const { select } = useOrganizationsStore()
   const organization = select(id)
-  const { name, location, title, company, companyUrl, logoUrl } =
-    organization || {}
+  const { name, location, logoUrl, industry } = organization || {}
 
   useFetchLogo(id)
 
@@ -39,60 +43,46 @@ const OrganizationCard = ({ id }) => {
     }
   })
 
-  const navigate = useNavigate()
-
   return (
     <Card variant="outlined">
-      <CardActionArea onClick={() => navigate('/companies/' + organization.id)}>
-        <Box p={1} height="320px">
+      <CardActionArea component={RouterLink} to={'/companies/' + id}>
+        <Box p={2}>
           <Grid container>
-            <Grid item xs={6} textAlign="center">
-              <Box width="100%">
-                <Box maxWidth="150px" margin="auto" p={1}>
-                  <ResponsiveAvatar avatarUrl={logoUrl} />
-                </Box>
+            <Grid item xs={6} sm={4} textAlign="center">
+              <Box p={1} pr={3} height="100px" alignItems="center" width="100%">
+                <ResponsiveLogo src={logoUrl} alt={name} />
               </Box>
             </Grid>
-            <Grid item xs={6}>
-              <Typography variant="h6">
-                <b>{name}</b>
-              </Typography>
-              <Typography variant="subtitle" color="text.secondary">
-                <i>{location}</i>
-              </Typography>
-              <Typography>{title}</Typography>
-              {
-                <Typography>
-                  {companyUrl ? (
-                    <Link href={companyUrl} target="_blank">
-                      {company}
-                    </Link>
-                  ) : (
-                    company
-                  )}
+            <Grid item xs={6} sm={8}>
+              <Box pl={1}>
+                <Typography variant="h6">
+                  <b>{name}</b>
                 </Typography>
-              }
-            </Grid>
-            <Grid item xs={12}>
-              <Box display="flex" width="100%" flexWrap="wrap">
-                {tags.map(tag => (
-                  <Box pt={0.5} pl={0.5} key={tag.name} maxHeight="112px">
-                    <Chip label={tag.name} color="primary" size="small" />
-                  </Box>
-                ))}
-              </Box>
-            </Grid>
-            <Grid item xs={12}>
-              <Box display="flex" width="100%" flexWrap="wrap">
-                {qualities.map(quality => {
-                  const { name, label } = quality
-
-                  return organization[quality.name] ? (
-                    <Box pt={0.5} pl={0.5} key={name}>
-                      <Chip label={label} color="secondary" size="small" />
+                {industry && industry.name !== 'Other' && (
+                  <Box display="flex" alignItems="center">
+                    <Box pr={0.5} display="flex" alignItems="center">
+                      <LocalOffer color="primary" fontSize="12" />
                     </Box>
-                  ) : null
-                })}
+                    <Typography>{industry.name}</Typography>
+                  </Box>
+                )}
+                {location && (
+                  <Box display="flex" alignItems="center">
+                    <Box pr={0.5} display="flex" alignItems="center">
+                      <LocationOn color="primary" fontSize="12" />
+                    </Box>
+                    <Typography color="text.secondary">
+                      <i>{location}</i>
+                    </Typography>
+                  </Box>
+                )}
+                <Box display="flex" width="100%" overflow="hidden">
+                  {tags.map(tag => (
+                    <Box pt={0.5} pl={0.5} key={tag.name} maxHeight="112px">
+                      <Chip label={tag.name} color="primary" size="small" />
+                    </Box>
+                  ))}
+                </Box>
               </Box>
             </Grid>
           </Grid>

@@ -9,6 +9,7 @@ let initialState = {
   updateStatus: 'idle',
   createStatus: 'idle',
   getCoverageStatus: 'idle',
+  getIndividualsStatus: 'idle',
 }
 
 export const fetch = createAsyncThunk(
@@ -77,6 +78,17 @@ export const getCoverage = createAsyncThunk(
     const { data } = await client.request({
       headers,
       url: `/organizations/${id}/coverage`,
+    })
+    return data
+  }
+)
+
+export const getIndividuals = createAsyncThunk(
+  'organizations/getIndividuals',
+  async ({ headers, id }) => {
+    const { data } = await client.request({
+      headers,
+      url: `/organizations/${id}/individuals`,
     })
     return data
   }
@@ -183,6 +195,21 @@ const organizationsSlice = createSlice({
     },
     [getCoverage.rejected]: (state, action) => {
       state.getCoverageStatus = 'failed'
+      state.error = action.error.message
+    },
+    [getIndividuals.pending]: (state, action) => {
+      state.getIndividualsStatus = 'loading'
+    },
+    [getIndividuals.fulfilled]: (state, action) => {
+      state.getIndividualsStatus = 'succeeded'
+      const { id, individuals } = action.payload
+      const matchingIndex = state.items.findIndex(item => item.id === id)
+      const newItems = state.items
+      newItems[matchingIndex].individuals = individuals
+      state.items = newItems
+    },
+    [getIndividuals.rejected]: (state, action) => {
+      state.getIndividualsStatus = 'failed'
       state.error = action.error.message
     },
     [remove.fulfilled]: (state, action) => {

@@ -49,7 +49,7 @@ const LayoutDrawer = ({ children }) => {
                   to="/profiles"
                   selected={location.pathname === '/profiles'}
                 >
-                  <ListItemIcon>
+                  <ListItemIcon sx={{ minWidth: '40px' }}>
                     <Person />
                   </ListItemIcon>
                   <ListItemText primary="People" />
@@ -61,7 +61,7 @@ const LayoutDrawer = ({ children }) => {
                   to="/companies"
                   selected={location.pathname === '/companies'}
                 >
-                  <ListItemIcon>
+                  <ListItemIcon sx={{ minWidth: '40px' }}>
                     <Business />
                   </ListItemIcon>
                   <ListItemText primary="Companies" />
@@ -77,7 +77,7 @@ const LayoutDrawer = ({ children }) => {
                   target="_blank"
                   href="https://airtable.com/shrgP0cjfUzl2lSHS"
                 >
-                  <ListItemIcon>
+                  <ListItemIcon sx={{ minWidth: '40px' }}>
                     <BugReport />
                   </ListItemIcon>
                   <ListItemText primary="Report a Bug" />

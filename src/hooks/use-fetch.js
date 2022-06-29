@@ -6,6 +6,7 @@ import useOrganizationsStore from './store/use-organizations-store'
 import useTagsStore from './store/use-tags-store'
 import useSession from './use-session'
 import useAlertStore from './store/use-alert-store'
+import useIndustriesStore from './store/use-industries-store'
 
 export const useFetch = () => {
   const { user } = useSession()
@@ -16,6 +17,8 @@ export const useFetch = () => {
   const { fetch: fetchOrganizations, fetchStatus: organizationsStatus } =
     useOrganizationsStore()
   const { fetch: fetchTags, fetchStatus: tagsStatus } = useTagsStore()
+  const { fetch: fetchIndustries, fetchStatus: industriesStatus } =
+    useIndustriesStore()
 
   useEffect(() => {
     const get = async () => {
@@ -87,6 +90,31 @@ export const useFetch = () => {
     // fetchUserStatus,
     tagsStatus,
     fetchTags,
+    // storeUser,
+    setError,
+    user,
+  ])
+
+  useEffect(() => {
+    const get = async () => {
+      try {
+        await fetchIndustries()
+      } catch (err) {
+        setError({ message: err.message })
+      }
+    }
+    if (
+      !!user &&
+      // fetchUserStatus === 'succeeded' &&
+      industriesStatus === 'idle'
+      // && !!storeUser._id
+    ) {
+      get()
+    }
+  }, [
+    // fetchUserStatus,
+    industriesStatus,
+    fetchIndustries,
     // storeUser,
     setError,
     user,

@@ -6,11 +6,14 @@ import {
   FormGroup,
   FormControlLabel,
   Box,
+  FormControl,
+  InputLabel,
+  Select,
 } from '@mui/material'
 import TextFielder from 'components/TextFielder'
 import MuiPhoneNumber from 'material-ui-phone-number'
 
-const FormField = ({ formField, control }) => {
+const FormField = ({ formField, control, options }) => {
   const { name, label, type, helpText, placeholder } = formField
 
   const renderField = ({ field, fieldState }) => {
@@ -84,6 +87,24 @@ const FormField = ({ formField, control }) => {
                 <i>{helpText}</i>
               </Typography>
             )}
+          </>
+        )
+      case 'select':
+        return (
+          <>
+            <FormControl>
+              <InputLabel id={label}>{label}</InputLabel>
+              <Controller
+                as={
+                  <Select labelId={label} label={label}>
+                    {options.map(option => option)}
+                  </Select>
+                }
+                name={name}
+                control={control}
+                defaultValue={options[0]}
+              />
+            </FormControl>
           </>
         )
       case 'textarea':

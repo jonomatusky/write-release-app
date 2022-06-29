@@ -12,11 +12,15 @@ const Form = ({ formFields, submit, control, spacing }) => {
     <form onSubmit={handleSubmit}>
       <Grid container spacing={spacing === 0 ? 0 : spacing || 3}>
         {formFields.map(formField => {
-          const { name } = formField
+          const { name, options } = formField
 
           return (
             <Grid item xs={12} key={name}>
-              <FormField formField={formField} control={control} />
+              <FormField
+                formField={formField}
+                control={control}
+                options={options}
+              />
             </Grid>
           )
         })}

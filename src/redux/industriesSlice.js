@@ -10,22 +10,22 @@ let initialState = {
 }
 
 export const fetch = createAsyncThunk(
-  'industrys/fetch',
+  'industries/fetch',
   async ({ headers }) => {
     const { data } = await client.request({
       headers,
-      url: '/industrys',
+      url: '/industries',
     })
     return data
   }
 )
 
 export const create = createAsyncThunk(
-  'industrys/create',
+  'industries/create',
   async ({ headers, ...inputs }) => {
     const { data } = await client.request({
       headers,
-      url: `/industrys`,
+      url: `/industries`,
       method: 'POST',
       data: inputs,
     })
@@ -34,11 +34,11 @@ export const create = createAsyncThunk(
 )
 
 export const update = createAsyncThunk(
-  'industrys/update',
+  'industries/update',
   async ({ headers, id, ...inputs }) => {
     const { data } = await client.request({
       headers,
-      url: `/industrys/${id}`,
+      url: `/industries/${id}`,
       method: 'PATCH',
       data: inputs,
     })
@@ -47,7 +47,7 @@ export const update = createAsyncThunk(
 )
 
 export const remove = createAsyncThunk(
-  'industrys/remove',
+  'industries/remove',
   async ({ headers, id }) => {
     await client.request({
       headers,
@@ -58,8 +58,8 @@ export const remove = createAsyncThunk(
   }
 )
 
-const industrysSlice = createSlice({
-  name: 'industrys',
+const industriesSlice = createSlice({
+  name: 'industries',
   initialState,
   reducers: {
     set(state, action) {
@@ -133,6 +133,6 @@ const industrysSlice = createSlice({
   },
 })
 
-export const { set, clear, setFilter } = industrysSlice.actions
+export const { set, clear, setFilter } = industriesSlice.actions
 
-export default industrysSlice.reducer
+export default industriesSlice.reducer

@@ -48,7 +48,7 @@ const App = () => {
         <Routes>
           <Route path="/" element={<Header />}>
             <Route path="/login" element={<Login />} />
-            <Route path="/profiles/:pid" element={<ViewProfile />} />
+            <Route path="/profiles/:id" element={<ViewProfile />} />
             <Route path="/companies/:id" element={<ViewCompany />} />
             <Route path="/" element={<Navigate replace to="/profiles" />} />
             <Route path="/" element={<PrivateRoute component={Outlet} />}>
