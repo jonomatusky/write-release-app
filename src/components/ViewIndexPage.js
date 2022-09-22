@@ -1,12 +1,24 @@
-import React, { useEffect, useState } from 'react'
-import { Container, Grid, Box, CircularProgress, Button } from '@mui/material'
+import React, { useEffect, useRef, useState } from 'react'
+import {
+  Container,
+  Grid,
+  Box,
+  CircularProgress,
+  Button,
+  Paper,
+  TableContainer,
+  Table,
+  TableHead,
+  TableRow,
+  TableCell,
+  TableBody,
+} from '@mui/material'
 import Panel from 'layouts/Panel'
 import FuzzySearch from 'fuzzy-search'
 import InfiniteScroll from 'react-infinite-scroll-component'
-import FabAdd from './FabAdd'
 import usePageTitle from 'hooks/use-page-title'
 import LayoutDrawer from 'layouts/LayoutDrawer'
-import { useSearchParams } from 'react-router-dom'
+import { useNavigate, useSearchParams } from 'react-router-dom'
 import TagBar from 'components/TagBar'
 import SearchBar from 'components/SearchBar'
 import IndustriesBar from 'components/IndustriesBar'
@@ -14,9 +26,11 @@ import { Clear } from '@mui/icons-material'
 import OrgBar from './OrgBar'
 import useOrganizationsStore from 'hooks/store/use-organizations-store'
 
-const ViewIndexPage = ({ items, Item, type }) => {
+const ViewIndexPage = ({ items, Item, type, mode }) => {
   const [searchParams, setSearchParams] = useSearchParams()
   const { items: organizations } = useOrganizationsStore()
+  const navigate = useNavigate()
+  const [selectedId, setSelectedId] = useState(null)
 
   const search = searchParams.get('search') || ''
   const industries = searchParams.getAll('ind') || []
@@ -66,7 +80,7 @@ const ViewIndexPage = ({ items, Item, type }) => {
   }
 
   const chunks = []
-  const chunkSize = 12
+  const chunkSize = mode === 'list' ? 24 : 12
 
   for (let i = 0; i < list.length; i += chunkSize) {
     const chunk = list.slice(i, i + chunkSize)
@@ -81,7 +95,7 @@ const ViewIndexPage = ({ items, Item, type }) => {
     }
   })
 
-  const addMoreOrganizations = () => {
+  const addMore = () => {
     setChunkCount(chunkCount + 1)
   }
 
@@ -159,10 +173,32 @@ const ViewIndexPage = ({ items, Item, type }) => {
     setSearchParams(new URLSearchParams())
   }
 
+  function useOutsideAlerter(ref) {
+    useEffect(() => {
+      /**
+       * Alert if clicked on outside of element
+       */
+      function handleClickOutside(event) {
+        if (ref.current && !ref.current.contains(event.target)) {
+          setSelectedId(null)
+        }
+      }
+      // Bind the event listener
+      document.addEventListener('mousedown', handleClickOutside)
+      return () => {
+        // Unbind the event listener on clean up
+        document.removeEventListener('mousedown', handleClickOutside)
+      }
+    }, [ref])
+  }
+
+  const wrapperRef = useRef(null)
+
+  useOutsideAlerter(wrapperRef)
+
   return (
     <LayoutDrawer>
       <Container maxWidth="lg">
-        <FabAdd type={type} />
         <Box width="100%" display="flex" mt={2}>
           <Box
             width="350px"
@@ -180,7 +216,7 @@ const ViewIndexPage = ({ items, Item, type }) => {
                       setValue={handleUpdateSearch}
                     />
                   </Grid>
-                  {type === 'individual' && (
+                  {(type === 'individual' || type === 'content') && (
                     <Grid item xs={12}>
                       <OrgBar
                         value={company}
@@ -189,20 +225,24 @@ const ViewIndexPage = ({ items, Item, type }) => {
                       />
                     </Grid>
                   )}
-                  <Grid item xs={12}>
-                    <IndustriesBar
-                      values={industries}
-                      setValues={handleSetIndustries}
-                      disablePortal
-                    />
-                  </Grid>
-                  <Grid item xs={12}>
-                    <TagBar
-                      values={tags}
-                      setValues={handleSetTags}
-                      disablePortal
-                    />
-                  </Grid>
+                  {type !== 'content' && (
+                    <Grid item xs={12}>
+                      <IndustriesBar
+                        values={industries}
+                        setValues={handleSetIndustries}
+                        disablePortal
+                      />
+                    </Grid>
+                  )}
+                  {type !== 'content' && (
+                    <Grid item xs={12}>
+                      <TagBar
+                        values={tags}
+                        setValues={handleSetTags}
+                        disablePortal
+                      />
+                    </Grid>
+                  )}
                   <Grid item xs={12}>
                     <Button onClick={clear} endIcon={<Clear />} fullWidth>
                       clear
@@ -222,7 +262,7 @@ const ViewIndexPage = ({ items, Item, type }) => {
           <Box flexGrow={1} width="100px">
             <InfiniteScroll
               dataLength={itemsOnScreen.length}
-              next={addMoreOrganizations}
+              next={addMore}
               hasMore={itemsOnScreen.length < list.length}
               loader={
                 <Grid container mt={2} mb={2}>
@@ -232,55 +272,161 @@ const ViewIndexPage = ({ items, Item, type }) => {
                 </Grid>
               }
             >
-              <Grid container spacing={2} mb={2}>
-                <Grid item xs={12} sx={{ display: { xs: 'flex', md: 'none' } }}>
-                  <Box width="100%">
-                    <Panel>
-                      <Box p={2}>
-                        <Grid container spacing={2}>
-                          <Grid item xs={12}>
-                            <SearchBar
-                              value={search}
-                              setValue={handleUpdateSearch}
-                            />
-                          </Grid>
-                          {type === 'individual' && (
+              <div ref={wrapperRef}>
+                <Grid container spacing={2} mb={2}>
+                  <Grid
+                    item
+                    xs={12}
+                    sx={{ display: { xs: 'flex', md: 'none' } }}
+                  >
+                    <Box width="100%">
+                      <Panel>
+                        <Box p={2}>
+                          <Grid container spacing={2}>
                             <Grid item xs={12}>
-                              <OrgBar
-                                value={company}
-                                setValue={handleSetCompany}
+                              <SearchBar
+                                value={search}
+                                setValue={handleUpdateSearch}
                               />
                             </Grid>
-                          )}
-                          <Grid item xs={12}>
-                            <IndustriesBar
-                              values={industries}
-                              setValues={handleSetIndustries}
-                            />
+                            {type === 'individual' && (
+                              <Grid item xs={12}>
+                                <OrgBar
+                                  value={company}
+                                  setValue={handleSetCompany}
+                                />
+                              </Grid>
+                            )}
+                            <Grid item xs={12}>
+                              <IndustriesBar
+                                values={industries}
+                                setValues={handleSetIndustries}
+                              />
+                            </Grid>
+                            <Grid item xs={12}>
+                              <TagBar values={tags} setValues={handleSetTags} />
+                            </Grid>
+                            <Grid item xs={12}>
+                              <Button
+                                onClick={clear}
+                                endIcon={<Clear />}
+                                fullWidth
+                              >
+                                Clear Search
+                              </Button>
+                            </Grid>
                           </Grid>
-                          <Grid item xs={12}>
-                            <TagBar values={tags} setValues={handleSetTags} />
-                          </Grid>
-                          <Grid item xs={12}>
-                            <Button
-                              onClick={clear}
-                              endIcon={<Clear />}
-                              fullWidth
-                            >
-                              Clear Search
-                            </Button>
-                          </Grid>
-                        </Grid>
-                      </Box>
-                    </Panel>
-                  </Box>
-                </Grid>
-                {itemsOnScreen.map(item => (
-                  <Grid item xs={12} lg={9} key={item.id}>
-                    <Item id={item.id} />
+                        </Box>
+                      </Panel>
+                    </Box>
                   </Grid>
-                ))}
-              </Grid>
+                  {mode === 'list' || !Item ? (
+                    <Grid item xs={12} lg={9}>
+                      <Paper variant="outlined" sx={{ width: '100%' }}>
+                        <TableContainer>
+                          <Table>
+                            <TableHead>
+                              <TableRow>
+                                <TableCell width="45%">Name</TableCell>
+                                <TableCell>Company</TableCell>
+                                {/* <TableCell>Owner</TableCell> */}
+                                <TableCell align="right">
+                                  Last Modified
+                                </TableCell>
+                              </TableRow>
+                            </TableHead>
+                            <TableBody>
+                              {itemsOnScreen.length === 0 && (
+                                <TableRow>
+                                  <TableCell colSpan={3} align="center">
+                                    No results found
+                                  </TableCell>
+                                </TableRow>
+                              )}
+                              {itemsOnScreen.length > 0 &&
+                                itemsOnScreen.map((item, i) => (
+                                  <TableRow
+                                    key={i}
+                                    sx={{ cursor: 'pointer' }}
+                                    onClick={() => {
+                                      if (selectedId === item.id) {
+                                        navigate('/content/' + item.id)
+                                      } else {
+                                        setSelectedId(item.id)
+                                      }
+                                    }}
+                                    selected={selectedId === item.id}
+                                  >
+                                    <TableCell
+                                      width="45%"
+                                      sx={{
+                                        // maxWidth: 0,
+                                        overflow: 'hidden',
+                                        textOverflow: 'ellipsis',
+                                        whiteSpace: 'nowrap',
+                                      }}
+                                    >
+                                      {item.name}
+                                    </TableCell>
+                                    <TableCell
+                                      sx={{
+                                        maxWidth: 0,
+                                        overflow: 'hidden',
+                                        textOverflow: 'ellipsis',
+                                        whiteSpace: 'nowrap',
+                                      }}
+                                    >
+                                      {item.company}
+                                    </TableCell>
+                                    {/* <TableCell
+                                  sx={{
+                                    maxWidth: 0,
+                                    overflow: 'hidden',
+                                    textOverflow: 'ellipsis',
+                                    whiteSpace: 'nowrap',
+                                  }}
+                                >
+                                  {item.owner}
+                                </TableCell> */}
+                                    <TableCell
+                                      align="right"
+                                      sx={{
+                                        maxWidth: 0,
+                                        overflow: 'hidden',
+                                        textOverflow: 'ellipsis',
+                                        whiteSpace: 'nowrap',
+                                      }}
+                                    >
+                                      {/* <Box
+                                  overflow="hidden"
+                                  textOverflow="ellipsis"
+                                  whiteSpace="nowrap"
+                                  > */}
+                                      {new Date(
+                                        item.updatedAt || item.createdAt
+                                      ).toLocaleDateString('en-us', {
+                                        year: 'numeric',
+                                        month: 'short',
+                                        day: 'numeric',
+                                      })}
+                                      {/* </Box> */}
+                                    </TableCell>
+                                  </TableRow>
+                                ))}
+                            </TableBody>
+                          </Table>
+                        </TableContainer>
+                      </Paper>
+                    </Grid>
+                  ) : (
+                    itemsOnScreen.map(item => (
+                      <Grid item xs={12} lg={9} key={item.id}>
+                        <Item id={item.id} />
+                      </Grid>
+                    ))
+                  )}
+                </Grid>
+              </div>
             </InfiniteScroll>
           </Box>
         </Box>

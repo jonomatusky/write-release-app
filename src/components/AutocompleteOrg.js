@@ -2,11 +2,7 @@ import React, { useEffect, useState } from 'react'
 import { Autocomplete, TextField } from '@mui/material'
 import useOrganizationsStore from 'hooks/store/use-organizations-store'
 
-const AutocompleteOrg = ({
-  individualOrganizationId,
-  setIndividualOrganizationId,
-  error,
-}) => {
+const AutocompleteOrg = ({ orgId, setId, label, error }) => {
   const { items, select } = useOrganizationsStore()
 
   const [organizations, setOrganizations] = useState(items)
@@ -18,14 +14,14 @@ const AutocompleteOrg = ({
     setOrganizations(items)
   }, [items])
 
-  const selectedOrganization = select(individualOrganizationId)
+  const selectedOrganization = select(orgId)
 
   const individualOrganization = selectedOrganization.id
     ? selectedOrganization
     : null
 
   const handleChange = async (e, v) => {
-    let newOrganizationId = (v || {}).id
+    let newId = (v || {}).id
 
     // if (v.includes(addValue)) {
     //   try {
@@ -38,14 +34,13 @@ const AutocompleteOrg = ({
     //   }
     // }
 
-    setIndividualOrganizationId(newOrganizationId)
+    setId(newId)
   }
 
   return (
     <Autocomplete
       clearOnBlur={false}
-      options={organizations}
-      // filterSelectedOptions
+      options={organizations} // filterSelectedOptions
       value={individualOrganization}
       onChange={handleChange}
       inputValue={inputValue}
@@ -53,17 +48,18 @@ const AutocompleteOrg = ({
         setInputValue(v)
       }}
       getOptionLabel={option => option.name || ''}
+      openOnFocus
       renderInput={params => {
         return (
           <TextField
-            placeholder="Acme Inc."
+            // placeholder="Acme Inc."
             {...params}
-            label="Company*"
+            label={label}
             error={Boolean(error)}
             helperText={error}
-            InputLabelProps={{
-              shrink: true,
-            }}
+            // InputLabelProps={{
+            //   shrink: true,
+            // }}
           />
         )
       }}

@@ -11,7 +11,7 @@ import {
   Toolbar,
   Link as MuiLink,
 } from '@mui/material'
-import { BugReport, Business, Person } from '@mui/icons-material'
+import { PestControl, Business, Person, Create } from '@mui/icons-material'
 
 const drawerWidth = 200
 
@@ -67,6 +67,18 @@ const LayoutDrawer = ({ children }) => {
                   <ListItemText primary="Companies" />
                 </ListItemButton>
               </ListItem>
+              <ListItem disablePadding>
+                <ListItemButton
+                  component={Link}
+                  to="/content"
+                  selected={location.pathname === '/content'}
+                >
+                  <ListItemIcon sx={{ minWidth: '40px' }}>
+                    <Create />
+                  </ListItemIcon>
+                  <ListItemText primary="Content" />
+                </ListItemButton>
+              </ListItem>
             </List>
           </Box>
           <Box>
@@ -78,7 +90,7 @@ const LayoutDrawer = ({ children }) => {
                   href="https://airtable.com/shrgP0cjfUzl2lSHS"
                 >
                   <ListItemIcon sx={{ minWidth: '40px' }}>
-                    <BugReport />
+                    <PestControl />
                   </ListItemIcon>
                   <ListItemText primary="Report a Bug" />
                 </ListItemButton>

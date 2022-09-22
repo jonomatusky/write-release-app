@@ -87,9 +87,10 @@ const DialogCreateIndividual = ({ open, onClose }) => {
             </Grid>
             <Grid item xs={12}>
               <AutocompleteOrg
-                individualOrganizationId={individualOrganizationId}
-                setIndividualOrganizationId={setIndividualOrganizationId}
+                orgId={individualOrganizationId}
+                setId={setIndividualOrganizationId}
                 error={error}
+                label="Company"
               />
             </Grid>
             <Grid item xs={12}>

@@ -14,11 +14,11 @@ const Individual = ({ individual }) => {
     <Grid item xs={12}>
       <Card variant="outlined">
         <CardActionArea component={RouterLink} to={'/profiles/' + id}>
-          <Box p={2} minHeight="230px" width="150px">
+          <Box p={1} pt={2} width="150px">
             <Grid container>
               <Grid item xs={12} textAlign="center" pb={1}>
                 <Box width="100%">
-                  <Box maxWidth="200px" margin="auto" position="relative">
+                  <Box maxWidth="100px" margin="auto" position="relative">
                     <ResponsiveAvatar avatarUrl={avatarUrl} />
                   </Box>
                 </Box>
@@ -30,6 +30,7 @@ const Individual = ({ individual }) => {
                     display="flex"
                     flexWrap="none"
                     alignItems="center"
+                    justifyContent="center"
                     width="100%"
                   >
                     <Typography
@@ -46,6 +47,8 @@ const Individual = ({ individual }) => {
                     display="flex"
                     flexWrap="none"
                     alignItems="center"
+                    textAlign="center"
+                    justifyContent="center"
                     width="100%"
                   >
                     <Typography

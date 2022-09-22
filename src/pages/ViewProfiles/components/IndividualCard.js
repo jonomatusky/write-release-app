@@ -93,14 +93,36 @@ const IndividualCard = ({ id }) => {
                     </Typography>
                   </Box>
                 )}
-                <Box display="flex" width="100%" overflow="auto">
+                <Box
+                  display="flex"
+                  width="100%"
+                  overflow="auto"
+                  msOverflowStyle="none"
+                  scrollbarWidth="none"
+                  sx={{
+                    '&::-webkit-scrollbar': {
+                      display: 'none',
+                    },
+                  }}
+                >
                   {tags.map(tag => (
                     <Box pt={0.5} pr={0.5} key={tag.name} maxHeight="112px">
                       <Chip label={tag.name} color="primary" size="small" />
                     </Box>
                   ))}
                 </Box>
-                <Box display="flex" width="100%" overflow="auto">
+                <Box
+                  display="flex"
+                  width="100%"
+                  overflow="auto"
+                  msOverflowStyle="none"
+                  scrollbarWidth="none"
+                  sx={{
+                    '&::-webkit-scrollbar': {
+                      display: 'none',
+                    },
+                  }}
+                >
                   {qualities.map(quality => {
                     const { name, label } = quality
                     return individual[quality.name] ? (

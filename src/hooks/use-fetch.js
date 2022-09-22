@@ -1,6 +1,6 @@
 import { useEffect } from 'react'
 
-// import { useUserStore } from './store/use-user-store'
+import { useUserStore } from './store/use-user-store'
 import useIndividualsStore from './store/use-individuals-store'
 import useOrganizationsStore from './store/use-organizations-store'
 import useTagsStore from './store/use-tags-store'
@@ -19,6 +19,7 @@ export const useFetch = () => {
   const { fetch: fetchTags, fetchStatus: tagsStatus } = useTagsStore()
   const { fetch: fetchIndustries, fetchStatus: industriesStatus } =
     useIndustriesStore()
+  const { fetch: fetchUser, fetchStatus: userStatus } = useUserStore()
 
   useEffect(() => {
     const get = async () => {
@@ -119,6 +120,19 @@ export const useFetch = () => {
     setError,
     user,
   ])
+
+  useEffect(() => {
+    const get = async () => {
+      try {
+        await fetchUser()
+      } catch (err) {
+        setError({ message: err.message })
+      }
+    }
+    if (!!user && userStatus === 'idle') {
+      get()
+    }
+  }, [userStatus, fetchUser, setError, user])
 
   return
 }

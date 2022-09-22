@@ -50,7 +50,7 @@ const AutocompleteIndustry = ({
       renderInput={params => {
         return (
           <TextField
-            placeholder="Acme Inc."
+            placeholder="Financial Services"
             {...params}
             label="Industry"
             error={Boolean(error)}

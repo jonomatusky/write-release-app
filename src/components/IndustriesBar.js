@@ -14,7 +14,7 @@ const IndustriesBar = ({ values, setValues, disablePortal }) => {
     <Autocomplete
       fullWidth
       disablePortal={disablePortal}
-      label="Tags"
+      label="Industries"
       multiple
       options={options}
       filterSelectedOptions

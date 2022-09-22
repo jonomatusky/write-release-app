@@ -76,7 +76,18 @@ const OrganizationCard = ({ id }) => {
                     </Typography>
                   </Box>
                 )}
-                <Box display="flex" width="100%" overflow="hidden">
+                <Box
+                  display="flex"
+                  width="100%"
+                  overflow="auto"
+                  msOverflowStyle="none"
+                  scrollbarWidth="none"
+                  sx={{
+                    '&::-webkit-scrollbar': {
+                      display: 'none',
+                    },
+                  }}
+                >
                   {tags.map(tag => (
                     <Box pt={0.5} pl={0.5} key={tag.name} maxHeight="112px">
                       <Chip label={tag.name} color="primary" size="small" />

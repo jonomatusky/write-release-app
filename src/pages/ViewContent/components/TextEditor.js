@@ -1,0 +1,77 @@
+import React, { useEffect, useState } from 'react'
+import { EditorState, convertToRaw, convertFromRaw } from 'draft-js'
+import { Editor } from 'react-draft-wysiwyg'
+import 'react-draft-wysiwyg/dist/react-draft-wysiwyg.css'
+import { Box, Typography } from '@mui/material'
+import { use100vh } from 'hooks/use-100-vh'
+
+const TextEditor = ({ editorState, onSetEditorState, saveStatus }) => {
+  // console.log(editorState.getCurrentContent().getPlainText('\u0001'))
+
+  const toolbarOptions = ['history', 'inline', 'list']
+
+  const inlineOptions = ['bold', 'italic', 'underline']
+
+  const savingText =
+    saveStatus === 'saving'
+      ? 'Saving...'
+      : saveStatus === 'saved'
+      ? 'Saved'
+      : 'Unsaved Changes'
+
+  const vh100 = use100vh()
+
+  return (
+    // <>
+    // <Typography position="absolute" top="0" right="0" color="primary">
+    //   {savingText}
+    // </Typography>
+    <Box position="relative" height="100%">
+      <Box
+        height="46px"
+        display="flex"
+        alignItems="center"
+        position="absolute"
+        top="0"
+        right="15px"
+        color="grey.500"
+      >
+        <Typography variant="body2" fontSize="12px">
+          <b>{savingText}</b>
+        </Typography>
+      </Box>
+      <Editor
+        toolbar={{
+          options: toolbarOptions,
+          inline: { options: inlineOptions },
+          list: { inDropdown: true },
+        }}
+        editorState={editorState}
+        onEditorStateChange={onSetEditorState}
+        wrapperStyle={{
+          // width: '100%',
+          height: '100%',
+          // overflow: 'hidden',
+        }}
+        toolbarStyle={{
+          marginBottom: '0',
+          // position: 'fixed',
+          // zIndex: '100',
+          width: '100%',
+          borderRadius: '0',
+          border: '0 0 5px 0',
+        }}
+        editorStyle={{
+          height: 'calc(100% - 46px)',
+          // marginTop: '46px',
+          padding: '0 16px 32px 16px',
+          // paddingBottom: '-16px',
+          // marginTop: '-16px',
+          // overflowY: 'scroll',
+        }}
+      />
+    </Box>
+    // </>
+  )
+}
+export default TextEditor

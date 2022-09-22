@@ -63,7 +63,7 @@ const PanelIndividuals = ({ individuals, id }) => {
           display="flex"
           alignItems="center"
         >
-          {sortedIndividuals.length > 0 && scrollX !== 0 && (
+          {scrollX !== 0 && (
             <IconButton
               onClick={() => slide(-200)}
               sx={{
@@ -87,7 +87,7 @@ const PanelIndividuals = ({ individuals, id }) => {
           display="flex"
           alignItems="center"
         >
-          {sortedIndividuals.length > 0 && !scrollEnd && (
+          {!scrollEnd && (
             <IconButton
               onClick={() => slide(+200)}
               sx={{

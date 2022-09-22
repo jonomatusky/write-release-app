@@ -112,7 +112,7 @@ const DialogContactForm = ({ noScroll }) => {
           <Grid container spacing={2}>
             <Grid item xs={12} textAlign="center">
               <Typography>
-                Submit this form to get in touch with {firstName}
+                Submit this form to get in touch with {firstName || name}
               </Typography>
               <Typography>
                 or send an email to{' '}

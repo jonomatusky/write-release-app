@@ -22,6 +22,10 @@ import NotFound from 'pages/NotFound/NotFound'
 import DialogContactForm from 'components/DialogContactForm'
 import ViewCompanies from 'pages/ViewCompanies/ViewCompanies'
 import ViewCompany from 'pages/ViewCompany/ViewCompany'
+import ViewContents from 'pages/ViewContents/ViewContents'
+import ViewContent from 'pages/ViewContent/ViewContent'
+import HeaderAlt from 'layouts/HeaderAlt'
+import EditorTest from 'pages/EditorTest'
 
 const { REACT_APP_POSTHOG_KEY } = process.env
 
@@ -54,10 +58,16 @@ const App = () => {
             <Route path="/" element={<PrivateRoute component={Outlet} />}>
               <Route path="/profiles" element={<ViewProfiles />} />
               <Route path="/companies" element={<ViewCompanies />} />
+              <Route path="/content" element={<ViewContents />} />
+
               <Route path="*" element={<NotFound />} />
             </Route>
             <Route path="*" element={<NotFound />} />
           </Route>
+          <Route path="/" element={<HeaderAlt />}>
+            <Route path="/content/:id" element={<ViewContent />} />
+          </Route>
+          <Route path="/editor-test" element={<EditorTest />} />
         </Routes>
       </Router>
     </UserContext.Provider>
