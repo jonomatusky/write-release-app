@@ -50,7 +50,7 @@ const HeaderAlt = () => {
   return (
     <>
       <ScrollToTop />
-      <ButtonReportBug />
+      {/* <ButtonReportBug /> */}
       <AppBar
         color="secondary"
         position="fixed"

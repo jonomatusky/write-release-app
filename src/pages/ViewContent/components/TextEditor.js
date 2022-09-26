@@ -12,13 +12,6 @@ const TextEditor = ({ editorState, onSetEditorState, saveStatus }) => {
 
   const inlineOptions = ['bold', 'italic', 'underline']
 
-  const savingText =
-    saveStatus === 'saving'
-      ? 'Saving...'
-      : saveStatus === 'saved'
-      ? 'Saved'
-      : 'Unsaved Changes'
-
   const vh100 = use100vh()
 
   return (
@@ -27,19 +20,6 @@ const TextEditor = ({ editorState, onSetEditorState, saveStatus }) => {
     //   {savingText}
     // </Typography>
     <Box position="relative" height="100%">
-      <Box
-        height="46px"
-        display="flex"
-        alignItems="center"
-        position="absolute"
-        top="0"
-        right="15px"
-        color="grey.500"
-      >
-        <Typography variant="body2" fontSize="12px">
-          <b>{savingText}</b>
-        </Typography>
-      </Box>
       <Editor
         toolbar={{
           options: toolbarOptions,
