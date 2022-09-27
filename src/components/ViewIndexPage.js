@@ -32,6 +32,8 @@ const ViewIndexPage = ({ items, Item, type, mode }) => {
   const navigate = useNavigate()
   const [selectedId, setSelectedId] = useState(null)
 
+  const { select: selectOrganization } = useOrganizationsStore()
+
   const search = searchParams.get('search') || ''
   const industries = searchParams.getAll('ind') || []
   const company = searchParams.get('company') || ''
@@ -358,15 +360,18 @@ const ViewIndexPage = ({ items, Item, type, mode }) => {
                                     selected={selectedId === item.id}
                                   >
                                     <TableCell
-                                      width="45%"
+                                      width="50%"
                                       sx={{
-                                        // maxWidth: 0,
+                                        maxWidth: 0,
                                         overflow: 'hidden',
                                         textOverflow: 'ellipsis',
                                         whiteSpace: 'nowrap',
                                       }}
                                     >
-                                      {item.name}
+                                      {item.name ||
+                                        item.title ||
+                                        item.titleInternal ||
+                                        'No Title'}
                                     </TableCell>
                                     <TableCell
                                       sx={{
@@ -376,7 +381,11 @@ const ViewIndexPage = ({ items, Item, type, mode }) => {
                                         whiteSpace: 'nowrap',
                                       }}
                                     >
-                                      {item.company}
+                                      {
+                                        selectOrganization(
+                                          (item.organizations || [])[0]
+                                        )?.name
+                                      }
                                     </TableCell>
                                     {/* <TableCell
                                   sx={{

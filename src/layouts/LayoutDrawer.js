@@ -11,7 +11,12 @@ import {
   Toolbar,
   Link as MuiLink,
 } from '@mui/material'
-import { PestControl, Business, Person, Create } from '@mui/icons-material'
+import {
+  PestControl,
+  Business,
+  Person,
+  // Create
+} from '@mui/icons-material'
 
 const drawerWidth = 200
 
@@ -67,7 +72,7 @@ const LayoutDrawer = ({ children }) => {
                   <ListItemText primary="Companies" />
                 </ListItemButton>
               </ListItem>
-              <ListItem disablePadding>
+              {/* <ListItem disablePadding>
                 <ListItemButton
                   component={Link}
                   to="/content"
@@ -78,7 +83,7 @@ const LayoutDrawer = ({ children }) => {
                   </ListItemIcon>
                   <ListItemText primary="Content" />
                 </ListItemButton>
-              </ListItem>
+              </ListItem> */}
             </List>
           </Box>
           <Box>

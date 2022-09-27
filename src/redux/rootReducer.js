@@ -6,6 +6,7 @@ import tagsReducer from './tagsSlice'
 import coverageReducer from './coverageSlice'
 import contentReducer from './contentSlice'
 import contentTypesReducer from './contentTypesSlice'
+import questionsReducer from './questionsSlice'
 import inquiryReducer from './inquiriesSlice'
 import organizationsReducer from './organizationsSlice'
 import industriesReducer from './industriesSlice'
@@ -20,6 +21,7 @@ const rootReducer = combineReducers({
   coverage: coverageReducer,
   content: contentReducer,
   contentTypes: contentTypesReducer,
+  questions: questionsReducer,
   inquiries: inquiryReducer,
   industries: industriesReducer,
   history: historyReducer,

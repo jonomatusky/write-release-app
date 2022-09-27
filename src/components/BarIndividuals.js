@@ -15,7 +15,7 @@ const BarIndividuals = ({
   const [inputValue, setInputValue] = useState('')
 
   const valueObjects =
-    items && items.length > 0
+    items && items.length > 0 && values
       ? values.map(value => items.find(item => item.id === value))
       : []
 

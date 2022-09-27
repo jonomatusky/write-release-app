@@ -1,7 +1,9 @@
 import React, { useCallback, useEffect, useState } from 'react'
 import { Editor, EditorState, ContentState } from 'draft-js'
 
-const EditorTextInput = ({ editorState }) => {
+const EditorTextInput = ({ onChange }) => {
+  let text
+
   const [editorState, setEditorState] = useState(
     !!text
       ? EditorState.createWithContent(ContentState.createFromText(text))

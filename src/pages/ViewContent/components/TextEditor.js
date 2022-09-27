@@ -1,9 +1,9 @@
-import React, { useEffect, useState } from 'react'
-import { EditorState, convertToRaw, convertFromRaw } from 'draft-js'
+import React from 'react'
+// import { EditorState, convertToRaw, convertFromRaw } from 'draft-js'
 import { Editor } from 'react-draft-wysiwyg'
 import 'react-draft-wysiwyg/dist/react-draft-wysiwyg.css'
-import { Box, Typography } from '@mui/material'
-import { use100vh } from 'hooks/use-100-vh'
+import { Box } from '@mui/material'
+// import { use100vh } from 'hooks/use-100-vh'
 
 const TextEditor = ({ editorState, onSetEditorState, saveStatus }) => {
   // console.log(editorState.getCurrentContent().getPlainText('\u0001'))
@@ -12,7 +12,7 @@ const TextEditor = ({ editorState, onSetEditorState, saveStatus }) => {
 
   const inlineOptions = ['bold', 'italic', 'underline']
 
-  const vh100 = use100vh()
+  // const vh100 = use100vh()
 
   return (
     // <>

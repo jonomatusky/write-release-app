@@ -1,6 +1,12 @@
 import React, { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { Grid, Box, Typography, Collapse, TextField } from '@mui/material'
+import {
+  Grid,
+  Box,
+  Typography,
+  Collapse,
+  // TextField
+} from '@mui/material'
 import useOrganizationsStore from 'hooks/store/use-organizations-store'
 import LayoutDialogEdit from 'layouts/LayoutDialogEdit'
 import { NoteAdd } from '@mui/icons-material'
@@ -8,9 +14,9 @@ import AutocompleteOrg from 'components/AutocompleteOrg'
 import BarContentType from 'components/BarContentType'
 import useContentStore from 'hooks/store/use-content-store'
 import useContentTypesStore from 'hooks/store/use-content-types-store'
-import useIndividualsStore from 'hooks/store/use-individuals-store'
+// import useIndividualsStore from 'hooks/store/use-individuals-store'
 import Link from 'components/Link'
-import BarIndividuals from 'components/BarIndividuals'
+// import BarIndividuals from 'components/BarIndividuals'
 
 const DialogCreateContent = ({ open, onClose }) => {
   const navigate = useNavigate()
@@ -19,23 +25,23 @@ const DialogCreateContent = ({ open, onClose }) => {
   const { select: selectOrganization } = useOrganizationsStore()
   const [organizationId, setOrganizationId] = useState('')
   const [contentTypeId, setContentTypeId] = useState('')
-  const [individualsQuoted, setIndividualsQuoted] = useState([])
-  const [individualsMentioned, setIndividualsMentioned] = useState([])
-  const [text, setText] = useState('')
+  // const [individualsQuoted, setIndividualsQuoted] = useState([])
+  // const [individualsMentioned, setIndividualsMentioned] = useState([])
+  // const [text, setText] = useState('')
 
   const contentType = selectContentType(contentTypeId)
   const organization = selectOrganization(organizationId)
-  const { items } = useIndividualsStore()
-  const individuals = items
-    .filter(item => item.organization === organizationId)
-    .filter(item => !individualsQuoted.map(item2 => item2.id).includes(item.id))
+  // const { items } = useIndividualsStore()
+  // const individuals = items
+  //   .filter(item => item.organization === organizationId)
+  //   .filter(item => !individualsQuoted.map(item2 => item2.id).includes(item.id))
 
   const handleSubmit = async () => {
     let values = {}
     values.organizations = [organizationId]
     values.type = contentTypeId
-    values.individualsQuoted = individualsQuoted.map(item => item.id)
-    values.individualsMentioned = individualsMentioned.map(item => item.id)
+    // values.individualsQuoted = individualsQuoted.map(item => item.id)
+    // values.individualsMentioned = individualsMentioned.map(item => item.id)
     values.titleInternal =
       organization.name +
       ' ' +
@@ -46,7 +52,7 @@ const DialogCreateContent = ({ open, onClose }) => {
         month: 'short',
         day: 'numeric',
       })
-    values.text = text
+    // values.text = text
     try {
       const content = await create(values)
       navigate(`/content/${content.id}`)
@@ -60,18 +66,18 @@ const DialogCreateContent = ({ open, onClose }) => {
 
   const handleChangeCompany = id => {
     setOrganizationId(id)
-    setIndividualsMentioned([])
-    setIndividualsQuoted([])
-    if (id === '') {
-      setIndividualsMentioned([])
-      setIndividualsQuoted([])
-    }
+    // setIndividualsMentioned([])
+    // setIndividualsQuoted([])
+    // if (id === '') {
+    //   setIndividualsMentioned([])
+    //   setIndividualsQuoted([])
+    // }
   }
 
-  const handleChangeQuotedIndividual = individuals => {
-    setIndividualsQuoted(individuals)
-    setIndividualsMentioned([])
-  }
+  // const handleChangeQuotedIndividual = individuals => {
+  //   setIndividualsQuoted(individuals)
+  //   setIndividualsMentioned([])
+  // }
 
   return (
     <LayoutDialogEdit
@@ -113,7 +119,7 @@ const DialogCreateContent = ({ open, onClose }) => {
             <Link to="/companies#create">Create a new one</Link>{' '}
           </Typography>
         </Collapse>
-        <Collapse
+        {/* <Collapse
           in={!!organizationId}
           orientation="vertical"
           component={Grid}
@@ -129,10 +135,10 @@ const DialogCreateContent = ({ open, onClose }) => {
           />
           <Typography fontSize="10pt" pt={0.5} pl={0.5}>
             Don't see them in the list?{' '}
-            <Link to="/individuals#create">Create a new profile</Link>{' '}
+            <Link to="/profiles#create">Create a new profile</Link>{' '}
           </Typography>
-        </Collapse>
-        <Collapse
+        </Collapse> */}
+        {/* <Collapse
           in={!!organizationId}
           orientation="vertical"
           component={Grid}
@@ -147,8 +153,8 @@ const DialogCreateContent = ({ open, onClose }) => {
             orgId={organizationId}
             options={individuals}
           />
-        </Collapse>
-        <Collapse
+        </Collapse> */}
+        {/* <Collapse
           in={!!organizationId}
           orientation="vertical"
           component={Grid}
@@ -163,7 +169,7 @@ const DialogCreateContent = ({ open, onClose }) => {
             multiline
             rows={4}
           />
-        </Collapse>
+        </Collapse> */}
       </Grid>
     </LayoutDialogEdit>
   )

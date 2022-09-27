@@ -1,19 +1,15 @@
 import React, { useEffect, useState } from 'react'
-import { useNavigate, useParams } from 'react-router-dom'
+import { useParams } from 'react-router-dom'
 import {
   Grid,
   Box,
   Chip,
   Typography,
-  TextField,
   Toolbar,
   IconButton,
   Button,
-  Paper,
   Card,
   CardActionArea,
-  CardContent,
-  Divider,
 } from '@mui/material'
 import {
   Editor,
@@ -22,24 +18,21 @@ import {
   convertToRaw,
   convertFromRaw,
   Modifier,
-  RichUtils,
 } from 'draft-js'
-import useHistoryStore from 'hooks/store/use-history-store'
-import useSession from 'hooks/use-session'
-import useFetchCoverage from 'hooks/use-fetch-coverage'
 import usePageTitle from 'hooks/use-page-title'
 import useContentStore from 'hooks/store/use-content-store'
 import 'react-draft-wysiwyg/dist/react-draft-wysiwyg.css'
-import ContentName from './ContentName'
-import TextEditor from './TextEditor'
+// import ContentName from './ContentName'
+// import TextEditor from './TextEditor'
 import { use100vh } from 'hooks/use-100-vh'
 import useRequest from 'hooks/use-request'
 import useContentTypesStore from 'hooks/store/use-content-types-store'
 import useOrganizationsStore from 'hooks/store/use-organizations-store'
 import useIndividualsStore from 'hooks/store/use-individuals-store'
-import { Add, ArrowForwardIos, Edit, Settings } from '@mui/icons-material'
+import { Add, Settings } from '@mui/icons-material'
 import './inputs.css'
 import { LoadingButton } from '@mui/lab'
+import DialogContentQuestions from './DialogContentQuestions'
 
 const TextEditPage = () => {
   const { id } = useParams()
@@ -65,10 +58,13 @@ const TextEditPage = () => {
 
   let generationStep
 
-  if (editorState.getCurrentContent().getPlainText().length > 0) {
+  if (
+    editorState.getCurrentContent().getPlainText().length > 0 ||
+    titleState.getCurrentContent().getPlainText().length > 0
+  ) {
     generationStep = 'text'
-  } else if (titleState.getCurrentContent().getPlainText().length > 0) {
-    generationStep = 'subtitle'
+    // } else if (titleState.getCurrentContent().getPlainText().length > 0) {
+    //   generationStep = 'subtitle'
   } else {
     generationStep = 'title'
   }
@@ -77,33 +73,33 @@ const TextEditPage = () => {
     return 'titleInput'
   }
 
-  const subtitleStyleFn = () => {
-    return 'subtitleInput'
-  }
+  // const subtitleStyleFn = () => {
+  //   return 'subtitleInput'
+  // }
 
   usePageTitle((!!titleInternal ? titleInternal + ' | ' : '') + 'SourceOn')
 
-  const handleUpdate = async values => {
-    try {
-      await update({ id, ...values })
-    } catch (err) {
-      console.log(err)
-    }
-  }
+  // const handleUpdate = async values => {
+  //   try {
+  //     await update({ id, ...values })
+  //   } catch (err) {
+  //     console.log(err)
+  //   }
+  // }
 
-  const toolbarOptions = ['history', 'inline', 'list']
+  // const toolbarOptions = ['history', 'inline', 'list']
 
-  const inlineOptions = ['bold', 'italic', 'underline']
+  // const inlineOptions = ['bold', 'italic', 'underline']
 
-  const [name, setName] = useState(titleInternal || '')
+  // const [name, setName] = useState(titleInternal || '')
 
-  useEffect(() => {
-    setName(titleInternal)
-  }, [titleInternal])
+  // useEffect(() => {
+  //   setName(titleInternal)
+  // }, [titleInternal])
 
-  const handleUpdateName = () => {
-    update({ id, titleInternal: name })
-  }
+  // const handleUpdateName = () => {
+  //   update({ id, titleInternal: name })
+  // }
 
   const handleUpdateText = async () => {
     const newText = JSON.stringify(
@@ -156,11 +152,10 @@ const TextEditPage = () => {
         method: 'POST',
         data: {
           contentId: id,
-          type: generationStep,
+          operationType: generationStep,
         },
       })
-      const { message, results } = res.data
-      const options = results || []
+      const { message, options } = res.data
       setGenerations({ type: generationStep, message, options })
     } catch (err) {
       console.log(err)
@@ -186,10 +181,10 @@ const TextEditPage = () => {
     setTitleState(text)
   }
 
-  const handleChangeSubtitle = text => {
-    setSaveStatus('unsaved')
-    setSubtitleState(text)
-  }
+  // const handleChangeSubtitle = text => {
+  //   setSaveStatus('unsaved')
+  //   setSubtitleState(text)
+  // }
 
   const savingText =
     saveStatus === 'saving'
@@ -253,6 +248,13 @@ const TextEditPage = () => {
     setSaveStatus('unsaved')
   }
 
+  const [DialogEditSettings, setDialogEditSettings] = useState(
+    !content.individuals ||
+      content.individuals.length === 0 ||
+      !content.answers ||
+      content.answers.length === 0
+  )
+
   return (
     <>
       {/* {history.length > 1 && !!user && (
@@ -273,7 +275,11 @@ const TextEditPage = () => {
               </Button>
             </Box>
           )} */}
-
+      <DialogContentQuestions
+        open={DialogEditSettings}
+        onClose={() => setDialogEditSettings(false)}
+        id={id}
+      />
       <Box display="flex">
         <Box height={vh100} width="30%" p={3} overflow="scroll">
           <Toolbar variant="dense" />
@@ -291,31 +297,29 @@ const TextEditPage = () => {
             {!isGenerating &&
               (generations.options || []).map((generation, i) => {
                 return (
-                  <Box m={1}>
+                  <Grid item xs={12} key={i}>
                     <Card variant="outlined" color="inherit">
                       <CardActionArea onClick={() => handleAppend(i)}>
-                        <CardContent>
-                          <Box p={1} display="flex" alignItems="center">
-                            <Box flexGrow={1}>
-                              <Typography variant="body2">
-                                {generation}
-                              </Typography>
-                            </Box>
-                            <Box>
-                              <IconButton>
-                                <Add />
-                              </IconButton>
-                            </Box>
+                        <Box display="flex" alignItems="center" p={1}>
+                          <Box flexGrow={1}>
+                            <Typography variant="body2">
+                              {generation}
+                            </Typography>
                           </Box>
-                        </CardContent>
+                          <Box>
+                            <IconButton color="inherit" size="small" ml={1}>
+                              <Add />
+                            </IconButton>
+                          </Box>
+                        </Box>
                       </CardActionArea>
                     </Card>
-                  </Box>
+                  </Grid>
                 )
               })}
             {!isGenerating && generations.message && (
               <Grid item xs={12}>
-                <Typography>
+                <Typography variant="body2">
                   <span style={{ whiteSpace: 'pre-line' }}>
                     {generations.message}
                   </span>
@@ -334,7 +338,7 @@ const TextEditPage = () => {
           mt="48px"
           height={vh100 - 48}
           pl={3}
-          pr={3}
+          pr={1}
           pt={2}
           position="relative"
         >
@@ -351,33 +355,35 @@ const TextEditPage = () => {
               <b>{savingText}</b>
             </Typography>
           </Box>
-          <Grid container>
-            <Grid item xs={12} id="title">
-              <Editor
-                editorState={titleState}
-                onChange={handleChangeTitle}
-                placeholder="Title"
-                stripPastedStyles
-                blockStyleFn={titleStyleFn}
-              />
+          <Box overflow="scroll" height="100%" pr={2}>
+            <Grid container>
+              <Grid item xs={12} id="title">
+                <Editor
+                  editorState={titleState}
+                  onChange={handleChangeTitle}
+                  placeholder="Title"
+                  stripPastedStyles
+                  blockStyleFn={titleStyleFn}
+                />
+              </Grid>
+              {/* <Grid item xs={12} id="subtitle">
+                <Editor
+                  editorState={subtitleState}
+                  onChange={handleChangeSubtitle}
+                  placeholder="Subtitle"
+                  stripPastedStyles
+                  blockStyleFn={subtitleStyleFn}
+                />
+              </Grid> */}
+              <Grid item xs={12}>
+                <Editor
+                  editorState={editorState}
+                  onChange={handleSetEditorState}
+                  placeholder="Body"
+                />
+              </Grid>
             </Grid>
-            <Grid item xs={12} id="subtitle">
-              <Editor
-                editorState={subtitleState}
-                onChange={handleChangeSubtitle}
-                placeholder="Subtitle"
-                stripPastedStyles
-                blockStyleFn={subtitleStyleFn}
-              />
-            </Grid>
-            <Grid item xs={12}>
-              <Editor
-                editorState={editorState}
-                onChange={handleSetEditorState}
-                placeholder="Body"
-              />
-            </Grid>
-          </Grid>
+          </Box>
         </Box>
         <Box height={vh100} width="20%" overflow="scroll">
           <Toolbar variant="dense" />
@@ -400,6 +406,7 @@ const TextEditPage = () => {
                   endIcon={<Settings />}
                   sx={{ textTransform: 'none' }}
                   color="secondary"
+                  onClick={() => setDialogEditSettings(true)}
                 >
                   Settings
                 </Button>
@@ -454,18 +461,22 @@ const TextEditPage = () => {
                       />
                     )
                   })}{' '}
-                  featuring quotes from{' '}
-                  {content.individualsQuoted.map(individualId => {
-                    const individual = selectIndividual(individualId)
-                    return (
-                      <Chip
-                        label={individual.name}
-                        key={individualId}
-                        size="small"
-                      />
-                    )
-                  })}{' '}
-                  with <Chip label="1/6" size="small" /> key questions answered:
+                  {content.individualsQuoted &&
+                    content.individualsQuoted.length > 0 &&
+                    'featuring quotes from '}
+                  {content.individualsQuoted &&
+                    content.individualsQuoted.length > 0 &&
+                    content.individualsQuoted.map(individualId => {
+                      const individual = selectIndividual(individualId)
+                      return (
+                        <Chip
+                          label={individual.name}
+                          key={individualId}
+                          size="small"
+                        />
+                      )
+                    })}
+                  {/* with <Chip label="1/6" size="small" /> key questions answered. */}
                 </Box>
               </Box>
             </Grid>

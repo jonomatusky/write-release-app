@@ -1,4 +1,5 @@
 import React from 'react'
+import { useParams } from 'react-router-dom'
 
 import Loading from 'pages/Loading/Loading'
 import NotFound from 'pages/NotFound/NotFound'
@@ -7,15 +8,17 @@ import useFetchContent from 'hooks/use-fetch-content'
 import TextEditPage from './components/TextEditPage'
 
 const ViewContent = () => {
-  const { fetchStatus } = useContentStore()
+  const { id } = useParams()
+  const { select, fetchStatus } = useContentStore()
+  const content = select(id)
 
   useFetchContent()
 
   return (
     <>
       {(fetchStatus === 'loading' || fetchStatus === 'idle') && <Loading />}
-      {fetchStatus === 'failed' && <NotFound />}
-      {fetchStatus === 'succeeded' && <TextEditPage />}
+      {(fetchStatus === 'failed' || !content) && <NotFound />}
+      {fetchStatus === 'succeeded' && !!content && <TextEditPage />}
     </>
   )
 }

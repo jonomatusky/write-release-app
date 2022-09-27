@@ -7,9 +7,9 @@ const TextFielder = props => {
       fullWidth
       variant="outlined"
       autoComplete="off"
-      InputLabelProps={{
-        shrink: true,
-      }}
+      // InputLabelProps={{
+      //   shrink: true,
+      // }}
       {...props}
     />
   )
