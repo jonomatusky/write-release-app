@@ -14,7 +14,7 @@ const ViewContents = () => {
   return (
     <>
       <FabAdd Icon={NoteAdd} Dialog={DialogCreateContent} />
-      <ViewIndexPage items={items} type="content" mode="list" />
+      <ViewIndexPage items={items} type="content" mode="list" Icon={NoteAdd} />
     </>
   )
 }

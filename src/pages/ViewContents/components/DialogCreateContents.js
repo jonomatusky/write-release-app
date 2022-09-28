@@ -16,6 +16,7 @@ import useContentStore from 'hooks/store/use-content-store'
 import useContentTypesStore from 'hooks/store/use-content-types-store'
 // import useIndividualsStore from 'hooks/store/use-individuals-store'
 import Link from 'components/Link'
+import useUserStore from 'hooks/store/use-user-store'
 // import BarIndividuals from 'components/BarIndividuals'
 
 const DialogCreateContent = ({ open, onClose }) => {
@@ -23,6 +24,7 @@ const DialogCreateContent = ({ open, onClose }) => {
   const { create, createStatus } = useContentStore()
   const { select: selectContentType } = useContentTypesStore()
   const { select: selectOrganization } = useOrganizationsStore()
+  const { item: user } = useUserStore()
   const [organizationId, setOrganizationId] = useState('')
   const [contentTypeId, setContentTypeId] = useState('')
   // const [individualsQuoted, setIndividualsQuoted] = useState([])
@@ -40,6 +42,7 @@ const DialogCreateContent = ({ open, onClose }) => {
     let values = {}
     values.organizations = [organizationId]
     values.type = contentTypeId
+    values.owner = user.id
     // values.individualsQuoted = individualsQuoted.map(item => item.id)
     // values.individualsMentioned = individualsMentioned.map(item => item.id)
     values.titleInternal =
@@ -55,6 +58,7 @@ const DialogCreateContent = ({ open, onClose }) => {
     // values.text = text
     try {
       const content = await create(values)
+      window.location.hash = ''
       navigate(`/content/${content.id}`)
     } catch (err) {}
     // console.log(values)

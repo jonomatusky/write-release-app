@@ -18,6 +18,7 @@ const DialogCreateCompany = ({ open, onClose }) => {
     values.industry = organizationIndustryId
     try {
       const company = await create(values)
+      window.location.hash = ''
       navigate(`/companies/${company.id}`)
     } catch (err) {}
   }

@@ -22,11 +22,11 @@ import { useNavigate, useSearchParams } from 'react-router-dom'
 import TagBar from 'components/TagBar'
 import SearchBar from 'components/SearchBar'
 import IndustriesBar from 'components/IndustriesBar'
-import { Clear } from '@mui/icons-material'
+import { Add, Clear } from '@mui/icons-material'
 import OrgBar from './OrgBar'
 import useOrganizationsStore from 'hooks/store/use-organizations-store'
 
-const ViewIndexPage = ({ items, Item, type, mode }) => {
+const ViewIndexPage = ({ items, Item, type, mode, Dialog, Icon }) => {
   const [searchParams, setSearchParams] = useSearchParams()
   const { items: organizations } = useOrganizationsStore()
   const navigate = useNavigate()
@@ -212,6 +212,16 @@ const ViewIndexPage = ({ items, Item, type, mode }) => {
             <Panel>
               <Box p={2} display="flex">
                 <Grid container spacing={2}>
+                  <Grid item xs={12}>
+                    <Button
+                      onClick={() => (window.location.hash = '#create')}
+                      endIcon={Icon ? <Icon /> : <Add />}
+                      variant="contained"
+                      fullWidth
+                    >
+                      Create New
+                    </Button>
+                  </Grid>
                   <Grid item xs={12}>
                     <SearchBar
                       value={searchValue}

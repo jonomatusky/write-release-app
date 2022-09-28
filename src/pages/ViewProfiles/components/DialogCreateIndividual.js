@@ -25,6 +25,7 @@ const DialogCreateIndividual = ({ open, onClose }) => {
     values.organization = individualOrganizationId
     try {
       const individual = await create(values)
+      window.location.hash = ''
       navigate(`/profiles/${individual.id}`)
     } catch (err) {}
   }

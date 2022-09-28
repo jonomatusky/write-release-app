@@ -16,6 +16,7 @@ const ViewCompanies = () => {
         items={items}
         Item={OrganizationCard}
         type="organization"
+        Icon={DomainAdd}
       />
     </>
   )

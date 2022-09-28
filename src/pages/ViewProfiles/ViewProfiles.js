@@ -12,7 +12,12 @@ const ViewProfiles = () => {
   return (
     <>
       <FabAdd Icon={PersonAdd} Dialog={DialogCreateIndividual} />
-      <ViewIndexPage items={items} Item={IndividualCard} type="individual" />
+      <ViewIndexPage
+        items={items}
+        Item={IndividualCard}
+        type="individual"
+        Icon={PersonAdd}
+      />
     </>
   )
 }
