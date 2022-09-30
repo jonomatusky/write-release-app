@@ -11,11 +11,13 @@ import inquiryReducer from './inquiriesSlice'
 import organizationsReducer from './organizationsSlice'
 import industriesReducer from './industriesSlice'
 import historyReducer from './historySlice'
+import usersReducer from './usersSlice'
 
 const rootReducer = combineReducers({
   user: userReducer,
   individuals: individualsReducer,
   organizations: organizationsReducer,
+  users: usersReducer,
   alert: alertReducer,
   tags: tagsReducer,
   coverage: coverageReducer,

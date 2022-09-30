@@ -1,9 +1,13 @@
 import React from 'react'
-import TextFielder from 'components/TextFielder'
-import { InputAdornment } from '@mui/material'
-import { Search } from '@mui/icons-material'
+import { IconButton, InputAdornment } from '@mui/material'
+import { Clear, Search } from '@mui/icons-material'
+import TextFielder from './TextFielder'
 
-const SearchBar = ({ value, setValue }) => {
+const SearchBar = ({ value, setValue, ...props }) => {
+  const handleClick = () => {
+    setValue('')
+  }
+
   return (
     <TextFielder
       // label="Search"
@@ -16,7 +20,15 @@ const SearchBar = ({ value, setValue }) => {
             <Search />
           </InputAdornment>
         ),
+        endAdornment: !!value ? (
+          <InputAdornment position="end">
+            <IconButton size="small" onClick={handleClick}>
+              <Clear />
+            </IconButton>
+          </InputAdornment>
+        ) : null,
       }}
+      {...props}
     />
   )
 }

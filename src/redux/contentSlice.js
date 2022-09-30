@@ -15,7 +15,8 @@ let initialState = {
 export const fetch = createAsyncThunk('contents/fetch', async ({ headers }) => {
   const { data } = await client.request({
     headers,
-    url: '/me/content',
+    // url: '/me/content',
+    url: '/contents',
   })
   return data
 })
