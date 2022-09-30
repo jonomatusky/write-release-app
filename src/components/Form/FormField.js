@@ -11,7 +11,6 @@ import {
   Select,
 } from '@mui/material'
 import TextFielder from 'components/TextFielder'
-import MuiPhoneNumber from 'material-ui-phone-number'
 
 const FormField = ({ formField, control, options }) => {
   const { name, label, type, helpText, placeholder } = formField
@@ -65,15 +64,11 @@ const FormField = ({ formField, control, options }) => {
       case 'tel':
         return (
           <>
-            <MuiPhoneNumber
-              disableDropdown
-              fullWidth
-              variant="outlined"
+            <TextFielder
               autoComplete="off"
               InputLabelProps={{
                 shrink: true,
               }}
-              defaultCountry={'us'}
               label={label}
               value={value.toString().slice(0, 10)}
               onChange={onChange}

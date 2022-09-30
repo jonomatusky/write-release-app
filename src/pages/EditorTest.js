@@ -1,8 +1,7 @@
 import { useState } from 'react'
-import 'react-draft-wysiwyg/dist/react-draft-wysiwyg.css'
+// import 'react-draft-wysiwyg/dist/react-draft-wysiwyg.css'
 
-import { EditorState } from 'draft-js'
-import { Editor } from 'react-draft-wysiwyg'
+import { EditorState, Editor } from 'draft-js'
 import { Box } from '@mui/material'
 
 const EditorTest = () => {

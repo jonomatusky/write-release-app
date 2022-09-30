@@ -21,7 +21,6 @@ import {
 } from 'draft-js'
 import usePageTitle from 'hooks/use-page-title'
 import useContentStore from 'hooks/store/use-content-store'
-import 'react-draft-wysiwyg/dist/react-draft-wysiwyg.css'
 // import ContentName from './ContentName'
 // import TextEditor from './TextEditor'
 import { use100vh } from 'hooks/use-100-vh'
