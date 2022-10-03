@@ -5,11 +5,12 @@ import {
   Box,
   Chip,
   Typography,
-  Toolbar,
   IconButton,
   Button,
   Card,
   CardActionArea,
+  Toolbar,
+  AppBar,
 } from '@mui/material'
 import {
   Editor,
@@ -28,10 +29,11 @@ import useRequest from 'hooks/use-request'
 import useContentTypesStore from 'hooks/store/use-content-types-store'
 import useOrganizationsStore from 'hooks/store/use-organizations-store'
 import useIndividualsStore from 'hooks/store/use-individuals-store'
-import { Add, Settings } from '@mui/icons-material'
+import { Add, Edit } from '@mui/icons-material'
 import './inputs.css'
 import { LoadingButton } from '@mui/lab'
 import DialogContentQuestions from './DialogContentQuestions'
+import 'draft-js/dist/Draft.css'
 
 const TextEditPage = () => {
   const { id } = useParams()
@@ -59,11 +61,12 @@ const TextEditPage = () => {
 
   if (
     editorState.getCurrentContent().getPlainText().length > 0 ||
-    titleState.getCurrentContent().getPlainText().length > 0
+    (titleState.getCurrentContent().getPlainText().length > 0 &&
+      subtitleState.getCurrentContent().getPlainText().length > 0)
   ) {
     generationStep = 'text'
-    // } else if (titleState.getCurrentContent().getPlainText().length > 0) {
-    //   generationStep = 'subtitle'
+  } else if (titleState.getCurrentContent().getPlainText().length > 0) {
+    generationStep = 'subtitle'
   } else {
     generationStep = 'title'
   }
@@ -72,9 +75,9 @@ const TextEditPage = () => {
     return 'titleInput'
   }
 
-  // const subtitleStyleFn = () => {
-  //   return 'subtitleInput'
-  // }
+  const subtitleStyleFn = () => {
+    return 'subtitleInput'
+  }
 
   usePageTitle((!!titleInternal ? titleInternal + ' | ' : '') + 'SourceOn')
 
@@ -180,10 +183,12 @@ const TextEditPage = () => {
     setTitleState(text)
   }
 
-  // const handleChangeSubtitle = text => {
-  //   setSaveStatus('unsaved')
-  //   setSubtitleState(text)
-  // }
+  const handleChangeSubtitle = text => {
+    setSaveStatus('unsaved')
+    setSubtitleState(text)
+  }
+
+  console.log(subtitleState.getCurrentContent().getPlainText())
 
   const savingText =
     saveStatus === 'saving'
@@ -204,11 +209,11 @@ const TextEditPage = () => {
       const textWithInsert = Modifier.insertText(
         currentContent,
         selection,
-        generations.options[i],
+        generations.options[i] + '\n',
         null
       )
 
-      let newContent
+      let newContent = textWithInsert
 
       if (blockContent !== '') {
         newContent = Modifier.splitBlock(textWithInsert, selection)
@@ -279,9 +284,51 @@ const TextEditPage = () => {
         onClose={() => setDialogEditSettings(false)}
         id={id}
       />
+      <AppBar
+        color="inherit"
+        position="fixed"
+        elevation={0}
+        sx={{
+          // zIndex: theme => theme.zIndex.drawer + 1,
+          // width: `calc(100% - ${drawerWidth}px)`,
+          // ml: `${drawerWidth}px`,
+          borderBottom: '1px solid #e0e0e0',
+        }}
+        open={true}
+      >
+        <Toolbar variant="dense">
+          <Box
+            display="flex"
+            width="100%"
+            alignItems="center"
+            justifyContent="flex-end"
+          >
+            <Box mr={1}>
+              <Typography
+                color="grey.500"
+                variant="body2"
+                fontSize="12px"
+                pt="2px"
+              >
+                <b>{savingText}</b>
+              </Typography>
+            </Box>
+            <Box>
+              <Button
+                endIcon={<Edit />}
+                sx={{ textTransform: 'none' }}
+                color="secondary"
+                onClick={() => setDialogEditSettings(true)}
+              >
+                Background
+              </Button>
+            </Box>
+          </Box>
+        </Toolbar>
+      </AppBar>
       <Box display="flex">
-        <Box height={vh100} width="30%" p={3} overflow="scroll">
-          <Toolbar variant="dense" />
+        <Box height={vh100 - 48} width="30%" p={3} overflow="scroll">
+          {/* <Toolbar variant="dense" /> */}
           <Grid item container spacing={2} alignContent="start">
             <Grid item xs={12}>
               <LoadingButton
@@ -334,28 +381,15 @@ const TextEditPage = () => {
           borderRight={1}
           borderColor="divider"
           // display="flex"
-          mt="48px"
+          // mt="48px"
           height={vh100 - 48}
-          pl={3}
-          pr={1}
-          pt={2}
+          // pl={3}
+          // pr={1}
+          // pt={2}
           position="relative"
         >
-          <Box
-            height="46px"
-            display="flex"
-            alignItems="center"
-            position="absolute"
-            top="0"
-            right="15px"
-            color="grey.500"
-          >
-            <Typography variant="body2" fontSize="12px">
-              <b>{savingText}</b>
-            </Typography>
-          </Box>
-          <Box overflow="scroll" height="100%" pr={2}>
-            <Grid container>
+          <Box overflow="scroll" height="100%" p={2}>
+            <Grid container spacing={2}>
               <Grid item xs={12} id="title">
                 <Editor
                   editorState={titleState}
@@ -365,7 +399,7 @@ const TextEditPage = () => {
                   blockStyleFn={titleStyleFn}
                 />
               </Grid>
-              {/* <Grid item xs={12} id="subtitle">
+              <Grid item xs={12} id="subtitle">
                 <Editor
                   editorState={subtitleState}
                   onChange={handleChangeSubtitle}
@@ -373,7 +407,7 @@ const TextEditPage = () => {
                   stripPastedStyles
                   blockStyleFn={subtitleStyleFn}
                 />
-              </Grid> */}
+              </Grid>
               <Grid item xs={12}>
                 <Editor
                   editorState={editorState}
@@ -384,65 +418,9 @@ const TextEditPage = () => {
             </Grid>
           </Box>
         </Box>
-        <Box height={vh100} width="20%" overflow="scroll">
-          <Toolbar variant="dense" />
+        <Box height={vh100 - 48} width="20%" overflow="scroll">
+          {/* <Toolbar variant="dense" /> */}
           <Grid item container alignContent="start">
-            <Grid item xs={12}>
-              <Box
-                display="flex"
-                justifyContent="flex-end"
-                alignItems="center"
-                p={1}
-                size="small"
-              >
-                {/* <Typography>
-                  <b>About This {type?.primary || 'Content'}</b>
-                </Typography> */}
-                {/* <IconButton>
-                  <Edit />
-                </IconButton> */}
-                <Button
-                  endIcon={<Settings />}
-                  sx={{ textTransform: 'none' }}
-                  color="secondary"
-                  onClick={() => setDialogEditSettings(true)}
-                >
-                  Settings
-                </Button>
-              </Box>
-              {/* <Divider /> */}
-            </Grid>
-            {/* <Grid item xs={12}>
-              <Box pt={1} pb={1}>
-                <ContentName
-                  text={name}
-                  // placeholder="Your Experience"
-                  type="input"
-                  submit={handleUpdateName}
-                >
-                  <TextField
-                    variant="standard"
-                    type="text"
-                    name="task"
-                    fullWidth
-                    placeholder="Your Experience"
-                    value={name}
-                    onChange={e => setName(e.target.value)}
-                    onBlur={handleUpdateName}
-                    size="small"
-                    autoFocus={true}
-                    // sx={{
-                    //   '& .MuiOutlinedInput-root': {
-                    //     fontWeight: 900,
-                    //   },
-                    // }}
-                    // InputProps={{
-                    //   style: { width: `${inputWidth}px` },
-                    // }}
-                  />
-                </ContentName>
-              </Box>
-            </Grid> */}
             <Grid item xs={12}>
               <Box display="flex" alignItems="center" p={2} pt={1}>
                 {/* <Box flexGrow={1} borderLeft="2px solid #e0e0e0" pl={1} pr={1}> */}

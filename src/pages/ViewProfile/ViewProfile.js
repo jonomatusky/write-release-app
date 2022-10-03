@@ -1,6 +1,6 @@
 import React from 'react'
-import { useNavigate, useParams } from 'react-router-dom'
-import { Container, Grid, Box, Button, Chip } from '@mui/material'
+import { useParams } from 'react-router-dom'
+import { Container, Grid, Box, Chip } from '@mui/material'
 
 import BasicInfo from './components/PanelBasicsIndividual'
 import PanelTags from 'components/PanelTags'
@@ -8,8 +8,7 @@ import Loading from 'pages/Loading/Loading'
 import NotFound from 'pages/NotFound/NotFound'
 import useGetIndividual from 'hooks/use-get-individual'
 import ButtonContact from 'components/ButtonContact'
-import useHistoryStore from 'hooks/store/use-history-store'
-import { ArrowBackIos, Settings } from '@mui/icons-material'
+import { Settings } from '@mui/icons-material'
 import useIndividualsStore from 'hooks/store/use-individuals-store'
 import ButtonEditPanel from 'components/ButtonEditPanel'
 import DialogEditSettings from './components/DialogEditSettings'
@@ -50,16 +49,12 @@ const ViewProfile = () => {
 
   const basics = { id, avatarUrl, name, location, title, organization }
 
-  const { history } = useHistoryStore()
-
   const { status } = useGetIndividual(id)
 
   const { coverage } = useFetchCoverage({
     object: 'individual',
     id,
   })
-
-  const navigate = useNavigate()
 
   usePageTitle((!!name ? name + ' | ' : '') + 'SourceOn')
 
@@ -108,7 +103,7 @@ const ViewProfile = () => {
               </Box>
             </Box>
           )}
-          {history.length > 1 && !!user && (
+          {/* {history.length > 1 && !!user && (
             <Box
               color="primary"
               position="absolute"
@@ -125,8 +120,8 @@ const ViewProfile = () => {
                 Back
               </Button>
             </Box>
-          )}
-
+          )} */}
+          {/* <LayoutDrawer open={false}> */}
           <Container maxWidth="md">
             <Grid container spacing={2} justifyContent="center" pt={2} pb={2}>
               {!!user && (
@@ -224,7 +219,17 @@ const ViewProfile = () => {
               )}
             </Grid>
           </Container>
-          <FabContact id={id} type="individual" />
+
+          <Box
+            sx={{
+              position: 'fixed',
+              zIndex: '100',
+              bottom: 24,
+              right: 24,
+            }}
+          >
+            <FabContact id={id} type="individual" />
+          </Box>
         </>
       )}
     </>

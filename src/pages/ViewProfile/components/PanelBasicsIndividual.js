@@ -1,24 +1,15 @@
 import React from 'react'
-import { Grid, Box, Typography, Fab } from '@mui/material'
+import { Grid, Box, Typography } from '@mui/material'
 
 import ResponsiveAvatar from 'components/ResponsiveAvatar'
 import PanelEdit from 'layouts/PanelEdit'
 import BasicInfoDialog from './DialogEditBasicsIndividual'
-import useInquiryStore from 'hooks/store/use-inquiries-store'
-import { Business, Email, LocalOffer, LocationOn } from '@mui/icons-material'
+import { Business, LocalOffer, LocationOn } from '@mui/icons-material'
 import Link from 'components/Link'
+import FabContact from 'components/FabContact'
 
 const PanelBasic = ({ id, avatarUrl, name, location, title, organization }) => {
   const { industry, name: orgName, id: orgId } = organization || {}
-
-  const { setEntity } = useInquiryStore()
-
-  const handleContact = () => {
-    setEntity({
-      entityType: 'individual',
-      entityId: id,
-    })
-  }
 
   return (
     <PanelEdit dialog={BasicInfoDialog}>
@@ -28,10 +19,9 @@ const PanelBasic = ({ id, avatarUrl, name, location, title, organization }) => {
             <Box width="100%">
               <Box maxWidth="200px" margin="auto" position="relative">
                 <ResponsiveAvatar avatarUrl={avatarUrl} />
+
                 <Box position="absolute" bottom={0} right={0}>
-                  <Fab color="primary" onClick={handleContact}>
-                    <Email />
-                  </Fab>
+                  <FabContact id={id} type="individual" />
                 </Box>
               </Box>
             </Box>

@@ -1,4 +1,3 @@
-import Header from 'layouts/Header'
 import React from 'react'
 import {
   BrowserRouter as Router,
@@ -24,8 +23,10 @@ import ViewCompanies from 'pages/ViewCompanies/ViewCompanies'
 import ViewCompany from 'pages/ViewCompany/ViewCompany'
 import ViewContents from 'pages/ViewContents/ViewContents'
 import ViewContent from 'pages/ViewContent/ViewContent'
-import HeaderAlt from 'layouts/HeaderAlt'
 import EditorTest from 'pages/EditorTest'
+import LayoutDrawerHeader from 'layouts/LayoutDrawerHeader'
+import HeaderViews from 'layouts/HeaderViews'
+import HeaderView from 'layouts/HeaderView'
 
 const { REACT_APP_POSTHOG_KEY } = process.env
 
@@ -50,23 +51,32 @@ const App = () => {
         <AlertBar />
         <DialogContactForm />
         <Routes>
-          <Route path="/" element={<Header />}>
-            <Route path="/login" element={<Login />} />
-            <Route path="/profiles/:id" element={<ViewProfile />} />
-            <Route path="/companies/:id" element={<ViewCompany />} />
-            <Route path="/" element={<Navigate replace to="/profiles" />} />
-            <Route path="/" element={<PrivateRoute component={Outlet} />}>
-              <Route path="/profiles" element={<ViewProfiles />} />
-              <Route path="/companies" element={<ViewCompanies />} />
-              <Route path="/content" element={<ViewContents />} />
-
-              <Route path="*" element={<NotFound />} />
+          {/* <Route path="/" element={<Header />}> */}
+          <Route path="/login" element={<Login />} />
+          <Route path="/" element={<LayoutDrawerHeader />}>
+            <Route path="/" element={<HeaderView copy />}>
+              <Route path="/profiles/:id" element={<ViewProfile />} />
+              <Route path="/companies/:id" element={<ViewCompany />} />
+              <Route path="/" element={<Navigate replace to="/profiles" />} />
             </Route>
-            <Route path="*" element={<NotFound />} />
+            <Route path="/" element={<HeaderView />}>
+              <Route path="/" element={<PrivateRoute component={Outlet} />}>
+                <Route path="/content/:id" element={<ViewContent />} />
+              </Route>
+            </Route>
           </Route>
-          <Route path="/" element={<HeaderAlt />}>
-            <Route path="/content/:id" element={<ViewContent />} />
+          <Route path="/" element={<LayoutDrawerHeader open />}>
+            <Route path="/" element={<HeaderViews />}>
+              <Route path="/" element={<PrivateRoute component={Outlet} />}>
+                <Route path="/profiles" element={<ViewProfiles />} />
+                <Route path="/companies" element={<ViewCompanies />} />
+                <Route path="/content" element={<ViewContents />} />
+                <Route path="*" element={<NotFound />} />
+              </Route>
+            </Route>
           </Route>
+
+          {/* <Route path="/" element={<HeaderAlt />}></Route> */}
           <Route path="/editor-test" element={<EditorTest />} />
         </Routes>
       </Router>

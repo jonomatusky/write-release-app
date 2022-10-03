@@ -1,26 +1,30 @@
 import React from 'react'
-import { Outlet, Link, useParams, useLocation } from 'react-router-dom'
-import { AppBar, Toolbar, Typography, Button } from '@mui/material'
-import { ContentCopy } from '@mui/icons-material'
-import { Box } from '@mui/system'
-import ButtonCopy from 'components/ButtonCopy'
-import { useSession } from 'hooks/use-session'
+import {
+  Outlet,
+  // Link, useParams, useLocation
+} from 'react-router-dom'
+// import { AppBar, Toolbar, Typography, Button } from '@mui/material'
+import { Toolbar } from '@mui/material'
+// import { ContentCopy } from '@mui/icons-material'
+// import { Box } from '@mui/system'
+// import ButtonCopy from 'components/ButtonCopy'
+// import { useSession } from 'hooks/use-session'
 import ScrollToTop from 'components/ScrollToTop'
-import Logo from 'assets/images/sourceon_logo.svg'
-import ButtonReportBug from 'components/ButtonReportBug'
+// import Logo from 'assets/images/sourceon_logo.svg'
+// import ButtonReportBug from 'components/ButtonReportBug'
 // import useIndividualsStore from 'hooks/store/use-individuals-store'
 // import useInquiriesStore from 'hooks/store/use-inquiries-store'
 
-const { REACT_APP_PUBLIC_URL } = process.env
+// const { REACT_APP_PUBLIC_URL } = process.env
 
 const Header = () => {
-  const { logout } = useSession()
-  const { id } = useParams()
+  // const { logout } = useSession()
+  // const { id } = useParams()
   // const { select } = useIndividualsStore()
   // const individual = select(id)
 
-  const location = useLocation()
-  const { pathname } = location
+  // const location = useLocation()
+  // const { pathname } = location
 
   // const { setEntity } = useInquiriesStore()
   // const handleContact = () => {
@@ -33,9 +37,9 @@ const Header = () => {
   return (
     <>
       <ScrollToTop />
-      <ButtonReportBug />
-      <AppBar
-        color="secondary"
+      {/* <ButtonReportBug /> */}
+      {/* <AppBar
+        color="inherit"
         position="fixed"
         sx={{ zIndex: theme => theme.zIndex.drawer + 1 }}
       >
@@ -79,27 +83,11 @@ const Header = () => {
                   Log Out
                 </Button>
               )}
-              {/* {!user && individual && individual.email && (
-                <Button
-                  variant="outlined"
-                  color="inherit"
-                  fontSize="small"
-                  size="small"
-                  onClick={handleContact}
-                  sx={{
-                    borderRadius: 28,
-                    paddingLeft: 2,
-                    paddingRight: 2,
-                  }}
-                  endIcon={<Email />}
-                >
-                  Contact
-                </Button>
-              )} */}
+
             </Box>
           </Box>
         </Toolbar>
-      </AppBar>
+      </AppBar> */}
       <main>
         <Toolbar variant="dense" />
         <Outlet />

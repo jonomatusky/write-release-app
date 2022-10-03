@@ -1,6 +1,6 @@
 import React from 'react'
-import { useParams, useNavigate } from 'react-router-dom'
-import { Container, Grid, Box, Button, Chip } from '@mui/material'
+import { useParams } from 'react-router-dom'
+import { Container, Grid, Box, Chip } from '@mui/material'
 
 import useSession from 'hooks/use-session'
 import useFetchCoverage from 'hooks/use-fetch-coverage'
@@ -13,8 +13,7 @@ import useGetOrganization from 'hooks/use-get-organization'
 import FabContact from 'components/FabContact'
 import ButtonContact from 'components/ButtonContact'
 import PanelIndividuals from './components/PanelIndividuals'
-import { ArrowBackIos, Settings } from '@mui/icons-material'
-import useHistoryStore from 'hooks/store/use-history-store'
+import { Settings } from '@mui/icons-material'
 import useIndividualsStore from 'hooks/store/use-individuals-store'
 import useOrganizationsStore from 'hooks/store/use-organizations-store'
 import usePageTitle from 'hooks/use-page-title'
@@ -24,7 +23,6 @@ import DialogEditSettingsCompany from './components/DialogEditSettingsCompany'
 
 const ViewCompany = () => {
   const { id } = useParams()
-  const { history } = useHistoryStore()
   const { user } = useSession()
   const { items: individuals } = useIndividualsStore()
   let { select, update, updateStatus } = useOrganizationsStore()
@@ -39,8 +37,6 @@ const ViewCompany = () => {
   const basics = { logoUrl, name, location, website, industry }
 
   const { status } = useGetOrganization(id)
-
-  const navigate = useNavigate()
 
   const { coverage } = useFetchCoverage({
     object: 'organization',
@@ -91,7 +87,7 @@ const ViewCompany = () => {
               </Box>
             )}
           </Box>
-          {history.length > 1 && (
+          {/* {history.length > 1 && (
             <Box
               color="primary"
               position="absolute"
@@ -108,7 +104,7 @@ const ViewCompany = () => {
                 Back
               </Button>
             </Box>
-          )}
+          )} */}
 
           <Container maxWidth="md">
             <Grid container spacing={2} justifyContent="center" pt={2} pb={2}>
@@ -198,7 +194,16 @@ const ViewCompany = () => {
               )}
             </Grid>
           </Container>
-          <FabContact id={id} type="organization" />
+          <Box
+            sx={{
+              position: 'fixed',
+              zIndex: '100',
+              bottom: 24,
+              right: 24,
+            }}
+          >
+            <FabContact id={id} type="organization" />
+          </Box>
         </>
       )}
     </>

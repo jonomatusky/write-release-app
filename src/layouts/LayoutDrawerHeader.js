@@ -1,6 +1,6 @@
 import React from 'react'
-import { Link, useLocation, useParams } from 'react-router-dom'
-import MuiAppBar from '@mui/material/AppBar'
+import { Link, Outlet, useLocation } from 'react-router-dom'
+// import MuiAppBar from '@mui/material/AppBar'
 import { styled } from '@mui/material/styles'
 
 import {
@@ -21,7 +21,7 @@ import {
   PestControl,
   Business,
   Person,
-  Create,
+  Description,
   // ContentCopy,
   // Create
 } from '@mui/icons-material'
@@ -64,31 +64,31 @@ const closedMixin = theme => ({
 //   ...theme.mixins.toolbar,
 // }))
 
-const AppBar = styled(MuiAppBar, {
-  shouldForwardProp: prop => prop !== 'open',
-})(({ theme, open }) => ({
-  zIndex: theme.zIndex.drawer + 1,
-  transition: theme.transitions.create(['width', 'margin'], {
-    easing: theme.transitions.easing.sharp,
-    duration: theme.transitions.duration.leavingScreen,
-  }),
-  ...(!open && {
-    marginLeft: `calc(${theme.spacing(7)} + 1px)`,
-    width: `calc(100% - ${theme.spacing(7)} - 1px)`,
-    [theme.breakpoints.up('sm')]: {
-      marginLeft: `calc(${theme.spacing(8)} + 1px)`,
-      width: `calc(100% - ${theme.spacing(8)} - 1px)`,
-    },
-  }),
-  ...(open && {
-    marginLeft: drawerWidth,
-    width: `calc(100% - ${drawerWidth}px)`,
-    transition: theme.transitions.create(['width', 'margin'], {
-      easing: theme.transitions.easing.sharp,
-      duration: theme.transitions.duration.enteringScreen,
-    }),
-  }),
-}))
+// const AppBar = styled(MuiAppBar, {
+//   shouldForwardProp: prop => prop !== 'open',
+// })(({ theme, open }) => ({
+//   zIndex: theme.zIndex.drawer + 1,
+//   transition: theme.transitions.create(['width', 'margin'], {
+//     easing: theme.transitions.easing.sharp,
+//     duration: theme.transitions.duration.leavingScreen,
+//   }),
+//   ...(!open && {
+//     marginLeft: `calc(${theme.spacing(7)} + 1px)`,
+//     width: `calc(100% - ${theme.spacing(7)} - 1px)`,
+//     [theme.breakpoints.up('sm')]: {
+//       marginLeft: `calc(${theme.spacing(8)} + 1px)`,
+//       width: `calc(100% - ${theme.spacing(8)} - 1px)`,
+//     },
+//   }),
+//   ...(open && {
+//     marginLeft: drawerWidth,
+//     width: `calc(100% - ${drawerWidth}px)`,
+//     transition: theme.transitions.create(['width', 'margin'], {
+//       easing: theme.transitions.easing.sharp,
+//       duration: theme.transitions.duration.enteringScreen,
+//     }),
+//   }),
+// }))
 
 const Drawer = styled(MuiDrawer, {
   shouldForwardProp: prop => prop !== 'open',
@@ -107,7 +107,7 @@ const Drawer = styled(MuiDrawer, {
   }),
 }))
 
-const DrawerItem = ({ open, label, Icon, path, beta, props }) => {
+const DrawerItem = ({ open, label, Icon, path, beta, ...props }) => {
   const location = useLocation()
   const { pathname } = location
   const { item } = useUserStore()
@@ -122,7 +122,7 @@ const DrawerItem = ({ open, label, Icon, path, beta, props }) => {
       <ListItemButton
         component={Link}
         to={path}
-        selected={pathname === path}
+        selected={'/' + pathname.split('/')[1] === path}
         sx={{
           minHeight: 48,
           justifyContent: open ? 'initial' : 'center',
@@ -147,10 +147,11 @@ const DrawerItem = ({ open, label, Icon, path, beta, props }) => {
   )
 }
 
-const LayoutDrawer = ({ open, children }) => {
-  const { user, logout } = useSession()
+const LayoutDrawerHeader = ({ open, children }) => {
+  // const { user, logout } = useSession()
+  const { user } = useSession()
 
-  const { id } = useParams()
+  // const { id } = useParams()
 
   return (
     <Box display="flex">
@@ -169,12 +170,7 @@ const LayoutDrawer = ({ open, children }) => {
           open={open}
         >
           {open ? (
-            <Box
-              width="100%"
-              display="flex"
-              justifyContent="flex-start"
-              height="48px"
-            >
+            <Toolbar variant="dense">
               <Button
                 startIcon={
                   <Box
@@ -198,7 +194,7 @@ const LayoutDrawer = ({ open, children }) => {
                 color="primary"
                 component={Link}
                 to="/"
-                // sx={{ justifyContent: open ? 'initial' : 'center' }}
+                sx={{ '&:hover': { backgroundColor: 'transparent' } }}
                 fullWidth
                 disableRipple
                 maxWidth="100%"
@@ -211,15 +207,17 @@ const LayoutDrawer = ({ open, children }) => {
                   <b>SourceOn</b>
                 </Typography>
               </Button>
-            </Box>
+            </Toolbar>
           ) : (
             <Box display="flex" justifyContent="center">
               <IconButton
                 color="primary"
                 component={Link}
                 to="/"
-                sx={{ justifyContent: open ? 'initial' : 'center' }}
-                fullWidth
+                sx={{
+                  justifyContent: open ? 'initial' : 'center',
+                  '&:hover': { backgroundColor: 'transparent' },
+                }}
                 disableRipple
                 maxWidth="100%"
               >
@@ -253,7 +251,7 @@ const LayoutDrawer = ({ open, children }) => {
                 <DrawerItem
                   open={open}
                   label="Content"
-                  Icon={Create}
+                  Icon={Description}
                   path="/content"
                   beta
                 />
@@ -265,11 +263,9 @@ const LayoutDrawer = ({ open, children }) => {
                   open={open}
                   label="Report a Bug"
                   Icon={PestControl}
-                  path="/content"
                   component={MuiLink}
                   target="_blank"
                   href="https://airtable.com/shrgP0cjfUzl2lSHS"
-                  beta
                 />
               </List>
             </Box>
@@ -277,58 +273,12 @@ const LayoutDrawer = ({ open, children }) => {
         </Drawer>
       )}
       <Box component="main" sx={{ flexGrow: 1 }}>
-        {!!user ? (
-          <AppBar
-            color="inherit"
-            position="fixed"
-            elevation={0}
-            sx={{
-              // zIndex: theme => theme.zIndex.drawer + 1,
-              // width: `calc(100% - ${drawerWidth}px)`,
-              // ml: `${drawerWidth}px`,
-              borderBottom: '1px solid #e0e0e0',
-            }}
-            open={open}
-          >
-            <Toolbar variant="dense">
-              <Box
-                display="flex"
-                width="100%"
-                alignItems="center"
-                justifyContent="flex-end"
-              >
-                <Box flexGrow={0}>
-                  {/* {id && (
-                    <ButtonCopy
-                      variant="outlined"
-                      color="inherit"
-                      fontSize="small"
-                      size="small"
-                      text={REACT_APP_PUBLIC_URL + pathname}
-                      endIcon={<ContentCopy />}
-                      sx={{ borderRadius: 28, paddingRight: 2, paddingLeft: 2 }}
-                    >
-                      Copy Link
-                    </ButtonCopy>
-                  )} */}
-                  {!id && (
-                    <Button color="primary" size="small" onClick={logout}>
-                      Log Out
-                    </Button>
-                  )}
-                </Box>
-              </Box>
-            </Toolbar>
-          </AppBar>
-        ) : (
-          <></>
-        )}
         <Box component="main" sx={{ flexGrow: 1 }}>
-          {children}
+          <Outlet />
         </Box>
       </Box>
     </Box>
   )
 }
 
-export default LayoutDrawer
+export default LayoutDrawerHeader

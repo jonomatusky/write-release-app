@@ -15,16 +15,7 @@ const FabContact = ({ id, type, label }) => {
   const [show, setShow] = useState(false)
 
   return (
-    <Box
-      onMouseEnter={() => setShow(true)}
-      onMouseLeave={() => setShow(false)}
-      sx={{
-        position: 'fixed',
-        zIndex: '100',
-        bottom: 24,
-        right: 24,
-      }}
-    >
+    <Box onMouseEnter={() => setShow(true)} onMouseLeave={() => setShow(false)}>
       <Fab
         size="large"
         color="primary"

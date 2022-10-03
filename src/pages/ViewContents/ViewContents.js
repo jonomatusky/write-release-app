@@ -16,7 +16,7 @@ import FabAdd from 'components/FabAdd'
 import FuzzySearch from 'fuzzy-search'
 import InfiniteScroll from 'react-infinite-scroll-component'
 import usePageTitle from 'hooks/use-page-title'
-import LayoutDrawer from 'layouts/LayoutDrawer'
+// import LayoutDrawer from 'layouts/LayoutDrawer'
 import { useNavigate, useSearchParams } from 'react-router-dom'
 import SearchBar from 'components/SearchBar'
 import { NoteAdd } from '@mui/icons-material'
@@ -178,157 +178,155 @@ const ViewContents = () => {
   return (
     <>
       <FabAdd Icon={NoteAdd} Dialog={DialogCreateContents} />
-      <LayoutDrawer>
-        <Container maxWidth="lg">
-          <Grid container mt={2} spacing={2}>
-            <Grid item xs={12}>
-              <Grid container spacing={2} justifyContent="space-between">
-                <Grid item xs={12} sm={6} md={3} lg={3}>
-                  <Button
-                    fullWidth
-                    onClick={() => (window.location.hash = '#create')}
-                    endIcon={<NoteAdd />}
-                    variant="contained"
-                    sx={{ height: '40px' }}
-                  >
-                    Create New
-                  </Button>
-                </Grid>
-                <Grid item xs={12} sm={6} md={4} lg={3}>
-                  <Box width="100%">
-                    <Paper variant="outlined">
-                      <SearchBar
-                        value={searchValue}
-                        setValue={handleUpdateSearch}
-                        size="small"
-                      />
-                    </Paper>
-                  </Box>
-                </Grid>
+      {/* <LayoutDrawer open={true}> */}
+      <Container maxWidth="lg">
+        <Grid container spacing={2} pt={2}>
+          <Grid item xs={12}>
+            <Grid container spacing={2} justifyContent="space-between">
+              <Grid item xs={12} sm={6} md={3} lg={3}>
+                <Button
+                  fullWidth
+                  onClick={() => (window.location.hash = '#create')}
+                  endIcon={<NoteAdd />}
+                  variant="contained"
+                  sx={{ height: '40px' }}
+                >
+                  Create New
+                </Button>
+              </Grid>
+              <Grid item xs={12} sm={6} md={4} lg={3}>
+                <Box width="100%">
+                  <SearchBar
+                    value={searchValue}
+                    setValue={handleUpdateSearch}
+                    size="small"
+                  />
+                </Box>
               </Grid>
             </Grid>
-            <Grid item xs={12}>
-              <InfiniteScroll
-                dataLength={itemsOnScreen.length}
-                next={addMore}
-                hasMore={itemsOnScreen.length < list.length}
-                loader={
-                  <Grid container mt={2} mb={2}>
-                    <Grid item xs={12} lg={9} textAlign="center">
-                      <CircularProgress />
-                    </Grid>
+          </Grid>
+          <Grid item xs={12}>
+            <InfiniteScroll
+              dataLength={itemsOnScreen.length}
+              next={addMore}
+              hasMore={itemsOnScreen.length < list.length}
+              loader={
+                <Grid container mt={2} mb={2}>
+                  <Grid item xs={12} lg={9} textAlign="center">
+                    <CircularProgress />
                   </Grid>
-                }
-              >
-                <div ref={wrapperRef}>
-                  <Grid container spacing={2} mb={2}>
-                    <Grid item xs={12}>
-                      <Paper variant="outlined" sx={{ width: '100%' }}>
-                        <TableContainer>
-                          <Table>
-                            <TableHead>
+                </Grid>
+              }
+            >
+              <div ref={wrapperRef}>
+                <Grid container spacing={2} mb={2}>
+                  <Grid item xs={12}>
+                    <Paper variant="outlined" sx={{ width: '100%' }}>
+                      <TableContainer>
+                        <Table>
+                          <TableHead>
+                            <TableRow>
+                              <TableCell width="50%">Name</TableCell>
+                              <TableCell width="15%">Company</TableCell>
+                              <TableCell width="15%">Owner</TableCell>
+                              <TableCell width="15%">Last Modified</TableCell>
+                            </TableRow>
+                          </TableHead>
+                          <TableBody>
+                            {itemsOnScreen.length === 0 && (
                               <TableRow>
-                                <TableCell width="50%">Name</TableCell>
-                                <TableCell width="15%">Company</TableCell>
-                                <TableCell width="15%">Owner</TableCell>
-                                <TableCell width="15%">Last Modified</TableCell>
+                                <TableCell colSpan={3} align="center">
+                                  No results found
+                                </TableCell>
                               </TableRow>
-                            </TableHead>
-                            <TableBody>
-                              {itemsOnScreen.length === 0 && (
-                                <TableRow>
-                                  <TableCell colSpan={3} align="center">
-                                    No results found
-                                  </TableCell>
-                                </TableRow>
-                              )}
-                              {itemsOnScreen.length > 0 &&
-                                itemsOnScreen.map((item, i) => (
-                                  <TableRow
-                                    key={i}
-                                    sx={{ cursor: 'pointer' }}
-                                    onClick={() => {
-                                      if (selectedId === item.id) {
-                                        navigate('/content/' + item.id)
-                                      } else {
-                                        setSelectedId(item.id)
-                                      }
+                            )}
+                            {itemsOnScreen.length > 0 &&
+                              itemsOnScreen.map((item, i) => (
+                                <TableRow
+                                  key={i}
+                                  sx={{ cursor: 'pointer' }}
+                                  onClick={() => {
+                                    if (selectedId === item.id) {
+                                      navigate('/content/' + item.id)
+                                    } else {
+                                      setSelectedId(item.id)
+                                    }
+                                  }}
+                                  selected={selectedId === item.id}
+                                >
+                                  <TableCell
+                                    width="55%"
+                                    sx={{
+                                      maxWidth: 0,
+                                      overflow: 'hidden',
+                                      textOverflow: 'ellipsis',
+                                      whiteSpace: 'nowrap',
                                     }}
-                                    selected={selectedId === item.id}
                                   >
-                                    <TableCell
-                                      width="55%"
-                                      sx={{
-                                        maxWidth: 0,
-                                        overflow: 'hidden',
-                                        textOverflow: 'ellipsis',
-                                        whiteSpace: 'nowrap',
-                                      }}
-                                    >
-                                      {item.name ||
-                                        item.title ||
-                                        item.titleInternal ||
-                                        'No Title'}
-                                    </TableCell>
-                                    <TableCell
-                                      width="15%"
-                                      sx={{
-                                        maxWidth: 0,
-                                        overflow: 'hidden',
-                                        textOverflow: 'ellipsis',
-                                        whiteSpace: 'nowrap',
-                                      }}
-                                    >
-                                      {item.organization}
-                                    </TableCell>
-                                    <TableCell
-                                      width="15%"
-                                      sx={{
-                                        maxWidth: 0,
-                                        overflow: 'hidden',
-                                        textOverflow: 'ellipsis',
-                                        whiteSpace: 'nowrap',
-                                      }}
-                                    >
-                                      {item.owner}
-                                    </TableCell>
-                                    <TableCell
-                                      width="15%"
-                                      sx={{
-                                        maxWidth: 0,
-                                        overflow: 'hidden',
-                                        textOverflow: 'ellipsis',
-                                        whiteSpace: 'nowrap',
-                                      }}
-                                    >
-                                      {/* <Box
+                                    {item.name ||
+                                      item.title ||
+                                      item.titleInternal ||
+                                      'No Title'}
+                                  </TableCell>
+                                  <TableCell
+                                    width="15%"
+                                    sx={{
+                                      maxWidth: 0,
+                                      overflow: 'hidden',
+                                      textOverflow: 'ellipsis',
+                                      whiteSpace: 'nowrap',
+                                    }}
+                                  >
+                                    {item.organization}
+                                  </TableCell>
+                                  <TableCell
+                                    width="15%"
+                                    sx={{
+                                      maxWidth: 0,
+                                      overflow: 'hidden',
+                                      textOverflow: 'ellipsis',
+                                      whiteSpace: 'nowrap',
+                                    }}
+                                  >
+                                    {item.owner}
+                                  </TableCell>
+                                  <TableCell
+                                    width="15%"
+                                    sx={{
+                                      maxWidth: 0,
+                                      overflow: 'hidden',
+                                      textOverflow: 'ellipsis',
+                                      whiteSpace: 'nowrap',
+                                    }}
+                                  >
+                                    {/* <Box
                                   overflow="hidden"
                                   textOverflow="ellipsis"
                                   whiteSpace="nowrap"
                                   > */}
-                                      {new Date(
-                                        item.updatedAt || item.createdAt
-                                      ).toLocaleDateString('en-us', {
-                                        year: 'numeric',
-                                        month: 'short',
-                                        day: 'numeric',
-                                      })}
-                                      {/* </Box> */}
-                                    </TableCell>
-                                  </TableRow>
-                                ))}
-                            </TableBody>
-                          </Table>
-                        </TableContainer>
-                      </Paper>
-                    </Grid>
+                                    {new Date(
+                                      item.updatedAt || item.createdAt
+                                    ).toLocaleDateString('en-us', {
+                                      year: 'numeric',
+                                      month: 'short',
+                                      day: 'numeric',
+                                    })}
+                                    {/* </Box> */}
+                                  </TableCell>
+                                </TableRow>
+                              ))}
+                          </TableBody>
+                        </Table>
+                      </TableContainer>
+                    </Paper>
                   </Grid>
-                </div>
-              </InfiniteScroll>
-            </Grid>
+                </Grid>
+              </div>
+            </InfiniteScroll>
           </Grid>
-        </Container>
-      </LayoutDrawer>
+        </Grid>
+      </Container>
+      {/* </LayoutDrawer> */}
     </>
   )
 }

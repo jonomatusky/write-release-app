@@ -1,4 +1,5 @@
 import React, { useState } from 'react'
+import { Box } from '@mui/material'
 
 import LayoutDialogEdit from 'layouts/LayoutDialogEdit'
 import useContentStore from 'hooks/store/use-content-store'
@@ -7,6 +8,7 @@ import useFormHelper from 'hooks/use-form-helper'
 import useQuestionsStore from 'hooks/store/use-questions-store'
 import useContentTypesStore from 'hooks/store/use-content-types-store'
 import { useNavigate } from 'react-router'
+import { Edit } from '@mui/icons-material'
 
 const DialogContentQuestions = ({ open, onClose, id }) => {
   const { update, select, updateStatus } = useContentStore()
@@ -96,7 +98,12 @@ const DialogContentQuestions = ({ open, onClose, id }) => {
 
   return (
     <LayoutDialogEdit
-      title="Content Info"
+      title={
+        <Box display="flex" alignItems="center" justifyContent="center">
+          <Edit />
+          <Box pl={1}>Background</Box>
+        </Box>
+      }
       open={open}
       onClose={handleClose}
       onSave={submit}
