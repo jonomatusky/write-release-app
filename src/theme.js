@@ -23,6 +23,10 @@ const theme = createTheme({
   },
   typography: {
     fontFamily: ['Work Sans', 'sans-serif'].join(','),
+    button: {
+      textTransform: 'none',
+      fontWeight: 600,
+    },
   },
 })
 

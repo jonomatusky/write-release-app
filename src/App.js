@@ -27,6 +27,7 @@ import EditorTest from 'pages/EditorTest'
 import LayoutDrawerHeader from 'layouts/LayoutDrawerHeader'
 import HeaderViews from 'layouts/HeaderViews'
 import HeaderView from 'layouts/HeaderView'
+import BetaRoute from 'routes/BetaRoute'
 
 const { REACT_APP_POSTHOG_KEY } = process.env
 
@@ -52,7 +53,7 @@ const App = () => {
         <DialogContactForm />
         <Routes>
           {/* <Route path="/" element={<Header />}> */}
-          <Route path="/login" element={<Login />} />
+
           <Route path="/" element={<LayoutDrawerHeader />}>
             <Route path="/" element={<HeaderView copy />}>
               <Route path="/profiles/:id" element={<ViewProfile />} />
@@ -60,7 +61,8 @@ const App = () => {
               <Route path="/" element={<Navigate replace to="/profiles" />} />
             </Route>
             <Route path="/" element={<HeaderView />}>
-              <Route path="/" element={<PrivateRoute component={Outlet} />}>
+              <Route path="/login" element={<Login />} />
+              <Route path="/" element={<BetaRoute component={Outlet} />}>
                 <Route path="/content/:id" element={<ViewContent />} />
               </Route>
             </Route>
@@ -70,8 +72,10 @@ const App = () => {
               <Route path="/" element={<PrivateRoute component={Outlet} />}>
                 <Route path="/profiles" element={<ViewProfiles />} />
                 <Route path="/companies" element={<ViewCompanies />} />
-                <Route path="/content" element={<ViewContents />} />
                 <Route path="*" element={<NotFound />} />
+              </Route>
+              <Route path="/" element={<BetaRoute component={Outlet} />}>
+                <Route path="/content" element={<ViewContents />} />
               </Route>
             </Route>
           </Route>

@@ -62,6 +62,7 @@ const Login = ({ title, text }) => {
                     '&:hover': {
                       backgroundColor: '#ffffff',
                     },
+                    letterSpacing: '0.5px',
                   }}
                   onClick={handleSignInWithGoogle}
                 >
@@ -72,13 +73,7 @@ const Login = ({ title, text }) => {
                       style={{ height: '24px', width: '24px' }}
                     />
                   </Box>
-                  <Typography
-                    letterSpacing={1}
-                    style={{ fontWeight: 500 }}
-                    color="text.secondary"
-                  >
-                    Sign in with Google
-                  </Typography>
+                  Sign in with Google
                 </Button>
               </Grid>
             </Grid>

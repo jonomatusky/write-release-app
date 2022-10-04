@@ -257,7 +257,7 @@ const ViewIndexPage = ({ items, Item, type, mode, Dialog, Icon }) => {
                 )}
                 <Grid item xs={12}>
                   <Button onClick={clear} endIcon={<Clear />} fullWidth>
-                    clear
+                    Clear Search
                   </Button>
                 </Grid>
               </Grid>

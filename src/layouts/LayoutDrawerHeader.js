@@ -29,6 +29,7 @@ import useUserStore from 'hooks/store/use-user-store'
 import Logo from 'assets/images/logo40svg.svg'
 // import ButtonCopy from 'components/ButtonCopy'
 import useSession from 'hooks/use-session'
+import ScrollToTop from 'components/ScrollToTop'
 
 // const { REACT_APP_PUBLIC_URL } = process.env
 
@@ -154,130 +155,138 @@ const LayoutDrawerHeader = ({ open, children }) => {
   // const { id } = useParams()
 
   return (
-    <Box display="flex">
-      {!!user && (
-        <Drawer
-          variant="permanent"
-          // sx={{
-          //   width: drawerWidth,
-          //   flexShrink: 0,
-          //   [`& .MuiDrawer-paper`]: {
-          //     width: drawerWidth,
-          //     boxSizing: 'border-box',
-          //   },
-          //   display: { xs: 'none', sm: 'block' },
-          // }}
-          open={open}
-        >
-          {open ? (
-            <Toolbar variant="dense">
-              <Button
-                startIcon={
-                  <Box
-                    sx={{
-                      height: '100%',
-                      display: 'flex',
-                      alignItems: 'center',
-                      minWidth: 0,
-                      mr: open ? 0 : 'auto',
-                      justifyContent: 'center',
-                    }}
-                  >
-                    <img
-                      src={Logo}
-                      width="30px"
-                      height="30px"
-                      alt="sourceonlogo"
-                    />
-                  </Box>
-                }
-                color="primary"
-                component={Link}
-                to="/"
-                sx={{ '&:hover': { backgroundColor: 'transparent' } }}
-                fullWidth
-                disableRipple
-                maxWidth="100%"
-              >
-                <Typography
-                  variant="h6"
-                  textTransform="none"
-                  sx={{ opacity: open ? 1 : 0 }}
-                >
-                  <b>SourceOn</b>
-                </Typography>
-              </Button>
-            </Toolbar>
-          ) : (
-            <Box display="flex" justifyContent="center">
-              <IconButton
-                color="primary"
-                component={Link}
-                to="/"
-                sx={{
-                  justifyContent: open ? 'initial' : 'center',
-                  '&:hover': { backgroundColor: 'transparent' },
-                }}
-                disableRipple
-                maxWidth="100%"
-              >
-                <img src={Logo} width="30px" height="30px" alt="sourceonlogo" />
-              </IconButton>
-            </Box>
-          )}
-
-          <Box
-            // sx={{ overflow: 'auto' }}
-            display="flex"
-            flexDirection="column"
-            justifyContent="space-between"
-            height="100%"
-            width="100%"
+    <>
+      <ScrollToTop />
+      <Box display="flex">
+        {!!user && (
+          <Drawer
+            variant="permanent"
+            // sx={{
+            //   width: drawerWidth,
+            //   flexShrink: 0,
+            //   [`& .MuiDrawer-paper`]: {
+            //     width: drawerWidth,
+            //     boxSizing: 'border-box',
+            //   },
+            //   display: { xs: 'none', sm: 'block' },
+            // }}
+            open={open}
           >
-            <Box>
-              <List>
-                <DrawerItem
-                  open={open}
-                  label="Profiles"
-                  Icon={Person}
-                  path="/profiles"
-                />
-                <DrawerItem
-                  open={open}
-                  label="Companies"
-                  Icon={Business}
-                  path="/companies"
-                />
-                <DrawerItem
-                  open={open}
-                  label="Content"
-                  Icon={Description}
-                  path="/content"
-                  beta
-                />
-              </List>
+            {open ? (
+              <Toolbar variant="dense">
+                <Button
+                  startIcon={
+                    <Box
+                      sx={{
+                        height: '100%',
+                        display: 'flex',
+                        alignItems: 'center',
+                        minWidth: 0,
+                        mr: open ? 0 : 'auto',
+                        justifyContent: 'center',
+                      }}
+                    >
+                      <img
+                        src={Logo}
+                        width="30px"
+                        height="30px"
+                        alt="sourceonlogo"
+                      />
+                    </Box>
+                  }
+                  color="primary"
+                  component={Link}
+                  to="/"
+                  sx={{ '&:hover': { backgroundColor: 'transparent' } }}
+                  fullWidth
+                  disableRipple
+                  maxWidth="100%"
+                >
+                  <Typography
+                    variant="h6"
+                    textTransform="none"
+                    sx={{ opacity: open ? 1 : 0 }}
+                  >
+                    <b>SourceOn</b>
+                  </Typography>
+                </Button>
+              </Toolbar>
+            ) : (
+              <Box display="flex" justifyContent="center">
+                <IconButton
+                  color="primary"
+                  component={Link}
+                  to="/"
+                  sx={{
+                    justifyContent: open ? 'initial' : 'center',
+                    '&:hover': { backgroundColor: 'transparent' },
+                  }}
+                  disableRipple
+                  maxWidth="100%"
+                >
+                  <img
+                    src={Logo}
+                    width="30px"
+                    height="30px"
+                    alt="sourceonlogo"
+                  />
+                </IconButton>
+              </Box>
+            )}
+
+            <Box
+              // sx={{ overflow: 'auto' }}
+              display="flex"
+              flexDirection="column"
+              justifyContent="space-between"
+              height="100%"
+              width="100%"
+            >
+              <Box>
+                <List>
+                  <DrawerItem
+                    open={open}
+                    label="Profiles"
+                    Icon={Person}
+                    path="/profiles"
+                  />
+                  <DrawerItem
+                    open={open}
+                    label="Companies"
+                    Icon={Business}
+                    path="/companies"
+                  />
+                  <DrawerItem
+                    open={open}
+                    label="Content"
+                    Icon={Description}
+                    path="/content"
+                    beta
+                  />
+                </List>
+              </Box>
+              <Box>
+                <List>
+                  <DrawerItem
+                    open={open}
+                    label="Report a Bug"
+                    Icon={PestControl}
+                    component={MuiLink}
+                    target="_blank"
+                    href="https://airtable.com/shrgP0cjfUzl2lSHS"
+                  />
+                </List>
+              </Box>
             </Box>
-            <Box>
-              <List>
-                <DrawerItem
-                  open={open}
-                  label="Report a Bug"
-                  Icon={PestControl}
-                  component={MuiLink}
-                  target="_blank"
-                  href="https://airtable.com/shrgP0cjfUzl2lSHS"
-                />
-              </List>
-            </Box>
-          </Box>
-        </Drawer>
-      )}
-      <Box component="main" sx={{ flexGrow: 1 }}>
+          </Drawer>
+        )}
         <Box component="main" sx={{ flexGrow: 1 }}>
-          <Outlet />
+          <Box component="main" sx={{ flexGrow: 1 }}>
+            <Outlet />
+          </Box>
         </Box>
       </Box>
-    </Box>
+    </>
   )
 }
 
