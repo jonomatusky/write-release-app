@@ -80,12 +80,12 @@ const OrganizationCard = ({ id }) => {
                   display="flex"
                   width="100%"
                   overflow="auto"
-                  msOverflowStyle="none"
-                  scrollbarWidth="none"
                   sx={{
                     '&::-webkit-scrollbar': {
                       display: 'none',
                     },
+                    msOverflowStyle: 'none',
+                    scrollbarWidth: 'none',
                   }}
                 >
                   {tags.map(tag => (

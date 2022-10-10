@@ -11,19 +11,20 @@ const Form = ({ formFields, submit, control, spacing }) => {
   return (
     <form onSubmit={handleSubmit}>
       <Grid container spacing={spacing === 0 ? 0 : spacing || 3}>
-        {formFields.map(formField => {
-          const { name, options } = formField
+        {!!formFields &&
+          formFields.map(formField => {
+            const { name, options } = formField
 
-          return (
-            <Grid item xs={12} key={name}>
-              <FormField
-                formField={formField}
-                control={control}
-                options={options}
-              />
-            </Grid>
-          )
-        })}
+            return (
+              <Grid item xs={12} key={name}>
+                <FormField
+                  formField={formField}
+                  control={control}
+                  options={options}
+                />
+              </Grid>
+            )
+          })}
       </Grid>
       <button type="submit" style={{ display: 'none' }} />
     </form>

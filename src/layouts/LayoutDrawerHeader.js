@@ -17,14 +17,7 @@ import {
   IconButton,
   Typography,
 } from '@mui/material'
-import {
-  PestControl,
-  Business,
-  Person,
-  Description,
-  // ContentCopy,
-  // Create
-} from '@mui/icons-material'
+import { Business, Person, Description, Flag } from '@mui/icons-material'
 import useUserStore from 'hooks/store/use-user-store'
 import Logo from 'assets/images/logo40svg.svg'
 // import ButtonCopy from 'components/ButtonCopy'
@@ -33,7 +26,7 @@ import ScrollToTop from 'components/ScrollToTop'
 
 // const { REACT_APP_PUBLIC_URL } = process.env
 
-const drawerWidth = 200
+const drawerWidth = 220
 
 const openedMixin = theme => ({
   width: drawerWidth,
@@ -134,7 +127,7 @@ const DrawerItem = ({ open, label, Icon, path, beta, ...props }) => {
         <ListItemIcon
           sx={{
             minWidth: 0,
-            mr: open ? 3 : 'auto',
+            mr: open ? 2 : 'auto',
             justifyContent: 'center',
           }}
         >
@@ -200,7 +193,7 @@ const LayoutDrawerHeader = ({ open, children }) => {
                   sx={{ '&:hover': { backgroundColor: 'transparent' } }}
                   fullWidth
                   disableRipple
-                  maxWidth="100%"
+                  // maxWidth="100%"
                 >
                   <Typography
                     variant="h6"
@@ -222,7 +215,7 @@ const LayoutDrawerHeader = ({ open, children }) => {
                     '&:hover': { backgroundColor: 'transparent' },
                   }}
                   disableRipple
-                  maxWidth="100%"
+                  // maxWidth="100%"
                 >
                   <img
                     src={Logo}
@@ -269,11 +262,11 @@ const LayoutDrawerHeader = ({ open, children }) => {
                 <List>
                   <DrawerItem
                     open={open}
-                    label="Report a Bug"
-                    Icon={PestControl}
+                    label="Requests & Bugs"
+                    Icon={Flag}
                     component={MuiLink}
                     target="_blank"
-                    href="https://airtable.com/shrgP0cjfUzl2lSHS"
+                    href={`https://form.asana.com/?k=MTBXGOGWlSDhmqjbi4ipFw&d=38917462427951`}
                   />
                 </List>
               </Box>

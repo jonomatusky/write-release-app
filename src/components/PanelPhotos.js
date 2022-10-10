@@ -109,12 +109,12 @@ const PanelIndividuals = ({ individuals, id }) => {
           flexWrap="none"
           width="100%"
           scrollBehavior="smooth"
-          msOverflowStyle="none"
-          scrollbarWidth="none"
           sx={{
             '&::-webkit-scrollbar': {
               display: 'none',
             },
+            msOverflowStyle: 'none',
+            scrollbarWidth: 'none',
           }}
           ref={scrl}
           onScroll={scrollCheck}

@@ -67,8 +67,6 @@ const ViewProfile = () => {
   ]
 
   const handleUpdate = async values => {
-    console.log(id)
-    console.log(values)
     try {
       await update({ id, ...values })
     } catch (err) {

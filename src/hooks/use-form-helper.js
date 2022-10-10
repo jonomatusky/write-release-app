@@ -29,6 +29,8 @@ const useFormHelper = ({ formFields, initialValues, onSubmit }) => {
     handleSubmit,
     setFocus,
     reset: handleReset,
+    getValues,
+    watch,
   } = useForm({
     defaultValues,
     resolver: yupResolver(validationSchema),
@@ -45,7 +47,7 @@ const useFormHelper = ({ formFields, initialValues, onSubmit }) => {
 
   const submit = handleSubmit(onSubmit)
 
-  return { control, submit, setFocus, reset }
+  return { control, submit, setFocus, reset, getValues, watch }
 }
 
 export default useFormHelper

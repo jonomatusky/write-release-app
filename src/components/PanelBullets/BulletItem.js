@@ -60,6 +60,7 @@ const BulletItem = ({
               // rows={2}
               autoFocus={true}
               InputProps={{ disableUnderline: true }}
+              inputProps={{ maxLength: 140 }}
             />
             {/* </InlineTextEdit> */}
           </Box>

@@ -1,87 +1,118 @@
-import React, { useState } from 'react'
+import React from 'react'
 import { useNavigate } from 'react-router-dom'
-import {
-  Grid,
-  Box,
-  Typography,
-  Collapse,
-  // TextField
-} from '@mui/material'
+import { Grid, Box } from '@mui/material'
+import * as Yup from 'yup'
+
 import useOrganizationsStore from 'hooks/store/use-organizations-store'
 import LayoutDialogEdit from 'layouts/LayoutDialogEdit'
 import { NoteAdd } from '@mui/icons-material'
-import AutocompleteOrg from 'components/AutocompleteOrg'
-import BarContentType from 'components/BarContentType'
 import useContentStore from 'hooks/store/use-content-store'
 import useContentTypesStore from 'hooks/store/use-content-types-store'
-// import useIndividualsStore from 'hooks/store/use-individuals-store'
-import Link from 'components/Link'
 import useUserStore from 'hooks/store/use-user-store'
-// import BarIndividuals from 'components/BarIndividuals'
+import useFormHelper from 'hooks/use-form-helper'
+import Form from 'components/Form/Form'
 
 const DialogCreateContent = ({ open, onClose }) => {
   const navigate = useNavigate()
   const { create, createStatus } = useContentStore()
-  const { select: selectContentType } = useContentTypesStore()
-  const { select: selectOrganization } = useOrganizationsStore()
+  const { items: contentTypes, select: selectContentType } =
+    useContentTypesStore()
+  const { items: organizations, select: selectOrganization } =
+    useOrganizationsStore()
   const { item: user } = useUserStore()
-  const [organizationId, setOrganizationId] = useState('')
-  const [contentTypeId, setContentTypeId] = useState('')
-  // const [individualsQuoted, setIndividualsQuoted] = useState([])
-  // const [individualsMentioned, setIndividualsMentioned] = useState([])
-  // const [text, setText] = useState('')
 
-  const contentType = selectContentType(contentTypeId)
-  const organization = selectOrganization(organizationId)
-  // const { items } = useIndividualsStore()
-  // const individuals = items
-  //   .filter(item => item.organization === organizationId)
-  //   .filter(item => !individualsQuoted.map(item2 => item2.id).includes(item.id))
-
-  const handleSubmit = async () => {
-    let values = {}
-    values.organizations = [organizationId]
-    values.type = contentTypeId
+  const handleSubmit = async values => {
     values.owner = user.id
-    // values.individualsQuoted = individualsQuoted.map(item => item.id)
-    // values.individualsMentioned = individualsMentioned.map(item => item.id)
+    let date = values.date ? new Date(values.date) : new Date()
+
+    const organization = selectOrganization(values.organization)
+    const contentType = selectContentType(values.contentType)
+
     values.titleInternal =
-      organization.name +
+      organization +
       ' ' +
-      contentType.secondary +
+      contentType +
       ' Release - ' +
-      new Date().toLocaleDateString('en-us', {
+      date.toLocaleDateString('en-us', {
         year: 'numeric',
         month: 'short',
         day: 'numeric',
       })
-    // values.text = text
     try {
       const content = await create(values)
       window.location.hash = ''
       navigate(`/content/${content.id}`)
     } catch (err) {}
-    // console.log(values)
+    console.log(values)
   }
 
   const handleClose = () => {
     onClose()
   }
 
-  const handleChangeCompany = id => {
-    setOrganizationId(id)
-    // setIndividualsMentioned([])
-    // setIndividualsQuoted([])
-    // if (id === '') {
-    //   setIndividualsMentioned([])
-    //   setIndividualsQuoted([])
-    // }
-  }
+  // const audienceOptions = [
+  //   'Customers',
+  //   'Investors',
+  //   'Employees',
+  //   'Media',
+  //   'Other',
+  // ]
 
-  // const handleChangeQuotedIndividual = individuals => {
-  //   setIndividualsQuoted(individuals)
-  //   setIndividualsMentioned([])
-  // }
+  // const toneOptions = [
+  //   'Journalistic',
+  //   'Persuasive',
+  //   'Witty',
+  //   'Informative',
+  //   'Enthusiastic',
+  //   'Entertaining',
+  //   'Other',
+  // ]
+
+  const formFields = [
+    {
+      label: 'What type of press are you writing?',
+      name: 'contentType',
+      options:
+        contentTypes.map(contentType => ({
+          ...contentType,
+          name: contentType.secondary,
+        })) || [],
+      type: 'auto',
+      validation: Yup.string().required('Type is required'),
+    },
+    {
+      label: 'Which company is this for?',
+      name: 'organization',
+      options: organizations || [],
+      type: 'auto',
+      validation: Yup.string().required('Company is required'),
+    },
+    {
+      label: 'When is this release going out?',
+      name: 'date',
+      type: 'date',
+    },
+    // {
+    //   label: `What's the target audience for this release?`,
+    //   name: 'audiences',
+    //   options: audienceOptions,
+    //   type: 'auto',
+    // },
+    // {
+    //   label: `What's the tone of this release?`,
+    //   name: 'tone',
+    //   options: toneOptions,
+    //   type: 'auto',
+    // },
+  ]
+
+  const { control, submit } = useFormHelper({
+    formFields,
+    onSubmit: handleSubmit,
+    initialValues: {
+      tone: 'Journalistic',
+    },
+  })
 
   return (
     <LayoutDialogEdit
@@ -93,55 +124,14 @@ const DialogCreateContent = ({ open, onClose }) => {
       }
       open={open}
       onClose={handleClose}
-      onSave={handleSubmit}
+      onSave={submit}
       loading={createStatus === 'loading'}
+      label="Create"
     >
-      <Grid container justifyContent="center" pb={2} mt={1} mb={1}>
-        <Grid item xs={12} pb={3}>
-          <BarContentType
-            id={contentTypeId}
-            setId={setContentTypeId}
-            label="What type of press release are you writing?"
-          />
+      <Grid container justifyContent="center" spacing={3} pb={2} pt={1}>
+        <Grid item xs={12}>
+          <Form formFields={formFields} submit={submit} control={control} />
         </Grid>
-        <Collapse
-          in={!!contentTypeId}
-          orientation="vertical"
-          component={Grid}
-          item
-          xs={12}
-          pb={1}
-        >
-          <AutocompleteOrg
-            id={organizationId}
-            setId={handleChangeCompany}
-            label="Which company is this for?"
-            // error={error}
-          />
-          <Typography fontSize="10pt" pt={0.5} pl={0.5}>
-            Don't see the company in the list?{' '}
-            <Link to="/companies#create">Create a new one</Link>{' '}
-          </Typography>
-        </Collapse>
-        {/* <Collapse
-          in={!!organizationId}
-          orientation="vertical"
-          component={Grid}
-          item
-          xs={12}
-          pb={1}
-        >
-          <BarIndividuals
-            label="Who should be quoted in this release?"
-            values={individualsQuoted}
-            setValues={handleChangeQuotedIndividual}
-            orgId={organizationId}
-          />
-          <Typography fontSize="10pt" pt={0.5} pl={0.5}>
-            Don't see them in the list?{' '}
-            <Link to="/profiles#create">Create a new profile</Link>{' '}
-          </Typography>
-        </Collapse> */}
         {/* <Collapse
           in={!!organizationId}
           orientation="vertical"

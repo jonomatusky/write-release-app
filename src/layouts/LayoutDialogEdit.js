@@ -22,6 +22,7 @@ const LayoutDialogEdit = ({
   loading,
   children,
   noScroll,
+  label,
 }) => {
   return (
     <Dialog
@@ -81,7 +82,7 @@ const LayoutDialogEdit = ({
               size="large"
               loading={loading}
             >
-              Save
+              {label || 'Save'}
             </LoadingButton>
           </Box>
         </Box>

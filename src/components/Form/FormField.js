@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { Controller } from 'react-hook-form'
 import {
   Typography,
@@ -9,14 +9,53 @@ import {
   FormControl,
   InputLabel,
   Select,
+  Autocomplete,
 } from '@mui/material'
 import TextFielder from 'components/TextFielder'
 
-const FormField = ({ formField, control, options }) => {
+const FormField = ({ formField, control, options, onAddItem }) => {
   const { name, label, type, helpText, placeholder } = formField
+  // const [inputValue, setInputValue] = useState(type === 'auto-multi' ? [] : '')
+  const [inputValue, setInputValue] = useState('')
+
+  let optionsAreObjects
+
+  if (options && options.length > 0) {
+    optionsAreObjects = typeof options[0] === 'object'
+  }
 
   const renderField = ({ field, fieldState }) => {
     const { onChange, onBlur, value } = field
+
+    let valueForAuto = type === 'auto-multi' ? [] : null
+
+    if (
+      (type === 'auto' || type === 'auto-multi') &&
+      options &&
+      options.length > 0
+    ) {
+      if (optionsAreObjects) {
+        if (type === 'auto') {
+          valueForAuto = options?.find(option => option.id === value) || null
+        } else {
+          valueForAuto = value
+            ? value.map(value => options?.find(option => option.id === value))
+            : []
+        }
+      } else {
+        valueForAuto = value || null
+      }
+    }
+
+    const handleAutocompleteChange = (e, v) => {
+      let newValue = optionsAreObjects
+        ? type === 'auto-multi'
+          ? v.map(value => value.id)
+          : v?.id
+        : v
+      onChange(newValue)
+    }
+
     const { error } = fieldState
 
     const handleCheckboxChange = event => {
@@ -50,9 +89,11 @@ const FormField = ({ formField, control, options }) => {
               value={value.toString().slice(0, 10)}
               onChange={onChange}
               onBlur={onBlur}
-              error={Boolean(error)}
-              helperText={error?.message}
+              error={error}
               type="date"
+              InputLabelProps={{
+                shrink: true,
+              }}
             />
             {!!helpText && (
               <Typography fontSize="14px" color="secondary" pt={1}>
@@ -73,8 +114,7 @@ const FormField = ({ formField, control, options }) => {
               value={value.toString().slice(0, 10)}
               onChange={onChange}
               onBlur={onBlur}
-              error={Boolean(error)}
-              helperText={error?.message}
+              error={error}
               type="tel"
             />
             {!!helpText && (
@@ -111,14 +151,45 @@ const FormField = ({ formField, control, options }) => {
               value={value}
               onChange={onChange}
               onBlur={onBlur}
-              error={Boolean(error)}
-              helperText={error?.message}
+              error={error}
               type={type}
               multiline
               rows={4}
             />
             {!!helpText && (
               <Typography fontSize="14px" color="secondary" pt={1}>
+                <i>{helpText}</i>
+              </Typography>
+            )}
+          </>
+        )
+      case 'auto':
+      case 'auto-multi':
+        return (
+          <>
+            <Autocomplete
+              fullWidth
+              multiple={type === 'auto-multi'}
+              options={options || []}
+              filterSelectedOptions
+              renderInput={params => (
+                <TextFielder label={label} {...params} error={error} />
+              )}
+              getOptionLabel={
+                typeof options[0] === 'object'
+                  ? option => option?.name
+                  : option => option
+              }
+              value={valueForAuto}
+              onChange={handleAutocompleteChange}
+              inputValue={inputValue}
+              onInputChange={(e, v) => {
+                setInputValue(v)
+              }}
+              openOnFocus
+            />
+            {!!helpText && (
+              <Typography fontSize="14px" color="secondary">
                 <i>{helpText}</i>
               </Typography>
             )}
@@ -133,8 +204,7 @@ const FormField = ({ formField, control, options }) => {
               value={value}
               onChange={onChange}
               onBlur={onBlur}
-              error={Boolean(error)}
-              helperText={error?.message}
+              error={error}
               type={type}
             />
             {!!helpText && (

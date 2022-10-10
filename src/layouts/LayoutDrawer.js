@@ -107,7 +107,7 @@ const Drawer = styled(MuiDrawer, {
   }),
 }))
 
-const DrawerItem = ({ open, label, Icon, path, beta, props }) => {
+const DrawerItem = ({ open, label, Icon, path, beta, ...props }) => {
   const location = useLocation()
   const { pathname } = location
   const { item } = useUserStore()
@@ -263,12 +263,12 @@ const LayoutDrawer = ({ open, children }) => {
               <List>
                 <DrawerItem
                   open={open}
-                  label="Report a Bug"
+                  label="Report an Issue "
                   Icon={PestControl}
                   path="/content"
                   component={MuiLink}
                   target="_blank"
-                  href="https://airtable.com/shrgP0cjfUzl2lSHS"
+                  href={`https://form.asana.com/?k=MTBXGOGWlSDhmqjbi4ipFw&d=38917462427951`}
                   beta
                 />
               </List>

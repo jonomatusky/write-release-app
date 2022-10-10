@@ -1,7 +1,7 @@
 import React from 'react'
 import { TextField } from '@mui/material'
 
-const TextFielder = props => {
+const TextFielder = ({ error, ...props }) => {
   return (
     <TextField
       fullWidth
@@ -10,6 +10,8 @@ const TextFielder = props => {
       // InputLabelProps={{
       //   shrink: true,
       // }}
+      error={Boolean(error)}
+      helperText={error?.message}
       {...props}
     />
   )

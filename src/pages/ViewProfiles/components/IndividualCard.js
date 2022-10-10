@@ -22,7 +22,7 @@ import useIndividualStore from 'hooks/store/use-individuals-store'
 import useFetchAvatar from 'hooks/use-fetch-avatar'
 import useOrganizationsStore from 'hooks/store/use-organizations-store'
 
-const IndividualCard = ({ id }) => {
+const IndividualCard = ({ id, onClick, hideTags }) => {
   const { select } = useIndividualStore()
   const { select: selectOrganization } = useOrganizationsStore()
   const individual = select(id)
@@ -50,8 +50,12 @@ const IndividualCard = ({ id }) => {
   })
 
   return (
-    <Card variant="outlined">
-      <CardActionArea component={RouterLink} to={'/profiles/' + id}>
+    <Card variant="outlined" sx={{ borderRadius: 2 }}>
+      <CardActionArea
+        onClick={!!onClick ? onClick : null}
+        component={!!onClick ? null : RouterLink}
+        to={!!onClick ? null : '/profiles/' + id}
+      >
         <Box p={2} overflow="hidden" width="100%">
           <Grid container sx={{ width: '100%', overflow: 'hidden' }}>
             <Grid item xs={6} sm={3} textAlign="center">
@@ -93,45 +97,53 @@ const IndividualCard = ({ id }) => {
                     </Typography>
                   </Box>
                 )}
-                <Box
-                  display="flex"
-                  width="100%"
-                  overflow="auto"
-                  msOverflowStyle="none"
-                  scrollbarWidth="none"
-                  sx={{
-                    '&::-webkit-scrollbar': {
-                      display: 'none',
-                    },
-                  }}
-                >
-                  {tags.map(tag => (
-                    <Box pt={0.5} pr={0.5} key={tag.name} maxHeight="112px">
-                      <Chip label={tag.name} color="primary" size="small" />
+                {!hideTags && (
+                  <>
+                    <Box
+                      display="flex"
+                      width="100%"
+                      overflow="auto"
+                      sx={{
+                        '&::-webkit-scrollbar': {
+                          display: 'none',
+                        },
+                        msOverflowStyle: 'none',
+                        scrollbarWidth: 'none',
+                      }}
+                    >
+                      {tags.map(tag => (
+                        <Box pt={0.5} pr={0.5} key={tag.name} maxHeight="112px">
+                          <Chip label={tag.name} color="primary" size="small" />
+                        </Box>
+                      ))}
                     </Box>
-                  ))}
-                </Box>
-                <Box
-                  display="flex"
-                  width="100%"
-                  overflow="auto"
-                  msOverflowStyle="none"
-                  scrollbarWidth="none"
-                  sx={{
-                    '&::-webkit-scrollbar': {
-                      display: 'none',
-                    },
-                  }}
-                >
-                  {qualities.map(quality => {
-                    const { name, label } = quality
-                    return individual[quality.name] ? (
-                      <Box pt={0.5} pr={0.5} key={name}>
-                        <Chip label={label} color="secondary" size="small" />
-                      </Box>
-                    ) : null
-                  })}
-                </Box>
+                    <Box
+                      display="flex"
+                      width="100%"
+                      overflow="auto"
+                      sx={{
+                        '&::-webkit-scrollbar': {
+                          display: 'none',
+                        },
+                        msOverflowStyle: 'none',
+                        scrollbarWidth: 'none',
+                      }}
+                    >
+                      {qualities.map(quality => {
+                        const { name, label } = quality
+                        return individual[quality.name] ? (
+                          <Box pt={0.5} pr={0.5} key={name}>
+                            <Chip
+                              label={label}
+                              color="secondary"
+                              size="small"
+                            />
+                          </Box>
+                        ) : null
+                      })}
+                    </Box>
+                  </>
+                )}
               </Box>
             </Grid>
           </Grid>

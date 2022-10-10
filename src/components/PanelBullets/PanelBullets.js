@@ -6,6 +6,7 @@ import {
   ListItem,
   ListItemIcon,
   ListItemText,
+  Link,
 } from '@mui/material'
 
 import PanelEdit from 'layouts/PanelEdit'
@@ -27,7 +28,7 @@ const PanelBullets = ({
       dialogProps={{
         title: dialogTitle,
         field,
-        placeholders: placeholders,
+        placeholders,
         bullets,
         update,
         updateStatus,
@@ -52,6 +53,11 @@ const PanelBullets = ({
                 <ListItemText primary={bullet.text} />
               </ListItem>
             ))}
+            {bullets.length === 0 && (
+              <Typography textAlign="center" variant="body2">
+                You haven't added any bullets yet
+              </Typography>
+            )}
           </List>
         </Box>
       </Box>
