@@ -22,22 +22,32 @@ const DialogCreateContent = ({ open, onClose }) => {
   const { item: user } = useUserStore()
 
   const handleSubmit = async values => {
+    console.log(values)
     values.owner = user.id
+    values.organizations = [values.organization]
     let date = values.date ? new Date(values.date) : new Date()
 
     const organization = selectOrganization(values.organization)
-    const contentType = selectContentType(values.contentType)
+    const contentType = selectContentType(values.type)
 
     values.titleInternal =
-      organization +
+      organization.name +
       ' ' +
-      contentType +
-      ' Release - ' +
+      contentType.secondary +
+      ' ' +
+      contentType.primary +
+      ' ' +
       date.toLocaleDateString('en-us', {
         year: 'numeric',
         month: 'short',
         day: 'numeric',
       })
+
+    values.setupStage =
+      contentType.secondary === 'New Hire' ||
+      contentType.secondary === 'Board Appointment'
+        ? 'hiring'
+        : 'subject'
     try {
       const content = await create(values)
       window.location.hash = ''
@@ -71,7 +81,7 @@ const DialogCreateContent = ({ open, onClose }) => {
   const formFields = [
     {
       label: 'What type of press are you writing?',
-      name: 'contentType',
+      name: 'type',
       options:
         contentTypes.map(contentType => ({
           ...contentType,
@@ -109,9 +119,6 @@ const DialogCreateContent = ({ open, onClose }) => {
   const { control, submit } = useFormHelper({
     formFields,
     onSubmit: handleSubmit,
-    initialValues: {
-      tone: 'Journalistic',
-    },
   })
 
   return (

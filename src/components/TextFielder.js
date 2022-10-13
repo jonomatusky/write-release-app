@@ -1,19 +1,35 @@
 import React from 'react'
-import { TextField } from '@mui/material'
+import { TextField, Typography } from '@mui/material'
 
-const TextFielder = ({ error, ...props }) => {
+const TextFielder = ({ label, helpText, error, ...props }) => {
   return (
-    <TextField
-      fullWidth
-      variant="outlined"
-      autoComplete="off"
-      // InputLabelProps={{
-      //   shrink: true,
-      // }}
-      error={Boolean(error)}
-      helperText={error?.message}
-      {...props}
-    />
+    <label>
+      <Typography color="secondary" pb={1} variant="body2">
+        {label}
+      </Typography>
+      {!!helpText && (
+        <Typography
+          variant="body2"
+          fontSize="14px"
+          color="secondary"
+          mt={-0.5}
+          pb={1}
+        >
+          <i>{helpText}</i>
+        </Typography>
+      )}
+      <TextField
+        fullWidth
+        variant="outlined"
+        autoComplete="off"
+        // InputLabelProps={{
+        //   shrink: true,
+        // }}
+        error={Boolean(error)}
+        helperText={error ? error.message : null}
+        {...props}
+      />
+    </label>
   )
 }
 

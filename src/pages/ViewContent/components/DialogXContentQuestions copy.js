@@ -1,11 +1,10 @@
-import React, { useState } from 'react'
+import React from 'react'
 import { Box, Collapse, Grid } from '@mui/material'
 import * as Yup from 'yup'
 import { TransitionGroup } from 'react-transition-group'
 
 import LayoutDialogEdit from 'layouts/LayoutDialogEdit'
 import useContentStore from 'hooks/store/use-content-store'
-import FormCreateContent from './FormEditContent'
 import useFormHelper from 'hooks/use-form-helper'
 import useQuestionsStore from 'hooks/store/use-questions-store'
 import useContentTypesStore from 'hooks/store/use-content-types-store'
@@ -13,21 +12,18 @@ import { useNavigate } from 'react-router'
 import { Edit } from '@mui/icons-material'
 import Form from 'components/Form/Form'
 import useIndividualsStore from 'hooks/store/use-individuals-store'
-import Autocompleter from 'components/Autocompleter'
 import IndividualPanel from './IndividualPanel'
+import DialogCreateIndividual from './DialogCreateEditIndividual'
 
 const DialogContentQuestions = ({ open, onClose, id }) => {
   const { update, select, updateStatus } = useContentStore()
-  const {
-    items: individuals,
-    fetchStatus: fetchIndividualsStatus,
-    update: updateIndividual,
-  } = useIndividualsStore()
+  const { items: individuals, fetchStatus: fetchIndividualsStatus } =
+    useIndividualsStore()
   const content = select(id)
   const navigate = useNavigate()
 
   const individualsOptions = individuals.filter(
-    individual => individual.organization === content.organization
+    individual => individual.organization === content.organizations[0]
   )
 
   const handleRemove = async () => {
@@ -39,11 +35,11 @@ const DialogContentQuestions = ({ open, onClose, id }) => {
     }
   }
 
-  const [state, setState] = useState({
-    individualsHired: content.individualsHired || [],
-    individualsQuoted: content.individualsQuoted || [],
-    individualsMentioned: content.individualsMentioned || [],
-  })
+  // const [state, setState] = useState({
+  //   individualsHired: content.individualsHired || [],
+  //   individualsQuoted: content.individualsQuoted || [],
+  //   individualsMentioned: content.individualsMentioned || [],
+  // })
 
   const {
     items: allQuestions,
@@ -91,6 +87,8 @@ const DialogContentQuestions = ({ open, onClose, id }) => {
       options: individualsOptions || [],
       type: 'auto-multi',
       validation: Yup.array().required('Please select at least one person'),
+      AddDialog: DialogCreateIndividual,
+      addDialogProps: { organizationId },
     },
     // {
     //   label: `Who else should be quoted in this release?`,
@@ -117,14 +115,14 @@ const DialogContentQuestions = ({ open, onClose, id }) => {
     // },
   ]
 
-  const initialValues = content.answers?.reduce(
-    (acc, answer) => ({ ...acc, [answer.question]: answer.answer }),
-    {}
-  )
+  // const initialValues = content.answers?.reduce(
+  //   (acc, answer) => ({ ...acc, [answer.question]: answer.answer }),
+  //   {}
+  // )
 
-  const handleSubmitIndividual = async values => {
-    updateIndividual(values)
-  }
+  // const handleSubmitIndividual = async values => {
+  //   updateIndividual(values)
+  // }
 
   const handleSubmit = async values => {
     // const answers = Object.keys(values).map(key => ({
@@ -136,33 +134,33 @@ const DialogContentQuestions = ({ open, onClose, id }) => {
     //   .reduce((acc, item) => [...acc, ...item], [])
     //   .filter((item, index, self) => self.indexOf(item) === index)
 
-    const newContent = { hiredIndividuals, individuals: hiredIndividuals }
-
-    try {
-      for (let i=0hiredIndividual in hiredIndividuals) {
-        updateIndividual(hiredIndividual)
-      }
-      update(newContent)
-      onClose()
-    } catch (err) {
-      console.log(err)
+    const newContent = {
+      id,
+      ...values,
+      hiredIndividuals,
+      individuals: hiredIndividuals,
     }
 
     try {
-      await update({ id, ...newContent })
+      // for (let i = 0; i < hiredIndividuals.length; i++) {
+      //   await updateIndividual(hiredIndividuals[i])
+      // }
+      await update(newContent)
       await onClose()
-    } catch (err) {}
+    } catch (err) {
+      console.log(err)
+    }
   }
 
   const { control, submit, reset, watch } = useFormHelper({
     formFields,
-    // initialValues,
+    initialValues: content,
     onSubmit: handleSubmit,
   })
 
   const handleClose = () => {
-    onClose()
     reset()
+    onClose()
   }
 
   const hiredIndividuals = watch('individualsSubjects') || []
@@ -180,11 +178,14 @@ const DialogContentQuestions = ({ open, onClose, id }) => {
       onSave={submit}
       onRemove={handleRemove}
       loading={updateStatus === 'loading'}
+      // maxWidth="md"
     >
       {fetchQuestionsStatus === 'succeeded' &&
         fetchContentTypesStatus === 'succeeded' && (
-          <Grid container justifyContent="center" spacing={3} pb={2} pt={1}>
-            {/* <Grid item xs={12}>
+          <Box display="flex">
+            {/* <Box width="200px"></Box> */}
+            <Grid container justifyContent="center" spacing={3} pb={2} pt={1}>
+              {/* <Grid item xs={12}>
               <Autocompleter
                 label="Who's being hired?"
                 name="individualsSubjects"
@@ -194,39 +195,44 @@ const DialogContentQuestions = ({ open, onClose, id }) => {
                 multi
               />
             </Grid> */}
-            <Grid item xs={12}>
-              <Form submit={submit} control={control} formFields={formFields} />
+              <Grid item xs={12}>
+                <Form
+                  submit={submit}
+                  control={control}
+                  formFields={formFields}
+                />
+              </Grid>
+              <Grid item xs={12}>
+                <TransitionGroup>
+                  {fetchIndividualsStatus === 'succeeded' &&
+                    hiredIndividuals.map(individualId => {
+                      return (
+                        <Collapse
+                          orientation="vertical"
+                          component={Grid}
+                          item
+                          xs={12}
+                          pb={1}
+                          key={individualId}
+                        >
+                          <IndividualPanel
+                            id={individualId}
+                            hideTags
+                            onClick={() => {}}
+                            // onSubmit={values =>
+                            //   handleSubmitIndividual({
+                            //     id: individualId,
+                            //     ...values,
+                            //   })
+                            // }
+                          />
+                        </Collapse>
+                      )
+                    })}
+                </TransitionGroup>
+              </Grid>
             </Grid>
-            <Grid item xs={12}>
-              <TransitionGroup>
-                {fetchIndividualsStatus === 'succeeded' &&
-                  hiredIndividuals.map(individualId => {
-                    return (
-                      <Collapse
-                        orientation="vertical"
-                        component={Grid}
-                        item
-                        xs={12}
-                        pb={1}
-                        key={individualId}
-                      >
-                        <IndividualPanel
-                          id={individualId}
-                          hideTags
-                          onClick={() => {}}
-                          onSubmit={values =>
-                            handleSubmitIndividual({
-                              id: individualId,
-                              ...values,
-                            })
-                          }
-                        />
-                      </Collapse>
-                    )
-                  })}
-              </TransitionGroup>
-            </Grid>
-          </Grid>
+          </Box>
           // <FormCreateContent
           //   control={control}
           //   submit={submit}

@@ -13,15 +13,11 @@ const Form = ({ formFields, submit, control, spacing }) => {
       <Grid container spacing={spacing === 0 ? 0 : spacing || 3}>
         {!!formFields &&
           formFields.map(formField => {
-            const { name, options } = formField
+            const { name } = formField
 
             return (
               <Grid item xs={12} key={name}>
-                <FormField
-                  formField={formField}
-                  control={control}
-                  options={options}
-                />
+                <FormField {...formField} control={control} />
               </Grid>
             )
           })}

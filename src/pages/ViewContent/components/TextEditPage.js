@@ -3,10 +3,8 @@ import { useParams } from 'react-router-dom'
 import {
   Grid,
   Box,
-  Chip,
   Typography,
   IconButton,
-  Button,
   Card,
   CardActionArea,
   Toolbar,
@@ -26,14 +24,15 @@ import useContentStore from 'hooks/store/use-content-store'
 // import TextEditor from './TextEditor'
 import { use100vh } from 'hooks/use-100-vh'
 import useRequest from 'hooks/use-request'
-import useContentTypesStore from 'hooks/store/use-content-types-store'
-import useOrganizationsStore from 'hooks/store/use-organizations-store'
-import useIndividualsStore from 'hooks/store/use-individuals-store'
-import { Add, Edit } from '@mui/icons-material'
+import { Add } from '@mui/icons-material'
 import './inputs.css'
 import { LoadingButton } from '@mui/lab'
-import DialogContentQuestions from './DialogContentQuestions'
 import 'draft-js/dist/Draft.css'
+import PanelQuotes from './PanelQuotes'
+import PanelSubject from './PanelSubject'
+import PanelBackground from './PanelBackground'
+import PanelAbout from './PanelAbout'
+import PanelHiring from './PanelHiring'
 
 const TextEditPage = () => {
   const { id } = useParams()
@@ -171,13 +170,6 @@ const TextEditPage = () => {
     setEditorState(editorState)
   }
 
-  const { select: selectOrganization } = useOrganizationsStore()
-
-  const { select: selectIndividual } = useIndividualsStore()
-
-  const { select: selectType } = useContentTypesStore()
-  const type = selectType(content.type)
-
   const handleChangeTitle = text => {
     setSaveStatus('unsaved')
     setTitleState(text)
@@ -187,8 +179,6 @@ const TextEditPage = () => {
     setSaveStatus('unsaved')
     setSubtitleState(text)
   }
-
-  console.log(subtitleState.getCurrentContent().getPlainText())
 
   const savingText =
     saveStatus === 'saving'
@@ -252,38 +242,8 @@ const TextEditPage = () => {
     setSaveStatus('unsaved')
   }
 
-  const [DialogEditSettings, setDialogEditSettings] = useState(
-    !content.individuals ||
-      content.individuals.length === 0 ||
-      !content.answers ||
-      content.answers.length === 0
-  )
-
   return (
     <>
-      {/* {history.length > 1 && !!user && (
-            <Box
-              color="primary"
-              position="absolute"
-              left={12}
-              zIndex="100"
-              variant="extended"
-              pt={2}
-            >
-              <Button
-                onClick={() => navigate(-1)}
-                startIcon={<ArrowBackIos />}
-                color="secondary"
-              >
-                Back
-              </Button>
-            </Box>
-          )} */}
-      <DialogContentQuestions
-        open={DialogEditSettings}
-        onClose={() => setDialogEditSettings(false)}
-        id={id}
-      />
       <AppBar
         color="inherit"
         position="fixed"
@@ -303,7 +263,7 @@ const TextEditPage = () => {
             alignItems="center"
             justifyContent="flex-end"
           >
-            <Box mr={1}>
+            <Box>
               <Typography
                 color="grey.500"
                 variant="body2"
@@ -313,7 +273,7 @@ const TextEditPage = () => {
                 <b>{savingText}</b>
               </Typography>
             </Box>
-            <Box>
+            {/* <Box>
               <Button
                 endIcon={<Edit />}
                 sx={{ textTransform: 'none' }}
@@ -322,7 +282,7 @@ const TextEditPage = () => {
               >
                 Background
               </Button>
-            </Box>
+            </Box> */}
           </Box>
         </Toolbar>
       </AppBar>
@@ -420,43 +380,13 @@ const TextEditPage = () => {
         </Box>
         <Box height={vh100 - 48} width="20%" overflow="scroll">
           {/* <Toolbar variant="dense" /> */}
-          <Grid item container alignContent="start">
-            <Grid item xs={12}>
-              <Box display="flex" alignItems="center" p={2} pt={1}>
-                {/* <Box flexGrow={1} borderLeft="2px solid #e0e0e0" pl={1} pr={1}> */}
 
-                <Box fontSize="10pt" lineHeight={2}>
-                  A <Chip label={type.secondary} size="small" />{' '}
-                  <Chip label={type.primary} size="small" /> for{' '}
-                  {content.organizations.map(organizationId => {
-                    const organization = selectOrganization(organizationId)
-                    return (
-                      <Chip
-                        label={organization.name}
-                        key={organizationId}
-                        size="small"
-                      />
-                    )
-                  })}{' '}
-                  {content.individualsQuoted &&
-                    content.individualsQuoted.length > 0 &&
-                    'featuring quotes from '}
-                  {content.individualsQuoted &&
-                    content.individualsQuoted.length > 0 &&
-                    content.individualsQuoted.map(individualId => {
-                      const individual = selectIndividual(individualId)
-                      return (
-                        <Chip
-                          label={individual.name}
-                          key={individualId}
-                          size="small"
-                        />
-                      )
-                    })}
-                  {/* with <Chip label="1/6" size="small" /> key questions answered. */}
-                </Box>
-              </Box>
-            </Grid>
+          <Grid item container alignContent="start" spacing={2} p={1.5} pt={2}>
+            <PanelAbout id={id} />
+            <PanelHiring id={id} />
+            <PanelSubject id={id} />
+            <PanelBackground id={id} />
+            <PanelQuotes id={id} />
           </Grid>
         </Box>
       </Box>

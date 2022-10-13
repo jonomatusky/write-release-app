@@ -23,13 +23,15 @@ const LayoutDialogEdit = ({
   children,
   noScroll,
   label,
+  cancelLabel,
+  maxWidth,
 }) => {
   return (
     <Dialog
       open={open}
       onClose={onClose}
       fullWidth
-      maxWidth="sm"
+      maxWidth={maxWidth || 'sm'}
       transitionDuration={{ appear: 250, exit: 0 }}
     >
       <DialogTitle textAlign="center">
@@ -72,7 +74,7 @@ const LayoutDialogEdit = ({
           </Box>
           <Box flexGrow={0}>
             <Button variant="outlined" onClick={onClose} size="large">
-              Cancel
+              {cancelLabel || 'Cancel'}
             </Button>
           </Box>
           <Box flexGrow={0} pl={1}>

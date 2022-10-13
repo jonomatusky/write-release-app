@@ -20,7 +20,7 @@ import useOrganizationsStore from 'hooks/store/use-organizations-store'
 import useFetchLogo from 'hooks/use-fetch-logo'
 import ResponsiveLogo from 'components/ResponsiveLogo'
 
-const OrganizationCard = ({ id }) => {
+const OrganizationCard = ({ id, hideTags }) => {
   const { select } = useOrganizationsStore()
   const organization = select(id)
   const { name, location, logoUrl, industry } = organization || {}
@@ -76,24 +76,27 @@ const OrganizationCard = ({ id }) => {
                     </Typography>
                   </Box>
                 )}
-                <Box
-                  display="flex"
-                  width="100%"
-                  overflow="auto"
-                  sx={{
-                    '&::-webkit-scrollbar': {
-                      display: 'none',
-                    },
-                    msOverflowStyle: 'none',
-                    scrollbarWidth: 'none',
-                  }}
-                >
-                  {tags.map(tag => (
-                    <Box pt={0.5} pl={0.5} key={tag.name} maxHeight="112px">
-                      <Chip label={tag.name} color="primary" size="small" />
-                    </Box>
-                  ))}
-                </Box>
+
+                {!!hideTags && (
+                  <Box
+                    display="flex"
+                    width="100%"
+                    overflow="auto"
+                    sx={{
+                      '&::-webkit-scrollbar': {
+                        display: 'none',
+                      },
+                      msOverflowStyle: 'none',
+                      scrollbarWidth: 'none',
+                    }}
+                  >
+                    {tags.map(tag => (
+                      <Box pt={0.5} pl={0.5} key={tag.name} maxHeight="112px">
+                        <Chip label={tag.name} color="primary" size="small" />
+                      </Box>
+                    ))}
+                  </Box>
+                )}
               </Box>
             </Grid>
           </Grid>

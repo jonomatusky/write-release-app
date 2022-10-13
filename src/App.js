@@ -73,9 +73,9 @@ const App = () => {
                 <Route path="/profiles" element={<ViewProfiles />} />
                 <Route path="/companies" element={<ViewCompanies />} />
                 <Route path="*" element={<NotFound />} />
-              </Route>
-              <Route path="/" element={<BetaRoute component={Outlet} />}>
-                <Route path="/content" element={<ViewContents />} />
+                <Route path="/" element={<BetaRoute component={Outlet} />}>
+                  <Route path="/content" element={<ViewContents />} />
+                </Route>
               </Route>
             </Route>
           </Route>

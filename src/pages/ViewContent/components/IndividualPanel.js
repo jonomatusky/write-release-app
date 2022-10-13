@@ -1,16 +1,15 @@
 import React from 'react'
 import { Grid, Box, Typography } from '@mui/material'
-import { Mic, TimerOutlined, OfflineBolt } from '@mui/icons-material'
 
 import useIndividualStore from 'hooks/store/use-individuals-store'
 import useFetchAvatar from 'hooks/use-fetch-avatar'
 import PanelBullets from 'components/PanelBullets/PanelBullets'
-import IndividualCard from 'pages/ViewProfiles/components/IndividualCard'
-import useFormHelper from 'hooks/use-form-helper'
-import Form from 'components/Form/Form'
+import IndividualCard from './IndividualCard'
 import Panel from 'layouts/Panel'
+import PanelEdit from 'layouts/PanelEdit'
+import DialogIndividualBackground from './DialogIndividualBackground'
 
-const IndividualPanel = ({ id, onSubmit }) => {
+const IndividualPanel = ({ id }) => {
   const { select, update, updateStatus } = useIndividualStore()
   const individual = select(id)
 
@@ -24,45 +23,30 @@ const IndividualPanel = ({ id, onSubmit }) => {
     }
   }
 
-  const handleSubmit = async values => {
-    try {
-      onSubmit(values)
-    } catch (err) {
-      console.log(err)
-    }
-  }
-
-  const formFields = [
+  const fields = [
     {
       name: 'experience',
       label: 'Previous Experience',
-      type: 'textarea',
+      missing: `You haven't entered any previous experience`,
     },
     {
       name: 'education',
       label: 'Education',
-      type: 'textarea',
+      missing: `You haven't entered any education information`,
     },
     {
       name: 'notes',
       label: 'Other relevant information',
-      type: 'textarea',
-      placeholder: 'Home town, hobbies, family, etc.',
+      missing: `You haven't entered any other relevant information about this individual`,
     },
   ]
-
-  const { control } = useFormHelper({
-    formFields,
-    initialValues: individual || [],
-    onSubmit: handleSubmit,
-  })
 
   return (
     <Panel>
       <Box p={2}>
         <Grid container spacing={2}>
           <Grid item xs={12}>
-            <IndividualCard id={individual.id} hideTags onClick={() => {}} />
+            <IndividualCard id={individual.id} />
           </Grid>
           <Grid item xs={12}>
             <PanelBullets
@@ -74,18 +58,33 @@ const IndividualPanel = ({ id, onSubmit }) => {
             />
           </Grid>
           <Grid item xs={12}>
-            {/* <Panel>
-              <Box p={2} pt={1}>
-                <Box pb={1}>
-                  <Typography color="primary">
-                    <b>Additional Info</b>
-                  </Typography>
-                </Box> */}
-            <Box width="100%">
-              <Form formFields={formFields} control={control} />
-            </Box>
-            {/* </Box>
-            </Panel> */}
+            <PanelEdit
+              dialog={DialogIndividualBackground}
+              dialogProps={{
+                id: id,
+              }}
+            >
+              <Box p={2}>
+                <Grid container spacing={2}>
+                  {fields.map(field => {
+                    return (
+                      <Grid item xs={12} key={field.name}>
+                        <Typography color="primary" pb={1}>
+                          <b>{field.label}</b>
+                        </Typography>
+                        <Typography variant="body2">
+                          {individual[field.name] ? (
+                            individual[field.name]
+                          ) : (
+                            <i>{field.missing}</i>
+                          )}
+                        </Typography>
+                      </Grid>
+                    )
+                  })}
+                </Grid>
+              </Box>
+            </PanelEdit>
           </Grid>
         </Grid>
       </Box>
