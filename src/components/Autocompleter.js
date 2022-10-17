@@ -1,4 +1,4 @@
-import { Autocomplete } from '@mui/material'
+import Autocomplete, { createFilterOptions } from '@mui/material/Autocomplete'
 import React, { useState } from 'react'
 import TextFielder from './TextFielder'
 
@@ -43,6 +43,20 @@ const Autocompleter = ({
     ? { id: 'createnew', name: '+ Create New' }
     : '+ Create New'
 
+  const _filterOptions = createFilterOptions()
+
+  const filterOptions = (options, state) => {
+    const results = _filterOptions(options, state)
+
+    if (!!onAddItem || !!AddDialog) {
+      if (!results.includes(addValue)) {
+        results.push(addValue)
+      }
+    }
+
+    return results
+  }
+
   const [isOpen, setIsOpen] = useState(false)
 
   const handleAutocompleteChange = (e, v) => {
@@ -55,8 +69,14 @@ const Autocompleter = ({
           onChange(newValue)
         }
       } else {
-        const newValue = v.id
-        if (v.id === addValue.id) {
+        let newValue
+        if (!!v) {
+          newValue = v.id
+        } else {
+          newValue = null
+        }
+
+        if (newValue === addValue.id) {
           !!AddDialog ? setIsOpen(true) : onAddItem()
         } else {
           onChange(newValue)
@@ -82,9 +102,9 @@ const Autocompleter = ({
 
   const optionsForAuto = options ? [...options] : []
 
-  if (!!onAddItem || !!AddDialog) {
-    optionsForAuto.push(addValue)
-  }
+  // if (!!onAddItem || !!AddDialog) {
+  //   optionsForAuto.push(addValue)
+  // }
 
   const handleSubmit = v => {
     if (multi) {
@@ -131,6 +151,7 @@ const Autocompleter = ({
         // }}
         openOnFocus
         disabled={disabled}
+        filterOptions={filterOptions}
       />
     </>
   )

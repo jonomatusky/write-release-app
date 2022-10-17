@@ -1,31 +1,39 @@
-import { useEffect, useCallback } from 'react'
+import { useEffect, useCallback, useState } from 'react'
 import { getStorage, ref, getDownloadURL } from 'firebase/storage'
 
 import useOrganizationsStore from './store/use-organizations-store'
 import useIndividualsStore from './store/use-individuals-store'
+import useSession from './use-session'
 
 const useGetOrganization = id => {
+  const { initializing, user } = useSession()
   const { getStatus, select, get, setLogo } = useOrganizationsStore()
   const { getByOrganization, getByOrganizationStatus } = useIndividualsStore()
   const organization = select(id)
   const { logo, logoUrl } = organization || {}
+  const [status, setStatus] = useState('idle')
 
   const getOrganization = useCallback(
     async id => {
-      try {
-        await get(id)
-      } catch (err) {}
+      if (!user) {
+        try {
+          await get(id)
+          setStatus('succeeded')
+        } catch (err) {
+          setStatus('failed')
+        }
+      } else {
+        setStatus('succeeded')
+      }
     },
-    [get]
+    [get, user]
   )
 
   useEffect(() => {
-    if (getStatus === 'idle' && !!id) {
-      try {
-        getOrganization(id)
-      } catch (err) {}
+    if (getStatus === 'idle' && !!id && !initializing) {
+      getOrganization(id)
     }
-  }, [getOrganization, id, getStatus])
+  }, [getOrganization, id, getStatus, initializing])
 
   const getLogo = useCallback(async () => {
     const storage = getStorage()
@@ -49,7 +57,7 @@ const useGetOrganization = id => {
     }
   }, [id, getByOrganization, getByOrganizationStatus])
 
-  return { organization, status: getStatus }
+  return { organization, status }
 }
 
 export default useGetOrganization

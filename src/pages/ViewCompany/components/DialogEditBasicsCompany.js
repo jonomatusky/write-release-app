@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React from 'react'
 import { useParams } from 'react-router-dom'
 import { Grid } from '@mui/material'
 import LogoToEdit from './LogoToEdit'
@@ -7,20 +7,20 @@ import LayoutDialogEdit from 'layouts/LayoutDialogEdit'
 import useFormHelper from 'hooks/use-form-helper'
 import Form from 'components/Form/Form'
 import { getFields } from 'util/formFieldsOrganization'
-import AutocompleteIndustry from 'components/AutocompleteIndustry'
+// import AutocompleteIndustry from 'components/AutocompleteIndustry'
 
 const DialogEditBasicsCompany = ({ open, onClose }) => {
   const { update, select, updateStatus } = useOrganizationStore()
   const { id } = useParams()
   const organization = select(id)
   const { logoUrl } = organization || {}
-  const [organizationIndustryId, setOrganizationIndustryId] = useState(
-    (organization.industry || {}).id
-  )
+  // const [organizationIndustryId, setOrganizationIndustryId] = useState(
+  //   (organization.industry || {}).id
+  // )
 
-  useEffect(() => {
-    setOrganizationIndustryId((organization.industry || {}).id)
-  }, [organization.industry])
+  // useEffect(() => {
+  //   setOrganizationIndustryId((organization.industry || {}).id)
+  // }, [organization.industry])
 
   const formFields = getFields('basic')
 
@@ -29,7 +29,7 @@ const DialogEditBasicsCompany = ({ open, onClose }) => {
   }
 
   const handleSubmit = async values => {
-    values.industry = organizationIndustryId
+    // values.industry = organizationIndustryId
     try {
       await update({ id, ...values })
       onClose()
@@ -62,12 +62,12 @@ const DialogEditBasicsCompany = ({ open, onClose }) => {
         <Grid item xs={12}>
           <Form formFields={formFields} control={control} submit={submit} />
         </Grid>
-        <Grid item xs={12}>
+        {/* <Grid item xs={12}>
           <AutocompleteIndustry
             organizationIndustryId={organizationIndustryId}
             setOrganizationIndustryId={setOrganizationIndustryId}
           />
-        </Grid>
+        </Grid> */}
       </Grid>
     </LayoutDialogEdit>
   )

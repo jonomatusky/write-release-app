@@ -59,7 +59,7 @@ const LayoutDialogEdit = ({
                 size="large"
                 startIcon={<DeleteOutline />}
               >
-                Remove
+                Delete
               </Button>
             )}
             {!!onBack && (

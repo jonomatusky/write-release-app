@@ -12,13 +12,13 @@ import {
   Mic,
   TimerOutlined,
   OfflineBolt,
-  LocalOffer,
   LocationOn,
 } from '@mui/icons-material'
 
 import useOrganizationsStore from 'hooks/store/use-organizations-store'
 import useFetchLogo from 'hooks/use-fetch-logo'
 import ResponsiveLogo from 'components/ResponsiveLogo'
+import IndustryTag from 'components/IndustryTag'
 
 const OrganizationCard = ({ id, hideTags }) => {
   const { select } = useOrganizationsStore()
@@ -58,14 +58,7 @@ const OrganizationCard = ({ id, hideTags }) => {
                 <Typography variant="h6">
                   <b>{name}</b>
                 </Typography>
-                {industry && industry.name !== 'Other' && (
-                  <Box display="flex" alignItems="center">
-                    <Box pr={0.5} display="flex" alignItems="center">
-                      <LocalOffer color="primary" fontSize="12" />
-                    </Box>
-                    <Typography>{industry.name}</Typography>
-                  </Box>
-                )}
+                <IndustryTag id={industry} />
                 {location && (
                   <Box display="flex" alignItems="center">
                     <Box pr={0.5} display="flex" alignItems="center">
@@ -76,7 +69,6 @@ const OrganizationCard = ({ id, hideTags }) => {
                     </Typography>
                   </Box>
                 )}
-
                 {!!hideTags && (
                   <Box
                     display="flex"

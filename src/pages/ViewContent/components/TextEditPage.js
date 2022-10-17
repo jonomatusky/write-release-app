@@ -308,7 +308,10 @@ const TextEditPage = () => {
                       <CardActionArea onClick={() => handleAppend(i)}>
                         <Box display="flex" alignItems="center" p={1}>
                           <Box flexGrow={1}>
-                            <Typography variant="body2">
+                            <Typography
+                              variant="body2"
+                              sx={{ whiteSpace: 'pre-line' }}
+                            >
                               {generation}
                             </Typography>
                           </Box>

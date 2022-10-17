@@ -2,9 +2,10 @@ import React from 'react'
 import { Grid, Box, Typography, Link } from '@mui/material'
 
 import PanelEdit from 'layouts/PanelEdit'
-import { LocalOffer, LocationOn, OpenInNew } from '@mui/icons-material'
+import { LocationOn, OpenInNew } from '@mui/icons-material'
 import ResponsiveLogo from 'components/ResponsiveLogo'
 import DialogEditBasicsCompany from './DialogEditBasicsCompany'
+import IndustryTag from 'components/IndustryTag'
 
 const PanelBasic = ({ logoUrl, name, location, website, industry }) => {
   return (
@@ -41,14 +42,7 @@ const PanelBasic = ({ logoUrl, name, location, website, industry }) => {
                 </Box>
               )}
             </Box>
-            {industry && industry.name !== 'Other' && (
-              <Box display="flex" alignItems="center">
-                <Box pr={0.5} display="flex" alignItems="center">
-                  <LocalOffer color="primary" fontSize="10" />
-                </Box>
-                <Typography variant="subtitle">{industry.name}</Typography>
-              </Box>
-            )}
+            <IndustryTag id={industry} />
             {location && (
               <Box display="flex" alignItems="center">
                 <Box pr={0.5} display="flex" alignItems="center">

@@ -14,12 +14,12 @@ const ViewContent = () => {
 
   useFetchContent()
 
-  return (
-    <>
-      {(fetchStatus === 'loading' || fetchStatus === 'idle') && <Loading />}
-      {(fetchStatus === 'failed' || !content) && <NotFound />}
-      {fetchStatus === 'succeeded' && !!content && <TextEditPage />}
-    </>
-  )
+  if (fetchStatus === 'loading' || fetchStatus === 'idle') {
+    return <Loading />
+  } else if (fetchStatus === 'failed' || !content.id) {
+    return <NotFound />
+  } else {
+    return <TextEditPage />
+  }
 }
 export default ViewContent

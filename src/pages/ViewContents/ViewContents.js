@@ -23,9 +23,9 @@ import { NoteAdd } from '@mui/icons-material'
 import useOrganizationsStore from 'hooks/store/use-organizations-store'
 import useContentStore from 'hooks/store/use-content-store'
 import useFetchContent from 'hooks/use-fetch-content'
-import DialogCreateContents from './components/DialogCreateContents'
 import useUsersStore from 'hooks/store/use-users-store'
 import { Box } from '@mui/system'
+import DialogAbout from 'pages/ViewContent/components/DialogAbout'
 
 const ViewContents = () => {
   const type = 'content'
@@ -177,7 +177,7 @@ const ViewContents = () => {
 
   return (
     <>
-      <FabAdd Icon={NoteAdd} Dialog={DialogCreateContents} />
+      <FabAdd Icon={NoteAdd} Dialog={DialogAbout} />
       {/* <LayoutDrawer open={true}> */}
       <Container maxWidth="lg">
         <Grid container spacing={2} pt={2}>

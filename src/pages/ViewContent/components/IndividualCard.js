@@ -1,13 +1,6 @@
 import React from 'react'
 import { Grid, Box, Typography } from '@mui/material'
-import {
-  Mic,
-  TimerOutlined,
-  OfflineBolt,
-  LocalOffer,
-  LocationOn,
-  Business,
-} from '@mui/icons-material'
+import { LocalOffer, LocationOn, Business } from '@mui/icons-material'
 
 import ResponsiveAvatar from 'components/ResponsiveAvatar'
 import useIndividualStore from 'hooks/store/use-individuals-store'
@@ -16,7 +9,7 @@ import useOrganizationsStore from 'hooks/store/use-organizations-store'
 import PanelEdit from 'layouts/PanelEdit'
 import DialogCreateEditIndividual from './DialogCreateEditIndividual'
 
-const IndividualCard = ({ id, onClick }) => {
+const IndividualCard = ({ id }) => {
   const { select } = useIndividualStore()
   const { select: selectOrganization } = useOrganizationsStore()
   const individual = select(id)
@@ -26,20 +19,6 @@ const IndividualCard = ({ id, onClick }) => {
   const { industry } = company
 
   useFetchAvatar(id)
-
-  const qualities = [
-    { name: 'mediaTrained', label: 'Media Trained', Icon: Mic },
-    { name: 'quickToBook', label: 'Quick to Book', Icon: TimerOutlined },
-    { name: 'frequentSource', label: 'Frequent Source', Icon: OfflineBolt },
-  ]
-
-  let qualityList = []
-
-  qualities.forEach(quality => {
-    if (individual[quality.name]) {
-      qualityList.push(quality.label)
-    }
-  })
 
   return (
     <PanelEdit

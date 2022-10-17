@@ -1,29 +1,22 @@
 import React from 'react'
 import { Grid, Box } from '@mui/material'
-import useIndividualStore from 'hooks/store/use-individuals-store'
 import useOrganizationsStore from 'hooks/store/use-organizations-store'
 import LayoutDialogEdit from 'layouts/LayoutDialogEdit'
 import useFormHelper from 'hooks/use-form-helper'
 import Form from 'components/Form/Form'
-import { getFields } from 'util/formFieldsIndividual'
-import { Edit, PersonAdd } from '@mui/icons-material'
+// import { getFields } from 'util/formFieldsOrganization'
+import { DomainAdd, Edit } from '@mui/icons-material'
+import useFormFieldsOrganization from 'hooks/use-form-fields-organization'
 
-const DialogCreateEditIndividual = ({
-  open,
-  onClose,
-  onSubmit,
-  individual,
-  organizationId,
-}) => {
-  const { select } = useOrganizationsStore()
-  const { create, update, createStatus } = useIndividualStore()
+const DialogCreateEditCompany = ({ open, onClose, onSubmit, organization }) => {
+  const { create, update, createStatus } = useOrganizationsStore()
+
+  console.log(organization)
 
   const handleSubmit = async values => {
-    values.organization = organizationId
-
     try {
-      let newIndividual = !!individual
-        ? await update({ id: individual.id, ...values })
+      let newIndividual = !!organization
+        ? await update({ id: organization.id, ...values })
         : await create({ ...values, isPrivate: true })
 
       !!onSubmit && onSubmit(newIndividual.id)
@@ -31,19 +24,12 @@ const DialogCreateEditIndividual = ({
     } catch (err) {}
   }
 
+  const { getFields } = useFormFieldsOrganization()
   const formFields = [...getFields('basic')]
-
-  const organization = select(organizationId)
 
   const { control, submit, reset } = useFormHelper({
     formFields,
-    initialValues: !!individual
-      ? individual
-      : {
-          city: organization.city,
-          state: organization.state,
-          country: organization.country,
-        },
+    initialValues: organization,
     onSubmit: handleSubmit,
   })
 
@@ -56,9 +42,9 @@ const DialogCreateEditIndividual = ({
     <LayoutDialogEdit
       title={
         <Box display="flex" alignItems="center" justifyContent="center">
-          {!!individual ? <Edit /> : <PersonAdd />}
+          {!!organization ? <Edit /> : <DomainAdd />}
           <Box pl={1}>
-            {!!individual ? `Update Profile` : `Create New Profile`}
+            {!!organization ? `Update Company` : `Create New Company`}
           </Box>
         </Box>
       }
@@ -76,4 +62,4 @@ const DialogCreateEditIndividual = ({
   )
 }
 
-export default DialogCreateEditIndividual
+export default DialogCreateEditCompany

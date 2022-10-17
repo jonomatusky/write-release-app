@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React from 'react'
 import { useNavigate } from 'react-router-dom'
 import { Grid, Box } from '@mui/material'
 import useOrganizationsStore from 'hooks/store/use-organizations-store'
@@ -7,15 +7,15 @@ import useFormHelper from 'hooks/use-form-helper'
 import Form from 'components/Form/Form'
 import { getFields } from 'util/formFieldsOrganization'
 import { DomainAdd } from '@mui/icons-material'
-import AutocompleteIndustry from 'components/AutocompleteIndustry'
+// import AutocompleteIndustry from 'components/AutocompleteIndustry'
 
 const DialogCreateCompany = ({ open, onClose }) => {
   const navigate = useNavigate()
   const { create, createStatus } = useOrganizationsStore()
-  const [organizationIndustryId, setOrganizationIndustryId] = useState('')
+  // const [organizationIndustryId, setOrganizationIndustryId] = useState('')
 
   const handleSubmit = async values => {
-    values.industry = organizationIndustryId
+    // values.industry = organizationIndustryId
     try {
       const company = await create(values)
       window.location.hash = ''
@@ -52,13 +52,13 @@ const DialogCreateCompany = ({ open, onClose }) => {
         <Grid item xs={12}>
           <Form formFields={formFields} control={control} submit={submit} />
         </Grid>
-        <Grid item xs={12}>
+        {/* <Grid item xs={12}>
           <AutocompleteIndustry
             organizationIndustryId={organizationIndustryId}
             setOrganizationIndustryId={setOrganizationIndustryId}
             // error={error}
           />
-        </Grid>
+        </Grid> */}
       </Grid>
     </LayoutDialogEdit>
   )
