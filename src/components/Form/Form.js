@@ -2,10 +2,24 @@ import React from 'react'
 import { Grid } from '@mui/material'
 import FormField from 'components/Form/FormField'
 
-const Form = ({ formFields, submit, control, spacing }) => {
+const Form = ({
+  formFields,
+  submit,
+  control,
+  watch,
+  conditionalField,
+  conditionalValue,
+  spacing,
+}) => {
   const handleSubmit = e => {
     e.preventDefault()
     submit()
+  }
+
+  let showField = true
+
+  if (!!watch && !!conditionalField && !!conditionalValue) {
+    showField = watch(conditionalField) === conditionalValue
   }
 
   return (
@@ -16,9 +30,13 @@ const Form = ({ formFields, submit, control, spacing }) => {
             const { name } = formField
 
             return (
-              <Grid item xs={12} key={name}>
-                <FormField {...formField} control={control} />
-              </Grid>
+              <>
+                {showField && (
+                  <Grid item xs={12} key={name}>
+                    <FormField {...formField} control={control} />
+                  </Grid>
+                )}
+              </>
             )
           })}
       </Grid>

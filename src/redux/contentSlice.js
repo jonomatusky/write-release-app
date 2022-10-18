@@ -89,6 +89,17 @@ export const getCoverage = createAsyncThunk(
   }
 )
 
+// export const getResources = createAsyncThunk(
+//   'contents/getResources',
+//   async ({ headers, id }) => {
+//     const { data } = await client.request({
+//       headers,
+//       url: `/contents/${id}/resources`,
+//     })
+//     return data
+//   }
+// )
+
 const contentsSlice = createSlice({
   name: 'contents',
   initialState,

@@ -34,6 +34,7 @@ import PanelBackground from './PanelBackground'
 import PanelAbout from './PanelAbout'
 import PanelHiring from './PanelHiring'
 import ButtonCopyContent from './ButtonCopyContent'
+import PanelResources from './PanelResources'
 
 const TextEditPage = () => {
   const { id } = useParams()
@@ -380,6 +381,7 @@ const TextEditPage = () => {
 
           <Grid item container alignContent="start" spacing={2} p={1.5} pt={2}>
             <PanelAbout id={id} />
+            <PanelResources id={id} />
             <PanelHiring id={id} />
             <PanelSubject id={id} />
             <PanelBackground id={id} />

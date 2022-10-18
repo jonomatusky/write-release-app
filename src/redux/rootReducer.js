@@ -12,6 +12,7 @@ import organizationsReducer from './organizationsSlice'
 import industriesReducer from './industriesSlice'
 import historyReducer from './historySlice'
 import usersReducer from './usersSlice'
+import resourcesReducer from './resourcesSlice'
 
 const rootReducer = combineReducers({
   user: userReducer,
@@ -23,6 +24,7 @@ const rootReducer = combineReducers({
   coverage: coverageReducer,
   content: contentReducer,
   contentTypes: contentTypesReducer,
+  resources: resourcesReducer,
   questions: questionsReducer,
   inquiries: inquiryReducer,
   industries: industriesReducer,

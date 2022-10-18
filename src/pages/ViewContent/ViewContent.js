@@ -6,6 +6,7 @@ import NotFound from 'pages/NotFound/NotFound'
 import useContentStore from 'hooks/store/use-content-store'
 import useFetchContent from 'hooks/use-fetch-content'
 import TextEditPage from './components/TextEditPage'
+import useFetchResources from 'hooks/use-fetch-resources'
 
 const ViewContent = () => {
   const { id } = useParams()
@@ -13,6 +14,7 @@ const ViewContent = () => {
   const content = select(id)
 
   useFetchContent()
+  useFetchResources({ object: 'content', id })
 
   if (fetchStatus === 'loading' || fetchStatus === 'idle') {
     return <Loading />
