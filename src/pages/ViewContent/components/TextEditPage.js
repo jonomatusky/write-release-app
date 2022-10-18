@@ -33,6 +33,7 @@ import PanelSubject from './PanelSubject'
 import PanelBackground from './PanelBackground'
 import PanelAbout from './PanelAbout'
 import PanelHiring from './PanelHiring'
+import ButtonCopyContent from './ButtonCopyContent'
 
 const TextEditPage = () => {
   const { id } = useParams()
@@ -155,6 +156,7 @@ const TextEditPage = () => {
           contentId: id,
           operationType: generationStep,
         },
+        timeout: 15000,
       })
       const { message, options } = res.data
       setGenerations({ type: generationStep, message, options })
@@ -273,16 +275,8 @@ const TextEditPage = () => {
                 <b>{savingText}</b>
               </Typography>
             </Box>
-            {/* <Box>
-              <Button
-                endIcon={<Edit />}
-                sx={{ textTransform: 'none' }}
-                color="secondary"
-                onClick={() => setDialogEditSettings(true)}
-              >
-                Background
-              </Button>
-            </Box> */}
+
+            <ButtonCopyContent id={id} color="grey.800" />
           </Box>
         </Toolbar>
       </AppBar>

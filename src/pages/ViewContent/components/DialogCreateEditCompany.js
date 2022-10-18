@@ -11,8 +11,6 @@ import useFormFieldsOrganization from 'hooks/use-form-fields-organization'
 const DialogCreateEditCompany = ({ open, onClose, onSubmit, organization }) => {
   const { create, update, createStatus } = useOrganizationsStore()
 
-  console.log(organization)
-
   const handleSubmit = async values => {
     try {
       let newIndividual = !!organization

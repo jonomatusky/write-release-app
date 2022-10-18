@@ -11,7 +11,7 @@ export const request = async config => {
 
   try {
     const response = await axios.request({
-      timeout: 10000,
+      timeout: config.timeout || 10000,
       ...config,
     })
 
