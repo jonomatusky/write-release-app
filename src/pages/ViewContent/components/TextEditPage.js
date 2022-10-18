@@ -145,6 +145,8 @@ const TextEditPage = () => {
   })
   const [isGenerating, setIsGenerating] = useState(false)
 
+  const [generationIteration, setGenerationIteration] = useState(0)
+
   const handleGenerate = async () => {
     setIsGenerating(true)
 
@@ -156,11 +158,13 @@ const TextEditPage = () => {
         data: {
           contentId: id,
           operationType: generationStep,
+          iteration: generationIteration,
         },
         timeout: 15000,
       })
       const { message, options } = res.data
       setGenerations({ type: generationStep, message, options })
+      setGenerationIteration(generationIteration + 1)
     } catch (err) {
       console.log(err)
     }
@@ -242,8 +246,12 @@ const TextEditPage = () => {
         setSubtitleState(newEditorState)
       }
     }
+
     setSaveStatus('unsaved')
+    setGenerationIteration(0)
   }
+
+  console.log(generationIteration)
 
   return (
     <>
