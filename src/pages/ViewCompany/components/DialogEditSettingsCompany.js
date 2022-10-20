@@ -13,7 +13,7 @@ const DialogEditSettingsCompany = ({ open, onClose }) => {
   const { id } = useParams()
   const organization = select(id)
 
-  const formFields = getFields('settings')
+  const formFields = getFields(['content', 'settings'])
 
   const handleSubmit = async values => {
     try {

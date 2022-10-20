@@ -46,15 +46,31 @@ export const allFields = [
     category: 'basic',
   },
   {
+    name: 'boilerplate',
+    label: 'Boilerplate',
+    placeHolder: 'Acme Inc. is a...',
+    helpText: 'Company boilerplate for press releases',
+    type: 'textarea',
+    category: 'content',
+  },
+  {
+    name: 'descriptor',
+    label: 'Descriptor',
+    placeHolder: 'a global manufacturer of gadgets and gizmos',
+    helpText:
+      'A short description of the company, for use at the start of press release. Should not include the name of the company.',
+    type: 'text',
+    category: 'content',
+  },
+  {
     name: 'team',
     label: 'Team',
     placeHolder: 'Team Awesome',
     helpText:
       'This is only shown internally, to help other teams reach out if they have an opportunity',
     type: 'text',
-    validation: Yup.string()
-      .max(50, 'Must be under 50 characters')
-      .required('Team is required'),
+    validation: Yup.string().max(50, 'Must be under 50 characters'),
+    // .required('Team is required'),
     category: 'settings',
   },
   {
@@ -64,9 +80,8 @@ export const allFields = [
     type: 'email',
     helpText:
       'This is the email journalists will use to reach out to you. It is shown publicly.',
-    validation: Yup.string()
-      .email('Must be a valid email address')
-      .required('Email is required'),
+    validation: Yup.string().email('Must be a valid email address'),
+    // .required('Email is required'),
     category: 'settings',
   },
   // {
@@ -78,5 +93,9 @@ export const allFields = [
 ]
 
 export const getFields = category => {
-  return allFields.filter(field => field.category === category)
+  if (typeof category === 'object') {
+    return allFields.filter(field => category.includes(field.category))
+  } else {
+    return allFields.filter(field => field.category === category)
+  }
 }

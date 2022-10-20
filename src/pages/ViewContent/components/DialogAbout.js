@@ -13,6 +13,7 @@ import OrganizationCard from './OrganizationCard'
 import DialogCreateEditCompany from 'pages/ViewContent/components/DialogCreateEditCompany'
 import useUserStore from 'hooks/store/use-user-store'
 import DialogDeleteContent from './DialogDeleteContent'
+import OrganizationPanel from './OrganizationPanel'
 
 const DialogAbout = ({ open, onClose, id }) => {
   const {
@@ -156,7 +157,7 @@ const DialogAbout = ({ open, onClose, id }) => {
           </Grid>
           {!!orgId && (
             <Grid item xs={12}>
-              <OrganizationCard id={orgId} />
+              <OrganizationPanel id={orgId} />
             </Grid>
           )}
         </Grid>
