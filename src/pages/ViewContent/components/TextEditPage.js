@@ -54,9 +54,9 @@ const TextEditPage = () => {
     subtitle: EditorState.createWithContent(
       ContentState.createFromText(subtitle || '')
     ),
-    boilerplate: EditorState.createWithContent(
-      ContentState.createFromText(boilerplate || '')
-    ),
+    boilerplate: !!boilerplate
+      ? EditorState.createWithContent(convertFromRaw(JSON.parse(boilerplate)))
+      : EditorState.createEmpty(),
   })
 
   const textsState = Object.keys(editorsState).reduce((acc, key) => {
