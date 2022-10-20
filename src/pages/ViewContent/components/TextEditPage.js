@@ -251,8 +251,6 @@ const TextEditPage = () => {
     setGenerationIteration(0)
   }
 
-  console.log(generationIteration)
-
   return (
     <>
       <AppBar

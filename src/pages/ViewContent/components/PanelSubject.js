@@ -27,8 +27,23 @@ const PanelSubject = ({ id }) => {
 
   const subjectAnswer = (subjectAnswers || [])[0] || {}
 
-  const text =
-    subjectAnswer.answer || `You haven't answered any subject questions yet`
+  const Text = () => {
+    return (
+      <Typography
+        variant="body2"
+        sx={{
+          display: '-webkit-box',
+          overflow: 'ellipsis',
+          WebkitBoxOrient: 'vertical',
+          WebkitLineClamp: 3,
+        }}
+      >
+        {subjectAnswer.answer || (
+          <i>You haven't answered any subject questions yet</i>
+        )}
+      </Typography>
+    )
+  }
 
   return (
     <Grid item xs={12}>
@@ -41,17 +56,7 @@ const PanelSubject = ({ id }) => {
               </Typography>
             </Grid>
             <Grid item xs={12} overflow="hidden">
-              <Typography
-                variant="body2"
-                sx={{
-                  display: '-webkit-box',
-                  overflow: 'ellipsis',
-                  WebkitBoxOrient: 'vertical',
-                  WebkitLineClamp: 3,
-                }}
-              >
-                {text}
-              </Typography>
+              <Text />
             </Grid>
           </Grid>
         </Box>

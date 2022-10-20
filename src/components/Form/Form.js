@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { Fragment } from 'react'
 import { Grid } from '@mui/material'
 import FormField from 'components/Form/FormField'
 
@@ -29,15 +29,15 @@ const Form = ({
           formFields.map(formField => {
             const { name } = formField
 
-            return (
-              <>
-                {showField && (
-                  <Grid item xs={12} key={name}>
-                    <FormField {...formField} control={control} />
-                  </Grid>
-                )}
-              </>
-            )
+            if (showField) {
+              return (
+                <Grid item xs={12} key={name}>
+                  <FormField {...formField} control={control} />
+                </Grid>
+              )
+            } else {
+              return <Fragment key={name}></Fragment>
+            }
           })}
       </Grid>
       <button type="submit" style={{ display: 'none' }} />

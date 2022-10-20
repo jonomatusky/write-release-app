@@ -73,20 +73,26 @@ const LayoutDialogEdit = ({
             )}
           </Box>
           <Box flexGrow={0}>
-            <Button variant="outlined" onClick={onClose} size="large">
-              {cancelLabel || 'Cancel'}
+            <Button
+              variant={!!onSave ? 'outlined' : 'contained'}
+              onClick={onClose}
+              size="large"
+            >
+              {!!cancelLabel ? cancelLabel : !!onSave ? 'Cancel' : 'Close'}
             </Button>
           </Box>
-          <Box flexGrow={0} pl={1}>
-            <LoadingButton
-              variant="contained"
-              onClick={onSave}
-              size="large"
-              loading={loading}
-            >
-              {label || 'Save'}
-            </LoadingButton>
-          </Box>
+          {!!onSave && (
+            <Box flexGrow={0} pl={1}>
+              <LoadingButton
+                variant="contained"
+                onClick={onSave}
+                size="large"
+                loading={loading}
+              >
+                {label || 'Save'}
+              </LoadingButton>
+            </Box>
+          )}
         </Box>
       </DialogActions>
     </Dialog>

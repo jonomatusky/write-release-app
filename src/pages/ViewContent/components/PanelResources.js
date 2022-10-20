@@ -1,21 +1,13 @@
 import React from 'react'
 import { Grid, Box, Chip, Typography } from '@mui/material'
-import useContentStore from 'hooks/store/use-content-store'
-import { Business, Description, Newspaper } from '@mui/icons-material'
 import './inputs.css'
 import 'draft-js/dist/Draft.css'
 import PanelEdit from 'layouts/PanelEdit'
-import useContentTypesStore from 'hooks/store/use-content-types-store'
-import useOrganizationsStore from 'hooks/store/use-organizations-store'
 import DialogResources from './DialogResources'
+import useResourcesStore from 'hooks/store/use-resources-store'
 
 const PanelResources = ({ id }) => {
-  const { select } = useContentStore()
-  const { select: selectContentType } = useContentTypesStore()
-  const content = select(id)
-  const type = selectContentType(content.type)
-
-  const { select: selectOrganization } = useOrganizationsStore()
+  const { items: resources } = useResourcesStore()
 
   return (
     <Grid item xs={12}>
@@ -27,24 +19,20 @@ const PanelResources = ({ id }) => {
                 <b>Resources</b>
               </Typography>
             </Grid>
-            <Grid item>
-              <Chip label={type.primary} size="small" icon={<Description />} />
-            </Grid>
-            <Grid item>
-              <Chip label={type.secondary} size="small" icon={<Newspaper />} />
-            </Grid>
-            {content.organizations.map(organizationId => {
-              const organization = selectOrganization(organizationId)
+            {resources.map(resource => {
               return (
-                <Grid item key={organizationId}>
-                  <Chip
-                    label={organization.name}
-                    size="small"
-                    icon={<Business />}
-                  />
+                <Grid item key={resource.id}>
+                  <Chip label={resource.type} size="small" />
                 </Grid>
               )
             })}
+            {(!resources || resources.length === 0) && (
+              <Grid item xs={12}>
+                <Typography color="textSecondary" variant="body2">
+                  <i>No resources</i>
+                </Typography>
+              </Grid>
+            )}
           </Grid>
         </Box>
       </PanelEdit>

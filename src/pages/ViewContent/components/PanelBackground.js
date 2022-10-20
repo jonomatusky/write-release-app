@@ -24,9 +24,23 @@ const PanelBackground = ({ id }) => {
 
   const backgroundAnswer = (backgroundAnswers || [])[0] || {}
 
-  const text =
-    backgroundAnswer.answer ||
-    `You haven't answered any background questions yet`
+  const Text = () => {
+    return (
+      <Typography
+        variant="body2"
+        sx={{
+          display: '-webkit-box',
+          overflow: 'ellipsis',
+          WebkitBoxOrient: 'vertical',
+          WebkitLineClamp: 3,
+        }}
+      >
+        {backgroundAnswer.answer || (
+          <i>You haven't answered any background questions yet</i>
+        )}
+      </Typography>
+    )
+  }
 
   return (
     <Grid item xs={12}>
@@ -39,17 +53,7 @@ const PanelBackground = ({ id }) => {
               </Typography>
             </Grid>
             <Grid item xs={12} overflow="hidden">
-              <Typography
-                variant="body2"
-                sx={{
-                  display: '-webkit-box',
-                  overflow: 'ellipsis',
-                  WebkitBoxOrient: 'vertical',
-                  WebkitLineClamp: 3,
-                }}
-              >
-                {text}
-              </Typography>
+              <Text />
             </Grid>
           </Grid>
         </Box>

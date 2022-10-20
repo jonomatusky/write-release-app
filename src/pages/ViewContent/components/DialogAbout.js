@@ -57,13 +57,7 @@ const DialogAbout = ({ open, onClose, id }) => {
         day: 'numeric',
       })
 
-    newValues.setupStage =
-      !isSetup && !!id
-        ? null
-        : contentType.secondary === 'New Hire' ||
-          contentType.secondary === 'Board Appointment'
-        ? 'hiring'
-        : 'subject'
+    newValues.setupStage = !isSetup && !!id ? null : 'resources'
 
     try {
       if (!!id) {
@@ -119,15 +113,9 @@ const DialogAbout = ({ open, onClose, id }) => {
 
   const handleClose = async () => {
     if (isSetup && !!id) {
-      let contentType = selectContentType(content.type)
-
       await update({
         id,
-        setupStage:
-          contentType.secondary === 'New Hire' ||
-          contentType.secondary === 'Board Appointment'
-            ? 'hiring'
-            : 'subject',
+        setupStage: 'resources',
       })
     }
     reset()
@@ -157,7 +145,7 @@ const DialogAbout = ({ open, onClose, id }) => {
         open={open || isSetup}
         onClose={handleClose}
         onSave={submit}
-        onRemove={() => setDeleteDialogIsOpen(true)}
+        onRemove={!!id ? () => setDeleteDialogIsOpen(true) : null}
         loading={updateStatus === 'loading' || createStatus === 'loading'}
         label={isSetup ? 'Next' : 'Save'}
         cancelLabel={isSetup ? 'Skip' : 'Cancel'}
