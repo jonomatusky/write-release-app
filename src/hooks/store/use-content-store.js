@@ -2,11 +2,18 @@ import { useCallback } from 'react'
 import { useSelector, useDispatch } from 'react-redux'
 
 import { useThunk } from 'hooks/use-thunk'
-import { fetch, create, update, remove, clear } from 'redux/contentSlice'
+import { fetch, create, update, remove, clear, get } from 'redux/contentSlice'
 
 export const useContentStore = () => {
   const dispatch = useDispatch()
   const dispatchThunk = useThunk()
+
+  const _get = useCallback(
+    async id => {
+      await dispatchThunk(get, { id })
+    },
+    [dispatchThunk]
+  )
 
   const _fetch = useCallback(async () => {
     await dispatchThunk(fetch)
@@ -54,6 +61,7 @@ export const useContentStore = () => {
   }
 
   return {
+    get: _get,
     fetch: _fetch,
     create: _create,
     update: _update,

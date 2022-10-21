@@ -35,6 +35,7 @@ import PanelAbout from './PanelAbout'
 import PanelHiring from './PanelHiring'
 import ButtonCopyContent from './ButtonCopyContent'
 import PanelResources from './PanelResources'
+import ButtonGoogleDoc from './ButtonGoogleDoc'
 
 const TextEditPage = () => {
   const { id } = useParams()
@@ -282,8 +283,8 @@ const TextEditPage = () => {
                 <b>{savingText}</b>
               </Typography>
             </Box>
-
             <ButtonCopyContent id={id} color="grey.800" />
+            <ButtonGoogleDoc id={id} onUpdate={handleUpdateText} />
           </Box>
         </Toolbar>
       </AppBar>
