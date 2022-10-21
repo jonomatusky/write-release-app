@@ -288,7 +288,20 @@ const TextEditPage = () => {
         </Toolbar>
       </AppBar>
       <Box display="flex">
-        <Box height={vh100 - 48} width="30%" p={3} overflow="scroll">
+        <Box
+          height={vh100 - 48}
+          width="30%"
+          p={3}
+          sx={{
+            overflowY: 'scroll',
+            overflowX: 'hidden',
+            '&::-webkit-scrollbar': {
+              display: 'none',
+            },
+            msOverflowStyle: 'none',
+            scrollbarWidth: 'none',
+          }}
+        >
           {/* <Toolbar variant="dense" /> */}
           <Grid item container spacing={2} alignContent="start">
             <Grid item xs={12}>
@@ -350,9 +363,13 @@ const TextEditPage = () => {
           // pl={3}
           // pr={1}
           // pt={2}
-          position="relative"
+          // position="relative"
         >
-          <Box overflow="scroll" height="100%" p={2}>
+          <Box
+            sx={{ overflowY: 'scroll', overflowX: 'hidden' }}
+            height="100%"
+            p={2}
+          >
             <Grid container spacing={2}>
               <Grid item xs={12} id="title">
                 <Editor
@@ -382,7 +399,19 @@ const TextEditPage = () => {
             </Grid>
           </Box>
         </Box>
-        <Box height={vh100 - 48} width="20%" overflow="scroll">
+        <Box
+          height={vh100 - 48}
+          width="20%"
+          sx={{
+            overflowY: 'scroll',
+            overflowX: 'hidden',
+            '&::-webkit-scrollbar': {
+              display: 'none',
+            },
+            msOverflowStyle: 'none',
+            scrollbarWidth: 'none',
+          }}
+        >
           {/* <Toolbar variant="dense" /> */}
 
           <Grid item container alignContent="start" spacing={2} p={1.5} pt={2}>
