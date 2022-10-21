@@ -42,31 +42,42 @@ const TextEditPage = () => {
   const content = select(id)
   const { titleInternal } = content
   const [saveStatus, setSaveStatus] = useState('saved')
-  const { title, subtitle, text } = content || {}
+  const { title, subtitle, text, boilerplate } = content || {}
 
-  const [editorState, setEditorState] = useState(
-    !!text
+  const [editorsState, setEditorsState] = useState({
+    text: !!text
       ? EditorState.createWithContent(convertFromRaw(JSON.parse(text)))
-      : EditorState.createEmpty()
-  )
+      : EditorState.createEmpty(),
+    title: EditorState.createWithContent(
+      ContentState.createFromText(title || '')
+    ),
+    subtitle: EditorState.createWithContent(
+      ContentState.createFromText(subtitle || '')
+    ),
+    boilerplate: !!boilerplate
+      ? EditorState.createWithContent(convertFromRaw(JSON.parse(boilerplate)))
+      : EditorState.createEmpty(),
+  })
 
-  const [titleState, setTitleState] = useState(
-    EditorState.createWithContent(ContentState.createFromText(title || ''))
-  )
+  const textsState = Object.keys(editorsState).reduce((acc, key) => {
+    acc[key] = editorsState[key].getCurrentContent().getPlainText()
+    return acc
+  }, {})
 
-  const [subtitleState, setSubtitleState] = useState(
-    EditorState.createWithContent(ContentState.createFromText(subtitle || ''))
-  )
+  const hasText = text => text.length > 0
+
+  // const getText = (field) => {
+  //   editorsState[field].getCurrentContent().getPlainText()
+  // }
 
   let generationStep
 
   if (
-    editorState.getCurrentContent().getPlainText().length > 0 ||
-    (titleState.getCurrentContent().getPlainText().length > 0 &&
-      subtitleState.getCurrentContent().getPlainText().length > 0)
+    hasText(textsState.text) ||
+    (hasText(textsState.title) > 0 && hasText(textsState.subtitle) > 0)
   ) {
     generationStep = 'text'
-  } else if (titleState.getCurrentContent().getPlainText().length > 0) {
+  } else if (hasText(textsState.title)) {
     generationStep = 'subtitle'
   } else {
     generationStep = 'title'
@@ -106,10 +117,10 @@ const TextEditPage = () => {
 
   const handleUpdateText = async () => {
     const newText = JSON.stringify(
-      convertToRaw(editorState.getCurrentContent())
+      convertToRaw(editorsState.text.getCurrentContent())
     )
-    const newTitle = titleState.getCurrentContent().getPlainText()
-    const newSubtitle = subtitleState.getCurrentContent().getPlainText()
+    const newTitle = textsState.title
+    const newSubtitle = textsState.subtitle
     setSaveStatus('saving')
     await update({ id, text: newText, title: newTitle, subtitle: newSubtitle })
     setSaveStatus('saved')
@@ -172,19 +183,12 @@ const TextEditPage = () => {
     setIsGenerating(false)
   }
 
-  const handleSetEditorState = editorState => {
+  const handleSetEditorsState = (field, value) => {
+    setEditorsState({
+      ...editorsState,
+      [field]: value,
+    })
     setSaveStatus('unsaved')
-    setEditorState(editorState)
-  }
-
-  const handleChangeTitle = text => {
-    setSaveStatus('unsaved')
-    setTitleState(text)
-  }
-
-  const handleChangeSubtitle = text => {
-    setSaveStatus('unsaved')
-    setSubtitleState(text)
   }
 
   const savingText =
@@ -196,9 +200,11 @@ const TextEditPage = () => {
 
   const handleAppend = i => {
     if (generations.type === 'text') {
-      const currentContent = editorState.getCurrentContent()
+      const currentContent = editorsState.text.getCurrentContent()
 
-      const editorStateWithFocusAtEnd = EditorState.moveFocusToEnd(editorState)
+      const editorStateWithFocusAtEnd = EditorState.moveFocusToEnd(
+        editorsState.text
+      )
       const selection = editorStateWithFocusAtEnd.getSelection()
 
       const blockContent = currentContent.getLastBlock().getText()
@@ -219,32 +225,22 @@ const TextEditPage = () => {
       }
 
       const editorWithInsert = EditorState.push(
-        editorState,
+        editorsState.text,
         newContent,
         'split-block'
       )
 
       const newEditorState = EditorState.moveSelectionToEnd(editorWithInsert)
 
-      setEditorState(newEditorState)
+      handleSetEditorsState('text', newEditorState)
     } else {
-      const newContent = ContentState.createFromText(generations.options[i])
+      const newEditorState = EditorState.push(
+        editorsState[generations.type],
+        ContentState.createFromText(generations.options[i]),
+        'insert-characters'
+      )
 
-      if (generations.type === 'title') {
-        const newEditorState = EditorState.push(
-          titleState,
-          newContent,
-          'insert-characters'
-        )
-        setTitleState(newEditorState)
-      } else {
-        const newEditorState = EditorState.push(
-          subtitleState,
-          newContent,
-          'insert-characters'
-        )
-        setSubtitleState(newEditorState)
-      }
+      handleSetEditorsState(generations.type, newEditorState)
     }
 
     setSaveStatus('unsaved')
@@ -373,8 +369,8 @@ const TextEditPage = () => {
             <Grid container spacing={2}>
               <Grid item xs={12} id="title">
                 <Editor
-                  editorState={titleState}
-                  onChange={handleChangeTitle}
+                  editorState={editorsState.title}
+                  onChange={value => handleSetEditorsState('title', value)}
                   placeholder="Title"
                   stripPastedStyles
                   blockStyleFn={titleStyleFn}
@@ -382,8 +378,8 @@ const TextEditPage = () => {
               </Grid>
               <Grid item xs={12} id="subtitle">
                 <Editor
-                  editorState={subtitleState}
-                  onChange={handleChangeSubtitle}
+                  editorState={editorsState.subtitle}
+                  onChange={value => handleSetEditorsState('subtitle', value)}
                   placeholder="Subtitle"
                   stripPastedStyles
                   blockStyleFn={subtitleStyleFn}
@@ -391,9 +387,18 @@ const TextEditPage = () => {
               </Grid>
               <Grid item xs={12}>
                 <Editor
-                  editorState={editorState}
-                  onChange={handleSetEditorState}
+                  editorState={editorsState.text}
+                  onChange={value => handleSetEditorsState('text', value)}
                   placeholder="Body"
+                />
+              </Grid>
+              <Grid item xs={12}>
+                <Editor
+                  editorState={editorsState.boilerplate}
+                  onChange={value =>
+                    handleSetEditorsState('boilerplate', value)
+                  }
+                  placeholder="Boilerplate"
                 />
               </Grid>
             </Grid>

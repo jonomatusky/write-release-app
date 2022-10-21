@@ -9,10 +9,11 @@ import useContentStore from 'hooks/store/use-content-store'
 import useContentTypesStore from 'hooks/store/use-content-types-store'
 import useFormHelper from 'hooks/use-form-helper'
 import Form from 'components/Form/Form'
-import OrganizationCard from './OrganizationCard'
 import DialogCreateEditCompany from 'pages/ViewContent/components/DialogCreateEditCompany'
 import useUserStore from 'hooks/store/use-user-store'
 import DialogDeleteContent from './DialogDeleteContent'
+import OrganizationPanel from './OrganizationPanel'
+import { ContentState, convertToRaw } from 'draft-js'
 
 const DialogAbout = ({ open, onClose, id }) => {
   const {
@@ -63,7 +64,28 @@ const DialogAbout = ({ open, onClose, id }) => {
       if (!!id) {
         await update({ id, ...newValues })
       } else {
-        const c = await create(newValues)
+        const boilerplateText = `To learn more, visit: ${
+          values.ctaUrl || organization.website
+        }
+
+About ${organization.name}
+${
+  !!organization.boilerplate
+    ? organization.boilerplate
+    : '[Add company boilerplate]'
+}
+
+Contacts
+Gregory FCA for ${organization.name}
+[Contact Name] [Contact phone number]
+${organization.email}
+`
+
+        const boilerplate = JSON.stringify(
+          convertToRaw(ContentState.createFromText(boilerplateText))
+        )
+
+        const c = await create({ boilerplate, ...newValues })
         window.location.hash = ''
         navigate(`/content/${c.id}`)
       }
@@ -99,15 +121,17 @@ const DialogAbout = ({ open, onClose, id }) => {
       disabled: !!id,
       AddDialog: DialogCreateEditCompany,
     },
+    {
+      label: 'What URL can readers visit to learn more?',
+      name: 'ctaUrl',
+      type: 'url',
+      validation: Yup.string().url('Must be a valid URL'),
+    },
   ]
 
   const { control, submit, reset, watch } = useFormHelper({
     formFields,
-    initialValues: {
-      date: content.date,
-      type: content.type,
-      organization: content.organizations?.[0],
-    },
+    initialValues: { ...content, organization: content.organizations?.[0] },
     onSubmit: handleSubmit,
   })
 
@@ -156,7 +180,7 @@ const DialogAbout = ({ open, onClose, id }) => {
           </Grid>
           {!!orgId && (
             <Grid item xs={12}>
-              <OrganizationCard id={orgId} />
+              <OrganizationPanel id={orgId} />
             </Grid>
           )}
         </Grid>
