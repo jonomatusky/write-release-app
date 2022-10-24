@@ -25,7 +25,6 @@ import ViewContents from 'pages/ViewContents/ViewContents'
 import ViewContent from 'pages/ViewContent/ViewContent'
 import EditorTest from 'pages/EditorTest'
 import LayoutDrawerHeader from 'layouts/LayoutDrawerHeader'
-import HeaderViews from 'layouts/HeaderViews'
 import HeaderView from 'layouts/HeaderView'
 import BetaRoute from 'routes/BetaRoute'
 
@@ -63,19 +62,17 @@ const App = () => {
             <Route path="/" element={<HeaderView />}>
               <Route path="/login" element={<Login />} />
               <Route path="/" element={<BetaRoute component={Outlet} />}>
-                <Route path="/content/:id" element={<ViewContent />} />
+                <Route path="/stories/:id" element={<ViewContent />} />
               </Route>
             </Route>
           </Route>
           <Route path="/" element={<LayoutDrawerHeader open />}>
-            <Route path="/" element={<HeaderViews />}>
-              <Route path="/" element={<PrivateRoute component={Outlet} />}>
-                <Route path="/profiles" element={<ViewProfiles />} />
-                <Route path="/companies" element={<ViewCompanies />} />
-                <Route path="*" element={<NotFound />} />
-                <Route path="/" element={<BetaRoute component={Outlet} />}>
-                  <Route path="/content" element={<ViewContents />} />
-                </Route>
+            <Route path="/" element={<PrivateRoute component={Outlet} />}>
+              <Route path="/profiles" element={<ViewProfiles />} />
+              <Route path="/companies" element={<ViewCompanies />} />
+              <Route path="*" element={<NotFound />} />
+              <Route path="/" element={<BetaRoute component={Outlet} />}>
+                <Route path="/stories" element={<ViewContents />} />
               </Route>
             </Route>
           </Route>

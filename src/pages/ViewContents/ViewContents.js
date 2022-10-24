@@ -11,6 +11,11 @@ import {
   TableRow,
   TableCell,
   TableBody,
+  List,
+  ListItem,
+  ListItemButton,
+  ListItemIcon,
+  ListItemText,
 } from '@mui/material'
 import FabAdd from 'components/FabAdd'
 import FuzzySearch from 'fuzzy-search'
@@ -19,13 +24,16 @@ import usePageTitle from 'hooks/use-page-title'
 // import LayoutDrawer from 'layouts/LayoutDrawer'
 import { useNavigate, useSearchParams } from 'react-router-dom'
 import SearchBar from 'components/SearchBar'
-import { NoteAdd } from '@mui/icons-material'
+import { Groups, NoteAdd, Person } from '@mui/icons-material'
 import useOrganizationsStore from 'hooks/store/use-organizations-store'
 import useContentStore from 'hooks/store/use-content-store'
 import useFetchContent from 'hooks/use-fetch-content'
 import useUsersStore from 'hooks/store/use-users-store'
 import { Box } from '@mui/system'
 import DialogAbout from 'pages/ViewContent/components/DialogAbout'
+import Panel from 'layouts/Panel'
+import useUserStore from 'hooks/store/use-user-store'
+import HeaderViews from 'components/HeaderViews'
 
 const ViewContents = () => {
   const type = 'content'
@@ -35,6 +43,7 @@ const ViewContents = () => {
   const { select: selectUser } = useUsersStore()
   const navigate = useNavigate()
   const [selectedId, setSelectedId] = useState(null)
+  const { item: user } = useUserStore()
 
   const { select: selectOrganization } = useOrganizationsStore()
 
@@ -48,9 +57,15 @@ const ViewContents = () => {
   usePageTitle()
   useFetchContent()
 
+  const [userFilter, setUserFilter] = useState(user.id)
+
   const [chunkCount, setChunkCount] = useState(1)
 
-  const sorted = [...items]
+  const filtered = [...items].filter(item =>
+    !userFilter ? true : item.owner === userFilter
+  )
+
+  const sorted = filtered
     .map(item => {
       return {
         ...item,
@@ -175,13 +190,21 @@ const ViewContents = () => {
 
   useOutsideAlerter(wrapperRef)
 
+  const handleChangeFilter = value => {
+    setUserFilter(value)
+    window.scrollTo(0, 0)
+  }
+
   return (
     <>
       <FabAdd Icon={NoteAdd} Dialog={DialogAbout} />
-      {/* <LayoutDrawer open={true}> */}
-      <Container maxWidth="lg">
-        <Grid container spacing={2} pt={2}>
-          <Grid item xs={12}>
+      <HeaderViews
+        searchValue={searchValue}
+        setSearchValue={handleUpdateSearch}
+      />
+      <Container maxWidth="xl">
+        {/* <Grid container spacing={2} pt={2}> */}
+        {/* <Grid item xs={12}>
             <Grid container spacing={2} justifyContent="space-between">
               <Grid item xs={12} sm={6} md={3} lg={3}>
                 <Button
@@ -191,7 +214,7 @@ const ViewContents = () => {
                   variant="contained"
                   sx={{ height: '40px' }}
                 >
-                  Create New
+                  Start a Story
                 </Button>
               </Grid>
               <Grid item xs={12} sm={6} md={4} lg={3}>
@@ -204,8 +227,86 @@ const ViewContents = () => {
                 </Box>
               </Grid>
             </Grid>
-          </Grid>
-          <Grid item xs={12}>
+          </Grid> */}
+
+        {/* <Grid item xs={12}> */}
+        <Box width="100%" display="flex" mt={2}>
+          <Box
+            width="300px"
+            pr={2}
+            sx={{ display: { xs: 'none', md: 'block' } }}
+            position="fixed"
+            flexShrink={0}
+          >
+            <Panel>
+              <Box p={2} display="flex">
+                <Grid container spacing={2}>
+                  <Grid item xs={12}>
+                    <Button
+                      fullWidth
+                      onClick={() => (window.location.hash = '#create')}
+                      endIcon={<NoteAdd />}
+                      variant="contained"
+                      size="large"
+                      sx={{ height: '56px' }}
+                    >
+                      Start a Story
+                    </Button>
+                  </Grid>
+                  <Grid item xs={12}>
+                    <Box width="100%">
+                      <SearchBar
+                        value={searchValue}
+                        setValue={handleUpdateSearch}
+                      />
+                    </Box>
+                  </Grid>
+                  <Grid item xs={12}>
+                    <List disablePadding>
+                      <ListItem disablePadding sx={{ pb: 1.5 }}>
+                        <ListItemButton
+                          selected={userFilter === user.id}
+                          sx={{
+                            minHeight: 48,
+                            borderRadius: 1,
+                          }}
+                          onClick={() => handleChangeFilter(user.id)}
+                        >
+                          <ListItemIcon>
+                            <Person />
+                          </ListItemIcon>
+                          <ListItemText primary="Your Stories" />
+                        </ListItemButton>
+                      </ListItem>
+                      <ListItem disablePadding>
+                        <ListItemButton
+                          selected={userFilter === null}
+                          sx={{
+                            minHeight: 48,
+                            borderRadius: 1,
+                          }}
+                          onClick={() => handleChangeFilter(null)}
+                        >
+                          <ListItemIcon>
+                            <Groups />
+                          </ListItemIcon>
+                          <ListItemText primary="All Stories" />
+                        </ListItemButton>
+                      </ListItem>
+                    </List>
+                  </Grid>
+                </Grid>
+              </Box>
+            </Panel>
+          </Box>
+          <Box
+            width="300px"
+            pr={2}
+            sx={{ display: { xs: 'none', md: 'block' } }}
+            visibility="hidden"
+            flexShrink={0}
+          />
+          <Box flexGrow={1} width="100px">
             <InfiniteScroll
               dataLength={itemsOnScreen.length}
               next={addMore}
@@ -247,7 +348,7 @@ const ViewContents = () => {
                                   sx={{ cursor: 'pointer' }}
                                   onClick={() => {
                                     if (selectedId === item.id) {
-                                      navigate('/content/' + item.id)
+                                      navigate('/stories/' + item.id)
                                     } else {
                                       setSelectedId(item.id)
                                     }
@@ -300,10 +401,10 @@ const ViewContents = () => {
                                     }}
                                   >
                                     {/* <Box
-                                  overflow="hidden"
-                                  textOverflow="ellipsis"
-                                  whiteSpace="nowrap"
-                                  > */}
+                                      overflow="hidden"
+                                      textOverflow="ellipsis"
+                                      whiteSpace="nowrap"
+                                      > */}
                                     {new Date(
                                       item.updatedAt || item.createdAt
                                     ).toLocaleDateString('en-us', {
@@ -323,8 +424,10 @@ const ViewContents = () => {
                 </Grid>
               </div>
             </InfiniteScroll>
-          </Grid>
-        </Grid>
+          </Box>
+        </Box>
+        {/* </Grid>
+        </Grid> */}
       </Container>
       {/* </LayoutDrawer> */}
     </>

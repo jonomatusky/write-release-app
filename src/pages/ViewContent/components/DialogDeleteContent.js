@@ -21,7 +21,7 @@ const DialogDeleteContent = ({ id, open, onClose }) => {
   const handleDelete = async () => {
     try {
       await update({ id, isRemoved: true })
-      navigate('/content')
+      navigate('/stories')
       setMessage({ message: 'The content has been deleted' })
     } catch (err) {
       console.log(err)

@@ -252,9 +252,9 @@ const LayoutDrawer = ({ open, children }) => {
                 />
                 <DrawerItem
                   open={open}
-                  label="Content"
+                  label="Stories"
                   Icon={Create}
-                  path="/content"
+                  path="/stories"
                   beta
                 />
               </List>
@@ -265,7 +265,6 @@ const LayoutDrawer = ({ open, children }) => {
                   open={open}
                   label="Report an Issue "
                   Icon={PestControl}
-                  path="/content"
                   component={MuiLink}
                   target="_blank"
                   href={`https://form.asana.com/?k=MTBXGOGWlSDhmqjbi4ipFw&d=38917462427951`}

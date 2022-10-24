@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React from 'react'
 import { Grid, Box } from '@mui/material'
 import * as Yup from 'yup'
 import { useNavigate } from 'react-router'
@@ -11,7 +11,6 @@ import useFormHelper from 'hooks/use-form-helper'
 import Form from 'components/Form/Form'
 import DialogCreateEditCompany from 'pages/ViewContent/components/DialogCreateEditCompany'
 import useUserStore from 'hooks/store/use-user-store'
-import DialogDeleteContent from './DialogDeleteContent'
 import OrganizationPanel from './OrganizationPanel'
 import { ContentState, convertToRaw } from 'draft-js'
 import useSession from 'hooks/use-session'
@@ -93,7 +92,7 @@ ${organization.email}
 
         const c = await create({ boilerplate, ...newValues })
         window.location.hash = ''
-        navigate(`/content/${c.id}`)
+        navigate(`/stories/${c.id}`)
       }
 
       onClose()
@@ -156,26 +155,18 @@ ${organization.email}
 
   const navigate = useNavigate()
 
-  const [deleteDialogIsOpen, setDeleteDialogIsOpen] = useState(false)
-
   return (
     <>
-      <DialogDeleteContent
-        id={id}
-        open={deleteDialogIsOpen}
-        onClose={() => setDeleteDialogIsOpen(false)}
-      />
       <LayoutDialogEdit
         title={
           <Box display="flex" alignItems="center" justifyContent="center">
             {/* <NoteAdd /> */}
-            <Box>About</Box>
+            <Box>{!!id ? 'About' : 'Start a Story'}</Box>
           </Box>
         }
         open={open || isSetup}
         onClose={handleClose}
         onSave={submit}
-        onRemove={!!id ? () => setDeleteDialogIsOpen(true) : null}
         loading={updateStatus === 'loading' || createStatus === 'loading'}
         label={isSetup ? 'Next' : 'Save'}
         cancelLabel={isSetup ? 'Skip' : 'Cancel'}

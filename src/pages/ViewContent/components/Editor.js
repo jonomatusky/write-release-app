@@ -24,7 +24,7 @@ import useContentStore from 'hooks/store/use-content-store'
 // import TextEditor from './TextEditor'
 import { use100vh } from 'hooks/use-100-vh'
 import useRequest from 'hooks/use-request'
-import { Add, CheckCircleOutline, Sync } from '@mui/icons-material'
+import { Add } from '@mui/icons-material'
 import './inputs.css'
 import { LoadingButton } from '@mui/lab'
 import 'draft-js/dist/Draft.css'
@@ -33,8 +33,8 @@ import PanelSubject from './PanelSubject'
 import PanelBackground from './PanelBackground'
 import PanelAbout from './PanelAbout'
 import PanelHiring from './PanelHiring'
+import ButtonCopyContent from './ButtonCopyContent'
 import PanelResources from './PanelResources'
-import MenuContent from './MenuContent'
 
 const TextEditPage = () => {
   const { id } = useParams()
@@ -42,42 +42,31 @@ const TextEditPage = () => {
   const content = select(id)
   const { titleInternal } = content
   const [saveStatus, setSaveStatus] = useState('saved')
-  const { title, subtitle, text, boilerplate } = content || {}
+  const { title, subtitle, text } = content || {}
 
-  const [editorsState, setEditorsState] = useState({
-    text: !!text
+  const [editorState, setEditorState] = useState(
+    !!text
       ? EditorState.createWithContent(convertFromRaw(JSON.parse(text)))
-      : EditorState.createEmpty(),
-    title: EditorState.createWithContent(
-      ContentState.createFromText(title || '')
-    ),
-    subtitle: EditorState.createWithContent(
-      ContentState.createFromText(subtitle || '')
-    ),
-    boilerplate: !!boilerplate
-      ? EditorState.createWithContent(convertFromRaw(JSON.parse(boilerplate)))
-      : EditorState.createEmpty(),
-  })
+      : EditorState.createEmpty()
+  )
 
-  const textsState = Object.keys(editorsState).reduce((acc, key) => {
-    acc[key] = editorsState[key].getCurrentContent().getPlainText()
-    return acc
-  }, {})
+  const [titleState, setTitleState] = useState(
+    EditorState.createWithContent(ContentState.createFromText(title || ''))
+  )
 
-  const hasText = text => text.length > 0
-
-  // const getText = (field) => {
-  //   editorsState[field].getCurrentContent().getPlainText()
-  // }
+  const [subtitleState, setSubtitleState] = useState(
+    EditorState.createWithContent(ContentState.createFromText(subtitle || ''))
+  )
 
   let generationStep
 
   if (
-    hasText(textsState.text) ||
-    (hasText(textsState.title) > 0 && hasText(textsState.subtitle) > 0)
+    editorState.getCurrentContent().getPlainText().length > 0 ||
+    (titleState.getCurrentContent().getPlainText().length > 0 &&
+      subtitleState.getCurrentContent().getPlainText().length > 0)
   ) {
     generationStep = 'text'
-  } else if (hasText(textsState.title)) {
+  } else if (titleState.getCurrentContent().getPlainText().length > 0) {
     generationStep = 'subtitle'
   } else {
     generationStep = 'title'
@@ -117,10 +106,10 @@ const TextEditPage = () => {
 
   const handleUpdateText = async () => {
     const newText = JSON.stringify(
-      convertToRaw(editorsState.text.getCurrentContent())
+      convertToRaw(editorState.getCurrentContent())
     )
-    const newTitle = textsState.title
-    const newSubtitle = textsState.subtitle
+    const newTitle = titleState.getCurrentContent().getPlainText()
+    const newSubtitle = subtitleState.getCurrentContent().getPlainText()
     setSaveStatus('saving')
     await update({ id, text: newText, title: newTitle, subtitle: newSubtitle })
     setSaveStatus('saved')
@@ -183,44 +172,33 @@ const TextEditPage = () => {
     setIsGenerating(false)
   }
 
-  const handleSetEditorsState = (field, value) => {
-    setEditorsState({
-      ...editorsState,
-      [field]: value,
-    })
+  const handleSetEditorState = editorState => {
     setSaveStatus('unsaved')
+    setEditorState(editorState)
   }
 
-  const SavingText = () => {
-    return (
-      <Box display="flex" alingItems="center" color="grey.500" pr={1}>
-        {saveStatus === 'saving' ? (
-          <Sync fontSize="small" sx={{ pr: 0.5 }} />
-        ) : saveStatus === 'saved' ? (
-          <CheckCircleOutline fontSize="small" sx={{ pr: 0.5 }} />
-        ) : (
-          <></>
-        )}
-        <Typography color="inherit" variant="body2" fontSize="12px" pt="2px">
-          <b>
-            {saveStatus === 'saving'
-              ? 'Saving...'
-              : saveStatus === 'saved'
-              ? 'Saved'
-              : 'Unsaved Changes'}
-          </b>
-        </Typography>
-      </Box>
-    )
+  const handleChangeTitle = text => {
+    setSaveStatus('unsaved')
+    setTitleState(text)
   }
+
+  const handleChangeSubtitle = text => {
+    setSaveStatus('unsaved')
+    setSubtitleState(text)
+  }
+
+  const savingText =
+    saveStatus === 'saving'
+      ? 'Saving...'
+      : saveStatus === 'saved'
+      ? 'Saved'
+      : 'Unsaved Changes'
 
   const handleAppend = i => {
     if (generations.type === 'text') {
-      const currentContent = editorsState.text.getCurrentContent()
+      const currentContent = editorState.getCurrentContent()
 
-      const editorStateWithFocusAtEnd = EditorState.moveFocusToEnd(
-        editorsState.text
-      )
+      const editorStateWithFocusAtEnd = EditorState.moveFocusToEnd(editorState)
       const selection = editorStateWithFocusAtEnd.getSelection()
 
       const blockContent = currentContent.getLastBlock().getText()
@@ -241,22 +219,32 @@ const TextEditPage = () => {
       }
 
       const editorWithInsert = EditorState.push(
-        editorsState.text,
+        editorState,
         newContent,
         'split-block'
       )
 
       const newEditorState = EditorState.moveSelectionToEnd(editorWithInsert)
 
-      handleSetEditorsState('text', newEditorState)
+      setEditorState(newEditorState)
     } else {
-      const newEditorState = EditorState.push(
-        editorsState[generations.type],
-        ContentState.createFromText(generations.options[i]),
-        'insert-characters'
-      )
+      const newContent = ContentState.createFromText(generations.options[i])
 
-      handleSetEditorsState(generations.type, newEditorState)
+      if (generations.type === 'title') {
+        const newEditorState = EditorState.push(
+          titleState,
+          newContent,
+          'insert-characters'
+        )
+        setTitleState(newEditorState)
+      } else {
+        const newEditorState = EditorState.push(
+          subtitleState,
+          newContent,
+          'insert-characters'
+        )
+        setSubtitleState(newEditorState)
+      }
     }
 
     setSaveStatus('unsaved')
@@ -284,26 +272,23 @@ const TextEditPage = () => {
             alignItems="center"
             justifyContent="flex-end"
           >
-            <SavingText />
-            <MenuContent id={id} />
+            <Box>
+              <Typography
+                color="grey.500"
+                variant="body2"
+                fontSize="12px"
+                pt="2px"
+              >
+                <b>{savingText}</b>
+              </Typography>
+            </Box>
+
+            <ButtonCopyContent id={id} color="grey.800" />
           </Box>
         </Toolbar>
       </AppBar>
       <Box display="flex">
-        <Box
-          height={vh100 - 48}
-          width="30%"
-          p={3}
-          sx={{
-            overflowY: 'scroll',
-            overflowX: 'hidden',
-            '&::-webkit-scrollbar': {
-              display: 'none',
-            },
-            msOverflowStyle: 'none',
-            scrollbarWidth: 'none',
-          }}
-        >
+        <Box height={vh100 - 48} width="30%" p={3} overflow="scroll">
           {/* <Toolbar variant="dense" /> */}
           <Grid item container spacing={2} alignContent="start">
             <Grid item xs={12}>
@@ -365,18 +350,14 @@ const TextEditPage = () => {
           // pl={3}
           // pr={1}
           // pt={2}
-          // position="relative"
+          position="relative"
         >
-          <Box
-            sx={{ overflowY: 'scroll', overflowX: 'hidden' }}
-            height="100%"
-            p={2}
-          >
+          <Box overflow="scroll" height="100%" p={2}>
             <Grid container spacing={2}>
               <Grid item xs={12} id="title">
                 <Editor
-                  editorState={editorsState.title}
-                  onChange={value => handleSetEditorsState('title', value)}
+                  editorState={titleState}
+                  onChange={handleChangeTitle}
                   placeholder="Title"
                   stripPastedStyles
                   blockStyleFn={titleStyleFn}
@@ -384,8 +365,8 @@ const TextEditPage = () => {
               </Grid>
               <Grid item xs={12} id="subtitle">
                 <Editor
-                  editorState={editorsState.subtitle}
-                  onChange={value => handleSetEditorsState('subtitle', value)}
+                  editorState={subtitleState}
+                  onChange={handleChangeSubtitle}
                   placeholder="Subtitle"
                   stripPastedStyles
                   blockStyleFn={subtitleStyleFn}
@@ -393,36 +374,22 @@ const TextEditPage = () => {
               </Grid>
               <Grid item xs={12}>
                 <Editor
-                  editorState={editorsState.text}
-                  onChange={value => handleSetEditorsState('text', value)}
+                  editorState={editorState}
+                  onChange={handleSetEditorState}
                   placeholder="Body"
                 />
               </Grid>
               <Grid item xs={12}>
                 <Editor
-                  editorState={editorsState.boilerplate}
-                  onChange={value =>
-                    handleSetEditorsState('boilerplate', value)
-                  }
+                  editorState={editorState}
+                  onChange={handleSetEditorState}
                   placeholder="Boilerplate"
                 />
               </Grid>
             </Grid>
           </Box>
         </Box>
-        <Box
-          height={vh100 - 48}
-          width="20%"
-          sx={{
-            overflowY: 'scroll',
-            overflowX: 'hidden',
-            '&::-webkit-scrollbar': {
-              display: 'none',
-            },
-            msOverflowStyle: 'none',
-            scrollbarWidth: 'none',
-          }}
-        >
+        <Box height={vh100 - 48} width="20%" overflow="scroll">
           {/* <Toolbar variant="dense" /> */}
 
           <Grid item container alignContent="start" spacing={2} p={1.5} pt={2}>
