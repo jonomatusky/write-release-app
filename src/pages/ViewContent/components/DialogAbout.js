@@ -14,6 +14,7 @@ import useUserStore from 'hooks/store/use-user-store'
 import DialogDeleteContent from './DialogDeleteContent'
 import OrganizationPanel from './OrganizationPanel'
 import { ContentState, convertToRaw } from 'draft-js'
+import useSession from 'hooks/use-session'
 
 const DialogAbout = ({ open, onClose, id }) => {
   const {
@@ -28,6 +29,7 @@ const DialogAbout = ({ open, onClose, id }) => {
   const { items: organizations, select: selectOrganization } =
     useOrganizationsStore()
   const { item: user } = useUserStore()
+  const { user: authUser } = useSession()
 
   const content = !!id ? selectContent(id) : {}
 
@@ -77,7 +79,11 @@ ${
 
 Contacts
 Gregory FCA for ${organization.name}
-[Contact Name] [Contact phone number]
+${!!authUser?.displayName ? authUser.displayName : '[Contact Name]'} ${
+          !!authUser?.phoneNumber
+            ? authUser.phoneNumber
+            : '[Contact phone number]'
+        }
 ${organization.email}
 `
 
