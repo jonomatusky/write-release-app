@@ -9,6 +9,7 @@ import {
   CardActionArea,
   Toolbar,
   AppBar,
+  Button,
 } from '@mui/material'
 import {
   Editor,
@@ -35,6 +36,7 @@ import PanelAbout from './PanelAbout'
 import PanelHiring from './PanelHiring'
 import ButtonCopyContent from './ButtonCopyContent'
 import PanelResources from './PanelResources'
+import useUserStore from 'hooks/store/use-user-store'
 
 const TextEditPage = () => {
   const { id } = useParams()
@@ -43,6 +45,7 @@ const TextEditPage = () => {
   const { titleInternal } = content
   const [saveStatus, setSaveStatus] = useState('saved')
   const { title, subtitle, text, boilerplate } = content || {}
+  const { item: user } = useUserStore()
 
   const [editorsState, setEditorsState] = useState({
     text: !!text
@@ -247,6 +250,12 @@ const TextEditPage = () => {
     setGenerationIteration(0)
   }
 
+  const [messageOpen, setMessageOpen] = useState(false)
+
+  const handleToggleMessage = () => {
+    setMessageOpen(!messageOpen)
+  }
+
   return (
     <>
       <AppBar
@@ -307,7 +316,12 @@ const TextEditPage = () => {
                 onClick={handleGenerate}
                 loading={isGenerating}
               >
-                Generate {generationStep}
+                Generate{' '}
+                {generationStep === 'title'
+                  ? 'Headline'
+                  : generationStep === 'subtitle'
+                  ? 'Subheadline'
+                  : 'Text'}
               </LoadingButton>
             </Grid>
             {!isGenerating &&
@@ -336,14 +350,29 @@ const TextEditPage = () => {
                   </Grid>
                 )
               })}
-            {!isGenerating && generations.message && (
-              <Grid item xs={12}>
-                <Typography variant="body2">
-                  <span style={{ whiteSpace: 'pre-line' }}>
-                    {generations.message}
-                  </span>
-                </Typography>
-              </Grid>
+            {!isGenerating && generations.message && user.admin && (
+              <>
+                <Grid item xs={12} container justifyContent="center">
+                  <Box color="gray.500">
+                    <Button
+                      size="small"
+                      onClick={handleToggleMessage}
+                      color="inherit"
+                    >
+                      {messageOpen ? 'Hide Message' : 'Show Message'}
+                    </Button>
+                  </Box>
+                </Grid>
+                {messageOpen && (
+                  <Grid item xs={12}>
+                    <Typography variant="body2">
+                      <span style={{ whiteSpace: 'pre-line' }}>
+                        {generations.message}
+                      </span>
+                    </Typography>
+                  </Grid>
+                )}
+              </>
             )}
           </Grid>
         </Box>
@@ -371,7 +400,7 @@ const TextEditPage = () => {
                 <Editor
                   editorState={editorsState.title}
                   onChange={value => handleSetEditorsState('title', value)}
-                  placeholder="Title"
+                  placeholder="Headline"
                   stripPastedStyles
                   blockStyleFn={titleStyleFn}
                 />
@@ -380,7 +409,7 @@ const TextEditPage = () => {
                 <Editor
                   editorState={editorsState.subtitle}
                   onChange={value => handleSetEditorsState('subtitle', value)}
-                  placeholder="Subtitle"
+                  placeholder="Subheadline"
                   stripPastedStyles
                   blockStyleFn={subtitleStyleFn}
                 />
