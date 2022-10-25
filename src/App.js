@@ -27,6 +27,8 @@ import EditorTest from 'pages/EditorTest'
 import LayoutDrawerHeader from 'layouts/LayoutDrawerHeader'
 import HeaderView from 'layouts/HeaderView'
 import BetaRoute from 'routes/BetaRoute'
+import ViewCampaigns from 'pages/ViewCampaigns/ViewCampaigns'
+import ViewCampaign from 'pages/ViewCampaign/ViewCampaign'
 
 const { REACT_APP_POSTHOG_KEY } = process.env
 
@@ -63,6 +65,7 @@ const App = () => {
               <Route path="/login" element={<Login />} />
               <Route path="/" element={<BetaRoute component={Outlet} />}>
                 <Route path="/stories/:id" element={<ViewContent />} />
+                <Route path="/social/:id" element={<ViewCampaign />} />
               </Route>
             </Route>
           </Route>
@@ -73,10 +76,10 @@ const App = () => {
               <Route path="*" element={<NotFound />} />
               <Route path="/" element={<BetaRoute component={Outlet} />}>
                 <Route path="/stories" element={<ViewContents />} />
+                <Route path="/social" element={<ViewCampaigns />} />
               </Route>
             </Route>
           </Route>
-
           {/* <Route path="/" element={<HeaderAlt />}></Route> */}
           <Route path="/editor-test" element={<EditorTest />} />
         </Routes>
