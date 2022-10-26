@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import { useParams } from 'react-router-dom'
 import {
   Grid,
@@ -10,6 +10,7 @@ import {
   Toolbar,
   AppBar,
   Button,
+  Chip,
 } from '@mui/material'
 import {
   Editor,
@@ -18,6 +19,9 @@ import {
   convertToRaw,
   convertFromRaw,
   Modifier,
+  convertFromHTML,
+  CompositeDecorator,
+  SelectionState,
 } from 'draft-js'
 import usePageTitle from 'hooks/use-page-title'
 import useContentStore from 'hooks/store/use-content-store'
@@ -47,10 +51,43 @@ const TextEditPage = () => {
   const { title, subtitle, text, boilerplate } = content || {}
   const { item: user } = useUserStore()
 
+  const tabEntity = `{{TAB}}`
+
+  const findInstructions = (contentBlock, callback, contentState) => {
+    const text = contentBlock.getText()
+    let start
+
+    if (text.indexOf(tabEntity) >= 0) {
+      start = text.indexOf(tabEntity)
+      callback(start, start + tabEntity.length)
+    }
+  }
+
+  const TabEntity = () => {
+    return (
+      <span contentEditable={false} style={{ color: '#ababab' }}>
+        <b>
+          Press <Chip variant="outlined" size="small" label="tab" /> to continue
+          writing
+        </b>
+      </span>
+    )
+  }
+
+  const compositeDecorator = new CompositeDecorator([
+    {
+      strategy: findInstructions,
+      component: TabEntity,
+    },
+  ])
+
   const [editorsState, setEditorsState] = useState({
     text: !!text
-      ? EditorState.createWithContent(convertFromRaw(JSON.parse(text)))
-      : EditorState.createEmpty(),
+      ? EditorState.createWithContent(
+          convertFromRaw(JSON.parse(text)),
+          compositeDecorator
+        )
+      : EditorState.createEmpty(compositeDecorator),
     title: EditorState.createWithContent(
       ContentState.createFromText(title || '')
     ),
@@ -186,13 +223,114 @@ const TextEditPage = () => {
     setIsGenerating(false)
   }
 
+  const [isEditing, setIsEditing] = useState(false)
+  const [isFocused, setIsFocused] = useState(false)
+
   const handleSetEditorsState = (field, value) => {
+    let newValue = value
+
+    if (!isEditing) {
+      setIsEditing(true)
+    }
+
+    if (field === 'text') {
+      const text = value.getCurrentContent().getPlainText()
+
+      if (!!text.includes(tabEntity)) {
+        const blockMap = value.getCurrentContent().getBlockMap()
+
+        blockMap.forEach(contentBlock => {
+          const blockText = contentBlock.getText()
+
+          if (blockText.indexOf(tabEntity) >= 0) {
+            let start = text.indexOf(tabEntity)
+            const blockKey = contentBlock.getKey()
+            const blockSelection = new SelectionState.createEmpty(
+              blockKey
+            ).merge({
+              anchorOffset: start,
+              focusOffset: start + tabEntity.length,
+            })
+
+            let contentState = Modifier.replaceText(
+              value.getCurrentContent(),
+              blockSelection,
+              ''
+            )
+
+            newValue = EditorState.push(value, contentState)
+          }
+        })
+      }
+    }
+
     setEditorsState({
       ...editorsState,
-      [field]: value,
+      [field]: newValue,
     })
+
     setSaveStatus('unsaved')
   }
+
+  useEffect(() => {
+    const handleShowInline = () => {
+      const currentContent = editorsState.text.getCurrentContent()
+      const text = currentContent.getPlainText()
+
+      console.log(text)
+
+      // const editorStateWithFocusAtEnd = EditorState.moveFocusToEnd(
+      //   editorsState.text
+      // )
+
+      if (!text.includes(tabEntity)) {
+        const block = tabEntity
+        const blocksFromHTML = convertFromHTML(block)
+        const newBlockMap = ContentState.createFromBlockArray(
+          blocksFromHTML.contentBlocks,
+          blocksFromHTML.entityMap
+        )
+        const selection = editorsState.text.getSelection()
+        const textWithInsert = Modifier.replaceWithFragment(
+          currentContent,
+          selection,
+          newBlockMap.getBlockMap()
+        )
+        // const newContent = Modifier.splitBlock(textWithInsert, selection)
+        // let newContent = textWithInsert
+        const editorWithInsert = EditorState.push(
+          editorsState.text,
+          textWithInsert,
+          'insert-fragment'
+        )
+        // const newEditorState = EditorState.moveSelectionToEnd(editorWithInsert)
+        setEditorsState({
+          ...editorsState,
+          text: editorWithInsert,
+        })
+      }
+    }
+
+    if (isEditing && isFocused) {
+      const timer = setTimeout(() => {
+        setIsEditing(false)
+        handleShowInline()
+      }, 1000)
+
+      return () => clearTimeout(timer)
+    }
+  }, [
+    isEditing,
+    isFocused,
+    editorsState.text,
+    setEditorsState,
+    setSaveStatus,
+    editorsState,
+    tabEntity,
+  ])
+
+  console.log('isEditing', isEditing)
+  console.log('isFocused', isFocused)
 
   const savingText =
     saveStatus === 'saving'
@@ -419,6 +557,8 @@ const TextEditPage = () => {
                   editorState={editorsState.text}
                   onChange={value => handleSetEditorsState('text', value)}
                   placeholder="Body"
+                  onBlur={() => setIsFocused(false)}
+                  onFocus={() => setIsFocused(true)}
                 />
               </Grid>
               <Grid item xs={12}>
