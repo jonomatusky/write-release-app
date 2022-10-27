@@ -22,6 +22,8 @@ import PanelAbout from './PanelAbout'
 import PanelResources from './PanelResources'
 import MenuContent from './MenuContent'
 import GeneratedOption from 'components/GeneratedOption'
+import { Button } from 'react-scroll'
+import useUserStore from 'hooks/store/use-user-store'
 
 const TextEditPage = () => {
   const { id } = useParams()
@@ -30,6 +32,7 @@ const TextEditPage = () => {
   const { titleInternal } = content
   const [saveStatus, setSaveStatus] = useState('saved')
   const { title, text } = content || {}
+  const { item: user } = useUserStore()
 
   const [editorsState, setEditorsState] = useState({
     text: !!text
@@ -202,6 +205,12 @@ const TextEditPage = () => {
     setGenerationIteration(0)
   }
 
+  const [messageOpen, setMessageOpen] = useState(false)
+
+  const handleToggleMessage = () => {
+    setMessageOpen(!messageOpen)
+  }
+
   return (
     <>
       <AppBar
@@ -267,14 +276,29 @@ const TextEditPage = () => {
                   </Grid>
                 )
               })}
-            {!isGenerating && generations.message && (
-              <Grid item xs={12}>
-                <Typography variant="body2">
-                  <span style={{ whiteSpace: 'pre-line' }}>
-                    {generations.message}
-                  </span>
-                </Typography>
-              </Grid>
+            {!isGenerating && generations.message && user.admin && (
+              <>
+                <Grid item xs={12} container justifyContent="center">
+                  <Box color="gray.500">
+                    <Button
+                      size="small"
+                      onClick={handleToggleMessage}
+                      color="inherit"
+                    >
+                      {messageOpen ? 'Hide Message' : 'Show Message'}
+                    </Button>
+                  </Box>
+                </Grid>
+                {messageOpen && (
+                  <Grid item xs={12}>
+                    <Typography variant="body2">
+                      <span style={{ whiteSpace: 'pre-line' }}>
+                        {generations.message}
+                      </span>
+                    </Typography>
+                  </Grid>
+                )}
+              </>
             )}
           </Grid>
         </Box>

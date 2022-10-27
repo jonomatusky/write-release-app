@@ -23,7 +23,6 @@ import InfiniteScroll from 'react-infinite-scroll-component'
 import usePageTitle from 'hooks/use-page-title'
 // import LayoutDrawer from 'layouts/LayoutDrawer'
 import { useNavigate, useSearchParams } from 'react-router-dom'
-import SearchBar from 'components/SearchBar'
 import { Groups, NoteAdd, Person } from '@mui/icons-material'
 import useOrganizationsStore from 'hooks/store/use-organizations-store'
 import useContentStore from 'hooks/store/use-content-store'
@@ -256,14 +255,6 @@ const ViewCampaigns = () => {
                     >
                       Create Campaign
                     </Button>
-                  </Grid>
-                  <Grid item xs={12}>
-                    <Box width="100%">
-                      <SearchBar
-                        value={searchValue}
-                        setValue={handleUpdateSearch}
-                      />
-                    </Box>
                   </Grid>
                   <Grid item xs={12}>
                     <List disablePadding>
