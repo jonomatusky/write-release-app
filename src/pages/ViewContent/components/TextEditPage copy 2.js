@@ -55,7 +55,7 @@ const TextEditPage = () => {
   const [isEditing, setIsEditing] = useState(false)
   const [isFocused, setIsFocused] = useState(false)
 
-  const getCompositeDecorator = useCallback(() => {
+  const getCompositeDecorator = useCallback(show => {
     const findInstructions = (contentBlock, callback, contentState) => {
       const text = contentBlock.getText()
       let start
@@ -70,16 +70,16 @@ const TextEditPage = () => {
     }
 
     let TabEntity = () => {
-      // if (!show) {
-      //   return <span></span>
-      // } else {
-      return (
-        <span contentEditable={false} style={{ color: '#ababab' }}>
-          {' '}
-          Press <b>tab</b> to continue writing
-        </span>
-      )
-      // }
+      if (!show) {
+        return <span></span>
+      } else {
+        return (
+          <span contentEditable={false} style={{ color: '#ababab' }}>
+            {' '}
+            Press <b>tab</b> to continue writing
+          </span>
+        )
+      }
     }
 
     return new CompositeDecorator([
@@ -154,6 +154,7 @@ const TextEditPage = () => {
   }, {})
 
   const handleBlur = () => {
+    console.log(isFocused)
     setIsFocused(false)
     setIsEditing(false)
     const text = editorsState.text
@@ -163,7 +164,9 @@ const TextEditPage = () => {
 
     setEditorsState({
       ...editorsState,
-      text: editorState,
+      text: EditorState.set(editorState, {
+        decorator: getCompositeDecorator(),
+      }),
     })
   }
 
@@ -275,7 +278,9 @@ const TextEditPage = () => {
 
       setEditorsState({
         ...editorsState,
-        text: newNewValue,
+        text: EditorState.set(newNewValue, {
+          decorator: getCompositeDecorator(),
+        }),
       })
     } else {
       setEditorsState({
@@ -291,8 +296,10 @@ const TextEditPage = () => {
     if (isEditing) {
       const timer = setTimeout(() => {
         setIsEditing(false)
+        console.log('inserting tab')
 
         if (isFocused) {
+          console.log('focused')
           const text = editorsState.text
           const selectorState = text.getSelection()
 
@@ -309,6 +316,8 @@ const TextEditPage = () => {
 
           if (cursorIsAtEnd) {
             // change selector state to only at end
+            console.log('cursor is at end')
+
             const newContentState = Modifier.insertText(
               contentState,
               selectorState,
@@ -323,7 +332,9 @@ const TextEditPage = () => {
 
             setEditorsState({
               ...editorsState,
-              text: newestEditorState,
+              text: EditorState.set(newestEditorState, {
+                decorator: getCompositeDecorator(true),
+              }),
             })
           }
         }
@@ -331,7 +342,13 @@ const TextEditPage = () => {
 
       return () => clearTimeout(timer)
     }
-  }, [isEditing, editorsState, removeTabEntity, isFocused])
+  }, [
+    isEditing,
+    editorsState,
+    getCompositeDecorator,
+    removeTabEntity,
+    isFocused,
+  ])
 
   const savingText =
     saveStatus === 'saving'

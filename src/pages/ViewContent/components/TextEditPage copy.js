@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import { useParams } from 'react-router-dom'
 import {
   Grid,
@@ -10,6 +10,7 @@ import {
   Toolbar,
   AppBar,
   Button,
+  Chip,
 } from '@mui/material'
 import {
   Editor,
@@ -18,6 +19,7 @@ import {
   convertToRaw,
   convertFromRaw,
   Modifier,
+  convertFromHTML,
   CompositeDecorator,
   SelectionState,
 } from 'draft-js'
@@ -40,9 +42,6 @@ import ButtonCopyContent from './ButtonCopyContent'
 import PanelResources from './PanelResources'
 import useUserStore from 'hooks/store/use-user-store'
 
-const tabEntity = `{{TAB}}`
-const tabEntity2 = `{{TAB}`
-
 const TextEditPage = () => {
   const { id } = useParams()
   const { select, update } = useContentStore()
@@ -52,91 +51,42 @@ const TextEditPage = () => {
   const { title, subtitle, text, boilerplate } = content || {}
   const { item: user } = useUserStore()
 
+  const tabEntity = `{{TAB}}`
+
+  const findInstructions = (contentBlock, callback, contentState) => {
+    const text = contentBlock.getText()
+    let start
+
+    if (text.indexOf(tabEntity) >= 0) {
+      start = text.indexOf(tabEntity)
+      callback(start, start + tabEntity.length)
+    }
+  }
+
   const [isEditing, setIsEditing] = useState(false)
-  const [isFocused, setIsFocused] = useState(false)
+  // const [isFocused, setIsFocused] = useState(false)
 
-  const getCompositeDecorator = useCallback(() => {
-    const findInstructions = (contentBlock, callback, contentState) => {
-      const text = contentBlock.getText()
-      let start
+  const TabEntityHide = () => {
+    return <span></span>
+  }
 
-      if (text.indexOf(tabEntity) >= 0) {
-        start = text.indexOf(tabEntity)
-        callback(start, start + tabEntity.length)
-      } else if (text.indexOf(tabEntity2) >= 0) {
-        start = text.indexOf(tabEntity2)
-        callback(start, start + tabEntity2.length)
-      }
-    }
-
-    let TabEntity = () => {
-      // if (!show) {
-      //   return <span></span>
-      // } else {
-      return (
-        <span contentEditable={false} style={{ color: '#ababab' }}>
-          {' '}
-          Press <b>tab</b> to continue writing
-        </span>
-      )
-      // }
-    }
-
-    return new CompositeDecorator([
-      {
-        strategy: findInstructions,
-        component: TabEntity,
-      },
-    ])
-  }, [])
-
-  const removeTabEntity = useCallback(editorState => {
-    let contentState = editorState.getCurrentContent()
-    const blockMap = contentState.getBlockMap()
-
-    // remove all tab entities
-    blockMap.forEach(block => {
-      const key = block.getKey()
-      const textBlock = block.getText()
-
-      const start = textBlock.indexOf(tabEntity)
-
-      if (start >= 0) {
-        const selection = SelectionState.createEmpty(key).merge({
-          anchorOffset: start,
-          focusOffset: start + tabEntity.length,
-        })
-
-        contentState = Modifier.replaceText(contentState, selection, '')
-      }
-    })
-
-    blockMap.forEach(block => {
-      const key = block.getKey()
-      const textBlock = block.getText()
-
-      const start = textBlock.indexOf(tabEntity2)
-
-      if (start >= 0) {
-        const selection = SelectionState.createEmpty(key).merge({
-          anchorOffset: start,
-          focusOffset: start + tabEntity2.length,
-        })
-
-        contentState = Modifier.replaceText(contentState, selection, '')
-      }
-    })
-
-    return contentState
-  }, [])
+  const compositeDecoratorHide = new CompositeDecorator([
+    {
+      strategy: findInstructions,
+      component: TabEntityHide,
+    },
+  ])
 
   const [editorsState, setEditorsState] = useState({
     text: !!text
       ? EditorState.createWithContent(
           convertFromRaw(JSON.parse(text)),
-          getCompositeDecorator()
+          compositeDecoratorHide
         )
-      : EditorState.createEmpty(getCompositeDecorator()),
+      : EditorState.createEmpty(compositeDecoratorHide),
+    // text: !!text
+    //   ? EditorState.createWithContent(convertFromRaw(JSON.parse(text)))
+    //   : EditorState.createEmpty(),
     title: EditorState.createWithContent(
       ContentState.createFromText(title || '')
     ),
@@ -154,20 +104,45 @@ const TextEditPage = () => {
   }, {})
 
   const handleBlur = () => {
-    setIsFocused(false)
-    setIsEditing(false)
+    console.log('handling blur')
     const text = editorsState.text
 
-    const contentState = removeTabEntity(text)
-    const editorState = EditorState.push(text, contentState)
+    const findInstructions2 = (contentBlock, callback, contentState) => {
+      const text = contentBlock.getText()
+      let start
 
+      if (text.indexOf(tabEntity) >= 0) {
+        start = text.indexOf(tabEntity)
+        callback(start, start + tabEntity.length)
+      }
+    }
+
+    const TabEntity = () => {
+      return <span></span>
+    }
+
+    const compositeDecorator = new CompositeDecorator([
+      {
+        strategy: findInstructions2,
+        component: TabEntity,
+      },
+    ])
+
+    // setIsEditing(false)
     setEditorsState({
       ...editorsState,
-      text: editorState,
+      text: EditorState.set(text, {
+        decorator: compositeDecorator,
+      }),
     })
+    // setIsFocused(false)
   }
 
   const hasText = text => text.length > 0
+
+  // const getText = (field) => {
+  //   editorsState[field].getCurrentContent().getPlainText()
+  // }
 
   let generationStep
 
@@ -191,6 +166,28 @@ const TextEditPage = () => {
   }
 
   usePageTitle((!!titleInternal ? titleInternal + ' | ' : '') + 'SourceOn')
+
+  // const handleUpdate = async values => {
+  //   try {
+  //     await update({ id, ...values })
+  //   } catch (err) {
+  //     console.log(err)
+  //   }
+  // }
+
+  // const toolbarOptions = ['history', 'inline', 'list']
+
+  // const inlineOptions = ['bold', 'italic', 'underline']
+
+  // const [name, setName] = useState(titleInternal || '')
+
+  // useEffect(() => {
+  //   setName(titleInternal)
+  // }, [titleInternal])
+
+  // const handleUpdateName = () => {
+  //   update({ id, titleInternal: name })
+  // }
 
   const handleUpdateText = async () => {
     const newText = JSON.stringify(
@@ -260,22 +257,52 @@ const TextEditPage = () => {
     setIsGenerating(false)
   }
 
-  // console.log(editorsState.text.getCurrentContent().getPlainText())
-
   const handleSetEditorsState = (field, value) => {
     if (!isEditing) {
       setIsEditing(true)
     }
 
     if (field === 'text') {
-      const selectionState = value.getSelection()
-      const contentState = removeTabEntity(value)
-      let newValue = EditorState.push(value, contentState)
-      let newNewValue = EditorState.acceptSelection(newValue, selectionState)
+      //   let contentState = value.getCurrentContent()
+      //   const blockMap = contentState.getBlockMap()
+
+      //   // remove all tab entities
+      //   blockMap.forEach(block => {
+      //     const key = block.getKey()
+      //     const textBlock = block.getText()
+
+      //     // while (textBlock.indexOf(tabEntity) >= 0) {
+      //     const start = textBlock.indexOf(tabEntity)
+
+      //     if (start >= 0) {
+      //       const selection = SelectionState.createEmpty(key).merge({
+      //         anchorOffset: start,
+      //         focusOffset: start + tabEntity.length,
+      //       })
+
+      //       contentState = Modifier.replaceText(contentState, selection, '')
+      //     }
+      //     // }
+      //   })
+
+      //   const newEditorState = EditorState.push(editorsState.text, contentState)
+
+      const TabEntityHide = () => {
+        return <span></span>
+      }
+
+      const compositeDecoratorHide = new CompositeDecorator([
+        {
+          strategy: findInstructions,
+          component: TabEntityHide,
+        },
+      ])
 
       setEditorsState({
         ...editorsState,
-        text: newNewValue,
+        text: EditorState.set(value, {
+          decorator: compositeDecoratorHide,
+        }),
       })
     } else {
       setEditorsState({
@@ -285,53 +312,166 @@ const TextEditPage = () => {
     }
 
     setSaveStatus('unsaved')
+
+    // if (field === 'text') {
+    //   const text = value.getCurrentContent().getPlainText()
+
+    //   if (!!text.includes(tabEntity)) {
+    //     const blockMap = value.getCurrentContent().getBlockMap()
+
+    //     blockMap.forEach(contentBlock => {
+    //       const blockText = contentBlock.getText()
+
+    //       if (blockText.indexOf(tabEntity) >= 0) {
+    //         let start = text.indexOf(tabEntity)
+    //         const blockKey = contentBlock.getKey()
+    //         const blockSelection = new SelectionState.createEmpty(
+    //           blockKey
+    //         ).merge({
+    //           anchorOffset: start,
+    //           focusOffset: start + tabEntity.length,
+    //         })
+
+    //         let contentState = Modifier.replaceText(
+    //           value.getCurrentContent(),
+    //           blockSelection,
+    //           ''
+    //         )
+
+    //         newValue = EditorState.push(value, contentState)
+    //       }
+    //     })
+    //   }
+    // }
   }
 
   useEffect(() => {
+    // const handleShowInline = () => {
+    //   const currentContent = editorsState.text.getCurrentContent()
+    //   const text = currentContent.getPlainText()
+
+    //   console.log(text)
+
+    //   // const editorStateWithFocusAtEnd = EditorState.moveFocusToEnd(
+    //   //   editorsState.text
+    //   // )
+
+    //   if (!text.includes(tabEntity)) {
+    //     const block = tabEntity
+    //     const blocksFromHTML = convertFromHTML(block)
+    //     const newBlockMap = ContentState.createFromBlockArray(
+    //       blocksFromHTML.contentBlocks,
+    //       blocksFromHTML.entityMap
+    //     )
+    //     const selection = editorsState.text.getSelection()
+    //     const textWithInsert = Modifier.replaceWithFragment(
+    //       currentContent,
+    //       selection,
+    //       newBlockMap.getBlockMap()
+    //     )
+    //     // const newContent = Modifier.splitBlock(textWithInsert, selection)
+    //     // let newContent = textWithInsert
+    //     const editorWithInsert = EditorState.push(
+    //       editorsState.text,
+    //       textWithInsert,
+    //       'insert-fragment'
+    //     )
+    //     // const newEditorState = EditorState.moveSelectionToEnd(editorWithInsert)
+    //     setEditorsState({
+    //       ...editorsState,
+    //       text: editorWithInsert,
+    //     })
+    //   }
+    // }
+
     if (isEditing) {
       const timer = setTimeout(() => {
         setIsEditing(false)
+        const text = editorsState.text
+        let contentState = text.getCurrentContent()
+        const selectorState = text.getSelection()
+        const blockMap = contentState.getBlockMap()
 
-        if (isFocused) {
-          const text = editorsState.text
-          const selectorState = text.getSelection()
+        // remove all tab entities
+        blockMap.forEach(block => {
+          const key = block.getKey()
+          const textBlock = block.getText()
 
-          const contentState = removeTabEntity(text)
+          // while (textBlock.indexOf(tabEntity) >= 0) {
+          const start = textBlock.indexOf(tabEntity)
 
-          // add tab to current block
-          const block = contentState.getBlockForKey(selectorState.getEndKey())
-
-          let blockLength = block.getLength()
-
-          const cursorIsAtEnd =
-            selectorState.getEndOffset() === blockLength &&
-            selectorState.isCollapsed()
-
-          if (cursorIsAtEnd) {
-            // change selector state to only at end
-            const newContentState = Modifier.insertText(
-              contentState,
-              selectorState,
-              tabEntity
-            )
-
-            const newEditorState = EditorState.push(text, newContentState)
-            const newestEditorState = EditorState.acceptSelection(
-              newEditorState,
-              selectorState
-            )
-
-            setEditorsState({
-              ...editorsState,
-              text: newestEditorState,
+          if (start >= 0) {
+            const selection = SelectionState.createEmpty(key).merge({
+              anchorOffset: start,
+              focusOffset: start + tabEntity.length,
             })
+
+            contentState = Modifier.replaceText(contentState, selection, '')
           }
+          // }
+        })
+
+        const findInstructions2 = (contentBlock, callback, contentState) => {
+          const text = contentBlock.getText()
+          let start
+
+          if (text.indexOf(tabEntity) >= 0) {
+            start = text.indexOf(tabEntity)
+            callback(start, start + tabEntity.length)
+          }
+        }
+
+        const TabEntityShow = () => {
+          return (
+            <span contentEditable={false} style={{ color: '#ababab' }}>
+              {' '}
+              Press <b>tab</b> to continue writing
+            </span>
+          )
+        }
+
+        // add tab to current block
+        const block = contentState.getBlockForKey(selectorState.getEndKey())
+
+        // const hasInline = text.indexOf(tabEntity) >= 0
+
+        let blockLength = block.getLength()
+
+        // if (hasInline) {
+        //   blockLength -= tabEntity.length
+        // }
+
+        const cursorIsAtEnd = selectorState.getEndOffset() === blockLength
+
+        if (cursorIsAtEnd) {
+          console.log('cursor is at end')
+
+          const newContentState = Modifier.insertText(
+            contentState,
+            selectorState,
+            tabEntity
+          )
+          const newEditorState = EditorState.push(text, newContentState)
+
+          const compositeDecoratorShow = new CompositeDecorator([
+            {
+              strategy: findInstructions2,
+              component: TabEntityShow,
+            },
+          ])
+
+          setEditorsState({
+            ...editorsState,
+            text: EditorState.set(newEditorState, {
+              decorator: compositeDecoratorShow,
+            }),
+          })
         }
       }, 1000)
 
       return () => clearTimeout(timer)
     }
-  }, [isEditing, editorsState, removeTabEntity, isFocused])
+  }, [isEditing, editorsState, tabEntity])
 
   const savingText =
     saveStatus === 'saving'
@@ -559,7 +699,7 @@ const TextEditPage = () => {
                   onChange={value => handleSetEditorsState('text', value)}
                   placeholder="Body"
                   onBlur={handleBlur}
-                  onFocus={() => setIsFocused(true)}
+                  // onFocus={() => setIsFocused(true)}
                 />
               </Grid>
               <Grid item xs={12}>
