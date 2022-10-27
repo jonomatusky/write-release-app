@@ -92,7 +92,7 @@ ${organization.email}
 
         const c = await create({ boilerplate, ...newValues })
         window.location.hash = ''
-        navigate(`/stories/${c.id}`)
+        navigate(`/social/${c.id}`)
       }
 
       onClose()
@@ -101,18 +101,20 @@ ${organization.email}
 
   const formFields = [
     {
-      label: 'When is this release going out?',
-      name: 'date',
-      type: 'date',
+      label: 'Give your campaign a name',
+      name: 'title',
+      validation: Yup.string().required('Name is required'),
     },
     {
-      label: 'What type of press are you writing?',
+      label: 'Which platform is this for?',
       name: 'type',
       options:
-        contentTypes.map(contentType => ({
-          ...contentType,
-          name: contentType.secondary,
-        })) || [],
+        contentTypes
+          .map(contentType => ({
+            ...contentType,
+            name: contentType.secondary,
+          }))
+          .filter(contentType => contentType.primary === 'Social Media') || [],
       type: 'auto',
       validation: Yup.string().required('Type is required'),
       disabled: !!id,
@@ -127,7 +129,7 @@ ${organization.email}
       AddDialog: DialogCreateEditCompany,
     },
     {
-      label: 'What URL can readers visit to learn more?',
+      label: 'What link are you sharing? (optional)',
       name: 'ctaUrl',
       type: 'url',
       validation: Yup.string().url('Must be a valid URL'),
@@ -161,7 +163,7 @@ ${organization.email}
         title={
           <Box display="flex" alignItems="center" justifyContent="center">
             {/* <NoteAdd /> */}
-            <Box>{!!id ? 'About' : 'Start a Story'}</Box>
+            <Box>{!!id ? 'About' : 'Create Campaign'}</Box>
           </Box>
         }
         open={open || isSetup}

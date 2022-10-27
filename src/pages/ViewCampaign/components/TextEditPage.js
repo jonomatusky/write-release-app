@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { useParams } from 'react-router-dom'
-import { Grid, Box, Typography, Toolbar, AppBar, Button } from '@mui/material'
+import { Grid, Box, Typography, Toolbar, AppBar } from '@mui/material'
 import {
   Editor,
   EditorState,
@@ -11,23 +11,17 @@ import {
 } from 'draft-js'
 import usePageTitle from 'hooks/use-page-title'
 import useContentStore from 'hooks/store/use-content-store'
-// import ContentName from './ContentName'
-// import TextEditor from './TextEditor'
 import { use100vh } from 'hooks/use-100-vh'
 import useRequest from 'hooks/use-request'
 import { CheckCircleOutline, Sync } from '@mui/icons-material'
 import './inputs.css'
 import { LoadingButton } from '@mui/lab'
 import 'draft-js/dist/Draft.css'
-import PanelQuotes from './PanelQuotes'
 import PanelSubject from './PanelSubject'
-import PanelBackground from './PanelBackground'
 import PanelAbout from './PanelAbout'
-import PanelHiring from './PanelHiring'
 import PanelResources from './PanelResources'
 import MenuContent from './MenuContent'
 import GeneratedOption from 'components/GeneratedOption'
-import useUserStore from 'hooks/store/use-user-store'
 
 const TextEditPage = () => {
   const { id } = useParams()
@@ -35,8 +29,7 @@ const TextEditPage = () => {
   const content = select(id)
   const { titleInternal } = content
   const [saveStatus, setSaveStatus] = useState('saved')
-  const { title, subtitle, text, boilerplate } = content || {}
-  const { item: user } = useUserStore()
+  const { title, text } = content || {}
 
   const [editorsState, setEditorsState] = useState({
     text: !!text
@@ -45,12 +38,6 @@ const TextEditPage = () => {
     title: EditorState.createWithContent(
       ContentState.createFromText(title || '')
     ),
-    subtitle: EditorState.createWithContent(
-      ContentState.createFromText(subtitle || '')
-    ),
-    boilerplate: !!boilerplate
-      ? EditorState.createWithContent(convertFromRaw(JSON.parse(boilerplate)))
-      : EditorState.createEmpty(),
   })
 
   const textsState = Object.keys(editorsState).reduce((acc, key) => {
@@ -58,56 +45,13 @@ const TextEditPage = () => {
     return acc
   }, {})
 
-  const hasText = text => text.length > 0
-
-  // const getText = (field) => {
-  //   editorsState[field].getCurrentContent().getPlainText()
-  // }
-
-  let generationStep
-
-  if (
-    hasText(textsState.text) ||
-    (hasText(textsState.title) > 0 && hasText(textsState.subtitle) > 0)
-  ) {
-    generationStep = 'text'
-  } else if (hasText(textsState.title)) {
-    generationStep = 'subtitle'
-  } else {
-    generationStep = 'title'
-  }
+  let generationStep = 'text'
 
   const titleStyleFn = () => {
     return 'titleInput'
   }
 
-  const subtitleStyleFn = () => {
-    return 'subtitleInput'
-  }
-
   usePageTitle((!!titleInternal ? titleInternal + ' | ' : '') + 'SourceOn')
-
-  // const handleUpdate = async values => {
-  //   try {
-  //     await update({ id, ...values })
-  //   } catch (err) {
-  //     console.log(err)
-  //   }
-  // }
-
-  // const toolbarOptions = ['history', 'inline', 'list']
-
-  // const inlineOptions = ['bold', 'italic', 'underline']
-
-  // const [name, setName] = useState(titleInternal || '')
-
-  // useEffect(() => {
-  //   setName(titleInternal)
-  // }, [titleInternal])
-
-  // const handleUpdateName = () => {
-  //   update({ id, titleInternal: name })
-  // }
 
   const handleUpdateText = async () => {
     const newText = JSON.stringify(
@@ -148,6 +92,7 @@ const TextEditPage = () => {
     prompt: '',
     options: [],
   })
+
   const [isGenerating, setIsGenerating] = useState(false)
 
   const [generationIteration, setGenerationIteration] = useState(0)
@@ -257,12 +202,6 @@ const TextEditPage = () => {
     setGenerationIteration(0)
   }
 
-  const [messageOpen, setMessageOpen] = useState(false)
-
-  const handleToggleMessage = () => {
-    setMessageOpen(!messageOpen)
-  }
-
   return (
     <>
       <AppBar
@@ -313,12 +252,7 @@ const TextEditPage = () => {
                 onClick={handleGenerate}
                 loading={isGenerating}
               >
-                Generate{' '}
-                {generationStep === 'title'
-                  ? 'Headline'
-                  : generationStep === 'subtitle'
-                  ? 'Subheadline'
-                  : 'Text'}
+                Generate {generationStep}
               </LoadingButton>
             </Grid>
             {!isGenerating &&
@@ -333,29 +267,14 @@ const TextEditPage = () => {
                   </Grid>
                 )
               })}
-            {!isGenerating && generations.message && user.admin && (
-              <>
-                <Grid item xs={12} container justifyContent="center">
-                  <Box color="gray.500">
-                    <Button
-                      size="small"
-                      onClick={handleToggleMessage}
-                      color="inherit"
-                    >
-                      {messageOpen ? 'Hide Message' : 'Show Message'}
-                    </Button>
-                  </Box>
-                </Grid>
-                {messageOpen && (
-                  <Grid item xs={12}>
-                    <Typography variant="body2">
-                      <span style={{ whiteSpace: 'pre-line' }}>
-                        {generations.message}
-                      </span>
-                    </Typography>
-                  </Grid>
-                )}
-              </>
+            {!isGenerating && generations.message && (
+              <Grid item xs={12}>
+                <Typography variant="body2">
+                  <span style={{ whiteSpace: 'pre-line' }}>
+                    {generations.message}
+                  </span>
+                </Typography>
+              </Grid>
             )}
           </Grid>
         </Box>
@@ -383,18 +302,9 @@ const TextEditPage = () => {
                 <Editor
                   editorState={editorsState.title}
                   onChange={value => handleSetEditorsState('title', value)}
-                  placeholder="Headline"
+                  placeholder="Title"
                   stripPastedStyles
                   blockStyleFn={titleStyleFn}
-                />
-              </Grid>
-              <Grid item xs={12} id="subtitle">
-                <Editor
-                  editorState={editorsState.subtitle}
-                  onChange={value => handleSetEditorsState('subtitle', value)}
-                  placeholder="Subheadline"
-                  stripPastedStyles
-                  blockStyleFn={subtitleStyleFn}
                 />
               </Grid>
               <Grid item xs={12}>
@@ -402,15 +312,6 @@ const TextEditPage = () => {
                   editorState={editorsState.text}
                   onChange={value => handleSetEditorsState('text', value)}
                   placeholder="Body"
-                />
-              </Grid>
-              <Grid item xs={12}>
-                <Editor
-                  editorState={editorsState.boilerplate}
-                  onChange={value =>
-                    handleSetEditorsState('boilerplate', value)
-                  }
-                  placeholder="Boilerplate"
                 />
               </Grid>
             </Grid>
@@ -429,15 +330,10 @@ const TextEditPage = () => {
             scrollbarWidth: 'none',
           }}
         >
-          {/* <Toolbar variant="dense" /> */}
-
           <Grid item container alignContent="start" spacing={2} p={1.5} pt={2}>
             <PanelAbout id={id} />
             <PanelResources id={id} />
-            <PanelHiring id={id} />
             <PanelSubject id={id} />
-            <PanelBackground id={id} />
-            <PanelQuotes id={id} />
           </Grid>
         </Box>
       </Box>

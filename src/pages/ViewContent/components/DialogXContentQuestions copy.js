@@ -29,7 +29,7 @@ const DialogContentQuestions = ({ open, onClose, id }) => {
   const handleRemove = async () => {
     try {
       update({ id, isRemoved: true })
-      navigate('/content')
+      navigate('/stories')
     } catch (err) {
       console.log(err)
     }

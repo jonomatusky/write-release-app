@@ -2,6 +2,7 @@ import React from 'react'
 import { AppBar, Toolbar, Box, Button } from '@mui/material'
 import useSession from 'hooks/use-session'
 import { Outlet } from 'react-router'
+import SearchBar from 'components/SearchBar'
 
 const HeaderViews = ({ open }) => {
   const { logout } = useSession()
@@ -20,13 +21,14 @@ const HeaderViews = ({ open }) => {
         }}
         open={open}
       >
-        <Toolbar variant="dense">
+        <Toolbar>
           <Box
             display="flex"
             width="100%"
             alignItems="center"
             justifyContent="flex-end"
           >
+            <SearchBar />
             <Box flexGrow={0}>
               <Button color="primary" size="small" onClick={logout}>
                 Log Out
@@ -35,7 +37,7 @@ const HeaderViews = ({ open }) => {
           </Box>
         </Toolbar>
       </AppBar>
-      <Toolbar variant="dense" />
+      <Toolbar />
       <Outlet />
     </>
   )

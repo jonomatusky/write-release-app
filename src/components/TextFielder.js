@@ -4,9 +4,11 @@ import { TextField, Typography } from '@mui/material'
 const TextFielder = ({ label, helpText, error, ...props }) => {
   return (
     <label>
-      <Typography color="secondary" pb={1} variant="body2">
-        {label}
-      </Typography>
+      {!!label && (
+        <Typography color="secondary" pb={1} variant="body2">
+          {label}
+        </Typography>
+      )}
       {!!helpText && (
         <Typography
           variant="body2"

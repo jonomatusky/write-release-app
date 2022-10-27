@@ -25,6 +25,7 @@ import IndustriesBar from 'components/IndustriesBar'
 import { Add, Clear } from '@mui/icons-material'
 import OrgBar from './OrgBar'
 import useOrganizationsStore from 'hooks/store/use-organizations-store'
+import HeaderViews from './HeaderViews'
 
 const ViewIndexPage = ({ items, Item, type, mode, Dialog, Icon }) => {
   const [searchParams, setSearchParams] = useSearchParams()
@@ -199,199 +200,209 @@ const ViewIndexPage = ({ items, Item, type, mode, Dialog, Icon }) => {
   useOutsideAlerter(wrapperRef)
 
   return (
-    // <LayoutDrawer open={true}>
-    <Container maxWidth="lg">
-      <Box width="100%" display="flex" mt={2}>
-        <Box
-          width="350px"
-          pr={2}
-          sx={{ display: { xs: 'none', md: 'block' } }}
-          position="fixed"
-          flexShrink={0}
-        >
-          <Panel>
-            <Box p={2} display="flex">
-              <Grid container spacing={2}>
-                <Grid item xs={12}>
-                  <Button
-                    onClick={() => (window.location.hash = '#create')}
-                    endIcon={Icon ? <Icon /> : <Add />}
-                    variant="contained"
-                    fullWidth
-                  >
-                    Create New
-                  </Button>
-                </Grid>
-                <Grid item xs={12}>
+    <>
+      <HeaderViews
+        searchValue={searchValue}
+        setSearchValue={handleUpdateSearch}
+      />
+      <Container maxWidth="lg">
+        <Box width="100%" display="flex" mt={2}>
+          <Box
+            width="350px"
+            pr={2}
+            sx={{ display: { xs: 'none', md: 'block' } }}
+            position="fixed"
+            flexShrink={0}
+          >
+            <Panel>
+              <Box p={2} display="flex">
+                <Grid container spacing={2}>
+                  <Grid item xs={12}>
+                    <Button
+                      onClick={() => (window.location.hash = '#create')}
+                      endIcon={Icon ? <Icon /> : <Add />}
+                      variant="contained"
+                      fullWidth
+                    >
+                      Create New
+                    </Button>
+                  </Grid>
+                  {/* <Grid item xs={12}>
                   <SearchBar
                     value={searchValue}
                     setValue={handleUpdateSearch}
                   />
-                </Grid>
-                {(type === 'individual' || type === 'content') && (
+                </Grid> */}
+                  {(type === 'individual' || type === 'content') && (
+                    <Grid item xs={12}>
+                      <OrgBar
+                        value={company}
+                        setValue={handleSetCompany}
+                        disablePortal
+                      />
+                    </Grid>
+                  )}
+                  {type !== 'content' && (
+                    <Grid item xs={12}>
+                      <IndustriesBar
+                        values={industries}
+                        setValues={handleSetIndustries}
+                        disablePortal
+                      />
+                    </Grid>
+                  )}
+                  {type !== 'content' && (
+                    <Grid item xs={12}>
+                      <TagBar
+                        values={tags}
+                        setValues={handleSetTags}
+                        disablePortal
+                      />
+                    </Grid>
+                  )}
                   <Grid item xs={12}>
-                    <OrgBar
-                      value={company}
-                      setValue={handleSetCompany}
-                      disablePortal
-                    />
+                    <Button onClick={clear} endIcon={<Clear />} fullWidth>
+                      Clear Search
+                    </Button>
                   </Grid>
-                )}
-                {type !== 'content' && (
-                  <Grid item xs={12}>
-                    <IndustriesBar
-                      values={industries}
-                      setValues={handleSetIndustries}
-                      disablePortal
-                    />
-                  </Grid>
-                )}
-                {type !== 'content' && (
-                  <Grid item xs={12}>
-                    <TagBar
-                      values={tags}
-                      setValues={handleSetTags}
-                      disablePortal
-                    />
-                  </Grid>
-                )}
-                <Grid item xs={12}>
-                  <Button onClick={clear} endIcon={<Clear />} fullWidth>
-                    Clear Search
-                  </Button>
                 </Grid>
-              </Grid>
-            </Box>
-          </Panel>
-        </Box>
-        <Box
-          width="350px"
-          pr={2}
-          sx={{ display: { xs: 'none', md: 'block' } }}
-          visibility="hidden"
-          flexShrink={0}
-        />
-        <Box flexGrow={1} width="100px">
-          <InfiniteScroll
-            dataLength={itemsOnScreen.length}
-            next={addMore}
-            hasMore={itemsOnScreen.length < list.length}
-            loader={
-              <Grid container mt={2} mb={2}>
-                <Grid item xs={12} lg={9} textAlign="center">
-                  <CircularProgress />
+              </Box>
+            </Panel>
+          </Box>
+          <Box
+            width="350px"
+            pr={2}
+            sx={{ display: { xs: 'none', md: 'block' } }}
+            visibility="hidden"
+            flexShrink={0}
+          />
+          <Box flexGrow={1} width="100px">
+            <InfiniteScroll
+              dataLength={itemsOnScreen.length}
+              next={addMore}
+              hasMore={itemsOnScreen.length < list.length}
+              loader={
+                <Grid container mt={2} mb={2}>
+                  <Grid item xs={12} lg={9} textAlign="center">
+                    <CircularProgress />
+                  </Grid>
                 </Grid>
-              </Grid>
-            }
-          >
-            <div ref={wrapperRef}>
-              <Grid container spacing={2} mb={2}>
-                <Grid item xs={12} sx={{ display: { xs: 'flex', md: 'none' } }}>
-                  <Box width="100%">
-                    <Panel>
-                      <Box p={2}>
-                        <Grid container spacing={2}>
-                          <Grid item xs={12}>
-                            <SearchBar
-                              value={search}
-                              setValue={handleUpdateSearch}
-                            />
-                          </Grid>
-                          {type === 'individual' && (
+              }
+            >
+              <div ref={wrapperRef}>
+                <Grid container spacing={2} mb={2}>
+                  <Grid
+                    item
+                    xs={12}
+                    sx={{ display: { xs: 'flex', md: 'none' } }}
+                  >
+                    <Box width="100%">
+                      <Panel>
+                        <Box p={2}>
+                          <Grid container spacing={2}>
                             <Grid item xs={12}>
-                              <OrgBar
-                                value={company}
-                                setValue={handleSetCompany}
+                              <SearchBar
+                                value={search}
+                                setValue={handleUpdateSearch}
                               />
                             </Grid>
-                          )}
-                          <Grid item xs={12}>
-                            <IndustriesBar
-                              values={industries}
-                              setValues={handleSetIndustries}
-                            />
+                            {type === 'individual' && (
+                              <Grid item xs={12}>
+                                <OrgBar
+                                  value={company}
+                                  setValue={handleSetCompany}
+                                />
+                              </Grid>
+                            )}
+                            <Grid item xs={12}>
+                              <IndustriesBar
+                                values={industries}
+                                setValues={handleSetIndustries}
+                              />
+                            </Grid>
+                            <Grid item xs={12}>
+                              <TagBar values={tags} setValues={handleSetTags} />
+                            </Grid>
+                            <Grid item xs={12}>
+                              <Button
+                                onClick={clear}
+                                endIcon={<Clear />}
+                                fullWidth
+                              >
+                                Clear Search
+                              </Button>
+                            </Grid>
                           </Grid>
-                          <Grid item xs={12}>
-                            <TagBar values={tags} setValues={handleSetTags} />
-                          </Grid>
-                          <Grid item xs={12}>
-                            <Button
-                              onClick={clear}
-                              endIcon={<Clear />}
-                              fullWidth
-                            >
-                              Clear Search
-                            </Button>
-                          </Grid>
-                        </Grid>
-                      </Box>
-                    </Panel>
-                  </Box>
-                </Grid>
-                {mode === 'list' || !Item ? (
-                  <Grid item xs={12} lg={9}>
-                    <Paper variant="outlined" sx={{ width: '100%' }}>
-                      <TableContainer>
-                        <Table>
-                          <TableHead>
-                            <TableRow>
-                              <TableCell width="45%">Name</TableCell>
-                              <TableCell>Company</TableCell>
-                              {/* <TableCell>Owner</TableCell> */}
-                              <TableCell align="right">Last Modified</TableCell>
-                            </TableRow>
-                          </TableHead>
-                          <TableBody>
-                            {itemsOnScreen.length === 0 && (
+                        </Box>
+                      </Panel>
+                    </Box>
+                  </Grid>
+                  {mode === 'list' || !Item ? (
+                    <Grid item xs={12} lg={9}>
+                      <Paper variant="outlined" sx={{ width: '100%' }}>
+                        <TableContainer>
+                          <Table>
+                            <TableHead>
                               <TableRow>
-                                <TableCell colSpan={3} align="center">
-                                  No results found
+                                <TableCell width="45%">Name</TableCell>
+                                <TableCell>Company</TableCell>
+                                {/* <TableCell>Owner</TableCell> */}
+                                <TableCell align="right">
+                                  Last Modified
                                 </TableCell>
                               </TableRow>
-                            )}
-                            {itemsOnScreen.length > 0 &&
-                              itemsOnScreen.map((item, i) => (
-                                <TableRow
-                                  key={i}
-                                  sx={{ cursor: 'pointer' }}
-                                  onClick={() => {
-                                    if (selectedId === item.id) {
-                                      navigate('/content/' + item.id)
-                                    } else {
-                                      setSelectedId(item.id)
-                                    }
-                                  }}
-                                  selected={selectedId === item.id}
-                                >
-                                  <TableCell
-                                    width="50%"
-                                    sx={{
-                                      maxWidth: 0,
-                                      overflow: 'hidden',
-                                      textOverflow: 'ellipsis',
-                                      whiteSpace: 'nowrap',
-                                    }}
-                                  >
-                                    {item.name ||
-                                      item.title ||
-                                      item.titleInternal ||
-                                      'No Title'}
+                            </TableHead>
+                            <TableBody>
+                              {itemsOnScreen.length === 0 && (
+                                <TableRow>
+                                  <TableCell colSpan={3} align="center">
+                                    No results found
                                   </TableCell>
-                                  <TableCell
-                                    sx={{
-                                      maxWidth: 0,
-                                      overflow: 'hidden',
-                                      textOverflow: 'ellipsis',
-                                      whiteSpace: 'nowrap',
+                                </TableRow>
+                              )}
+                              {itemsOnScreen.length > 0 &&
+                                itemsOnScreen.map((item, i) => (
+                                  <TableRow
+                                    key={i}
+                                    sx={{ cursor: 'pointer' }}
+                                    onClick={() => {
+                                      if (selectedId === item.id) {
+                                        navigate('/stories/' + item.id)
+                                      } else {
+                                        setSelectedId(item.id)
+                                      }
                                     }}
+                                    selected={selectedId === item.id}
                                   >
-                                    {
-                                      selectOrganization(
-                                        (item.organizations || [])[0]
-                                      )?.name
-                                    }
-                                  </TableCell>
-                                  {/* <TableCell
+                                    <TableCell
+                                      width="50%"
+                                      sx={{
+                                        maxWidth: 0,
+                                        overflow: 'hidden',
+                                        textOverflow: 'ellipsis',
+                                        whiteSpace: 'nowrap',
+                                      }}
+                                    >
+                                      {item.name ||
+                                        item.title ||
+                                        item.titleInternal ||
+                                        'No Title'}
+                                    </TableCell>
+                                    <TableCell
+                                      sx={{
+                                        maxWidth: 0,
+                                        overflow: 'hidden',
+                                        textOverflow: 'ellipsis',
+                                        whiteSpace: 'nowrap',
+                                      }}
+                                    >
+                                      {
+                                        selectOrganization(
+                                          (item.organizations || [])[0]
+                                        )?.name
+                                      }
+                                    </TableCell>
+                                    {/* <TableCell
                                   sx={{
                                     maxWidth: 0,
                                     overflow: 'hidden',
@@ -401,50 +412,50 @@ const ViewIndexPage = ({ items, Item, type, mode, Dialog, Icon }) => {
                                 >
                                   {item.owner}
                                 </TableCell> */}
-                                  <TableCell
-                                    align="right"
-                                    sx={{
-                                      maxWidth: 0,
-                                      overflow: 'hidden',
-                                      textOverflow: 'ellipsis',
-                                      whiteSpace: 'nowrap',
-                                    }}
-                                  >
-                                    {/* <Box
+                                    <TableCell
+                                      align="right"
+                                      sx={{
+                                        maxWidth: 0,
+                                        overflow: 'hidden',
+                                        textOverflow: 'ellipsis',
+                                        whiteSpace: 'nowrap',
+                                      }}
+                                    >
+                                      {/* <Box
                                   overflow="hidden"
                                   textOverflow="ellipsis"
                                   whiteSpace="nowrap"
                                   > */}
-                                    {new Date(
-                                      item.updatedAt || item.createdAt
-                                    ).toLocaleDateString('en-us', {
-                                      year: 'numeric',
-                                      month: 'short',
-                                      day: 'numeric',
-                                    })}
-                                    {/* </Box> */}
-                                  </TableCell>
-                                </TableRow>
-                              ))}
-                          </TableBody>
-                        </Table>
-                      </TableContainer>
-                    </Paper>
-                  </Grid>
-                ) : (
-                  itemsOnScreen.map(item => (
-                    <Grid item xs={12} lg={9} key={item.id}>
-                      <Item id={item.id} />
+                                      {new Date(
+                                        item.updatedAt || item.createdAt
+                                      ).toLocaleDateString('en-us', {
+                                        year: 'numeric',
+                                        month: 'short',
+                                        day: 'numeric',
+                                      })}
+                                      {/* </Box> */}
+                                    </TableCell>
+                                  </TableRow>
+                                ))}
+                            </TableBody>
+                          </Table>
+                        </TableContainer>
+                      </Paper>
                     </Grid>
-                  ))
-                )}
-              </Grid>
-            </div>
-          </InfiniteScroll>
+                  ) : (
+                    itemsOnScreen.map(item => (
+                      <Grid item xs={12} lg={9} key={item.id}>
+                        <Item id={item.id} />
+                      </Grid>
+                    ))
+                  )}
+                </Grid>
+              </div>
+            </InfiniteScroll>
+          </Box>
         </Box>
-      </Box>
-    </Container>
-    // </LayoutDrawer>
+      </Container>
+    </>
   )
 }
 
