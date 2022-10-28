@@ -135,7 +135,7 @@ const TextEditPage = () => {
 
   const SavingText = () => {
     return (
-      <Box display="flex" alingItems="center" color="grey.500" pr={1}>
+      <Box display="flex" alignItems="center" color="grey.500" pr={1}>
         {saveStatus === 'saving' ? (
           <Sync fontSize="small" sx={{ pr: 0.5 }} />
         ) : saveStatus === 'saved' ? (
@@ -241,7 +241,8 @@ const TextEditPage = () => {
         <Box
           height={vh100 - 48}
           width="30%"
-          p={3}
+          p={2}
+          pr={1.5}
           sx={{
             overflowY: 'scroll',
             overflowX: 'hidden',
@@ -260,6 +261,7 @@ const TextEditPage = () => {
                 variant="contained"
                 onClick={handleGenerate}
                 loading={isGenerating}
+                size="large"
               >
                 Generate {generationStep}
               </LoadingButton>
@@ -354,7 +356,15 @@ const TextEditPage = () => {
             scrollbarWidth: 'none',
           }}
         >
-          <Grid item container alignContent="start" spacing={2} p={1.5} pt={2}>
+          <Grid
+            item
+            container
+            alignContent="start"
+            spacing={2}
+            p={1.5}
+            pt={2}
+            pr={2}
+          >
             <PanelAbout id={id} />
             <PanelResources id={id} />
             <PanelSubject id={id} />
