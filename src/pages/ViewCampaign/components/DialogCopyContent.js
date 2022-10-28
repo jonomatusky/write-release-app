@@ -1,6 +1,4 @@
-import React, { useState } from 'react'
-import { ContentCopy } from '@mui/icons-material'
-import { IconButton } from '@mui/material'
+import React from 'react'
 import useContentStore from 'hooks/store/use-content-store'
 import LayoutDialogEdit from 'layouts/LayoutDialogEdit'
 import useOrganizationsStore from 'hooks/store/use-organizations-store'
@@ -10,8 +8,7 @@ import useFormHelper from 'hooks/use-form-helper'
 import Form from 'components/Form/Form'
 import useAlertStore from 'hooks/store/use-alert-store'
 
-const ButtonCopyContent = ({ id }) => {
-  const [isOpen, setIsOpen] = useState(false)
+const DialogCopyContent = ({ open: isOpen, onClose, id }) => {
   const { create, createStatus, select } = useContentStore()
   const { items: organizations } = useOrganizationsStore()
   const { item: user } = useUserStore()
@@ -49,7 +46,7 @@ const ButtonCopyContent = ({ id }) => {
 
     try {
       const newContent = await create(newValues)
-      setIsOpen(false)
+      onClose()
       navigate('/stories/' + newContent.id)
       setMessage({ message: 'Content copied successfully' })
     } catch (err) {}
@@ -62,7 +59,7 @@ const ButtonCopyContent = ({ id }) => {
   })
 
   const handleClose = () => {
-    setIsOpen(false)
+    onClose()
     reset()
   }
 
@@ -79,13 +76,10 @@ const ButtonCopyContent = ({ id }) => {
           >
             <Form control={control} formFields={formFields} />
           </LayoutDialogEdit>
-          <IconButton onClick={() => setIsOpen(true)}>
-            <ContentCopy />
-          </IconButton>
         </>
       )}
     </>
   )
 }
 
-export default ButtonCopyContent
+export default DialogCopyContent

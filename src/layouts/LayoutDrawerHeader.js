@@ -17,7 +17,7 @@ import {
   IconButton,
   Typography,
 } from '@mui/material'
-import { Business, Person, Description, Flag } from '@mui/icons-material'
+import { Business, Person, Description, Flag, Tag } from '@mui/icons-material'
 import useUserStore from 'hooks/store/use-user-store'
 import Logo from 'assets/images/logo40svg.svg'
 // import ButtonCopy from 'components/ButtonCopy'
@@ -251,9 +251,16 @@ const LayoutDrawerHeader = ({ open, children }) => {
                   />
                   <DrawerItem
                     open={open}
-                    label="Content"
+                    label="Stories"
                     Icon={Description}
-                    path="/content"
+                    path="/stories"
+                    beta
+                  />
+                  <DrawerItem
+                    open={open}
+                    label="Social"
+                    Icon={Tag}
+                    path="/social"
                     beta
                   />
                 </List>
