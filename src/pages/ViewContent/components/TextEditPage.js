@@ -61,16 +61,12 @@ const TextEditPage = () => {
     }
 
     let TabEntity = () => {
-      // if (!show) {
-      //   return <span></span>
-      // } else {
       return (
         <span contentEditable={false} style={{ color: '#ababab' }}>
           {' '}
           Press <b>tab</b> to continue writing
         </span>
       )
-      // }
     }
 
     return new CompositeDecorator([
@@ -147,15 +143,23 @@ const TextEditPage = () => {
   const handleBlur = () => {
     setIsFocused(false)
     setIsEditing(false)
+    setFocusField(null)
     const text = editorsState.text
 
     const contentState = removeTabEntity(text)
-    const editorState = EditorState.push(text, contentState)
+    const editorState = EditorState.set(text, {
+      currentContent: contentState,
+    })
 
     setEditorsState({
       ...editorsState,
       text: editorState,
     })
+  }
+
+  const handleFocus = () => {
+    setFocusField('inline')
+    setIsFocused(true)
   }
 
   const hasText = text => text.length > 0
@@ -172,6 +176,13 @@ const TextEditPage = () => {
   } else {
     generationStep = 'title'
   }
+
+  const [focusField, setFocusField] = useState(null)
+  const operationType = focusField || generationStep
+
+  useEffect(() => {
+    setGenerationIteration(0)
+  }, [operationType])
 
   const titleStyleFn = () => {
     return 'titleInput'
@@ -215,7 +226,7 @@ const TextEditPage = () => {
     document.body.style.height = vh100
   }, [vh100])
 
-  const { request } = useRequest()
+  const { request, cancel } = useRequest()
 
   const [generations, setGenerations] = useState({
     type: 'none',
@@ -228,6 +239,8 @@ const TextEditPage = () => {
 
   const handleGenerate = async () => {
     setIsGenerating(true)
+    cancel()
+    const type = operationType
 
     try {
       await handleUpdateText()
@@ -236,14 +249,24 @@ const TextEditPage = () => {
         method: 'POST',
         data: {
           contentId: id,
-          operationType: generationStep,
+          operationType: type,
           iteration: generationIteration,
         },
         timeout: 15000,
       })
-      const { message, options } = res.data
-      setGenerations({ type: generationStep, message, options })
-      setGenerationIteration(generationIteration + 1)
+
+      if (!!res) {
+        const { message, options } = res.data
+
+        if (type !== 'inline') {
+          setGenerationIteration(generationIteration + 1)
+        }
+
+        // if (isGenerating) {
+        //   console.log('setting generations')
+        setGenerations({ type, message, options })
+        // }
+      }
     } catch (err) {
       console.log(err)
     }
@@ -254,6 +277,9 @@ const TextEditPage = () => {
   // console.log(editorsState.text.getCurrentContent().getPlainText())
 
   const handleSetEditorsState = (field, value) => {
+    setIsGenerating(false)
+    cancel()
+
     if (!isEditing) {
       setIsEditing(true)
     }
@@ -261,8 +287,12 @@ const TextEditPage = () => {
     if (field === 'text') {
       const selectionState = value.getSelection()
       const contentState = removeTabEntity(value)
-      let newValue = EditorState.push(value, contentState)
-      let newNewValue = EditorState.acceptSelection(newValue, selectionState)
+      // let newValue = EditorState.push(value, contentState)
+      // let newNewValue = EditorState.acceptSelection(newValue, selectionState)
+      let newNewValue = EditorState.set(value, {
+        currentContent: contentState,
+        selection: selectionState,
+      })
 
       setEditorsState({
         ...editorsState,
@@ -293,10 +323,12 @@ const TextEditPage = () => {
           const block = contentState.getBlockForKey(selectorState.getEndKey())
 
           let blockLength = block.getLength()
+          const position = selectorState.getEndOffset()
 
           const cursorIsAtEnd =
-            selectorState.getEndOffset() === blockLength &&
-            selectorState.isCollapsed()
+            selectorState.isCollapsed() &&
+            (selectorState.getEndOffset() === blockLength ||
+              block.getText()[position] === '\n')
 
           if (cursorIsAtEnd) {
             // change selector state to only at end
@@ -306,15 +338,19 @@ const TextEditPage = () => {
               tabEntity
             )
 
-            const newEditorState = EditorState.push(text, newContentState)
-            const newestEditorState = EditorState.acceptSelection(
-              newEditorState,
-              selectorState
-            )
+            const newEditorState = EditorState.set(text, {
+              currentContent: newContentState,
+              selection: selectorState,
+            })
+
+            // const newestEditorState = EditorState.acceptSelection(
+            //   newEditorState,
+            //   selectorState
+            // )
 
             setEditorsState({
               ...editorsState,
-              text: newestEditorState,
+              text: newEditorState,
             })
           }
         }
@@ -326,7 +362,7 @@ const TextEditPage = () => {
 
   const SavingText = () => {
     return (
-      <Box display="flex" alingItems="center" color="grey.500" pr={1}>
+      <Box display="flex" alignItems="center" color="grey.500" pr={1}>
         {saveStatus === 'saving' ? (
           <Sync fontSize="small" sx={{ pr: 0.5 }} />
         ) : saveStatus === 'saved' ? (
@@ -453,9 +489,9 @@ const TextEditPage = () => {
                 loading={isGenerating}
               >
                 Generate{' '}
-                {generationStep === 'title'
+                {operationType === 'title'
                   ? 'Headline'
-                  : generationStep === 'subtitle'
+                  : operationType === 'subtitle'
                   ? 'Subheadline'
                   : 'Text'}
               </LoadingButton>
@@ -525,6 +561,8 @@ const TextEditPage = () => {
                   placeholder="Headline"
                   stripPastedStyles
                   blockStyleFn={titleStyleFn}
+                  // onBlur={() => setFocusField(null)}
+                  onFocus={() => setFocusField('title')}
                 />
               </Grid>
               <Grid item xs={12} id="subtitle">
@@ -534,6 +572,8 @@ const TextEditPage = () => {
                   placeholder="Subheadline"
                   stripPastedStyles
                   blockStyleFn={subtitleStyleFn}
+                  // onBlur={() => setFocusField(null)}
+                  onFocus={() => setFocusField('subtitle')}
                 />
               </Grid>
               <Grid item xs={12}>
@@ -542,7 +582,7 @@ const TextEditPage = () => {
                   onChange={value => handleSetEditorsState('text', value)}
                   placeholder="Body"
                   onBlur={handleBlur}
-                  onFocus={() => setIsFocused(true)}
+                  onFocus={handleFocus}
                 />
               </Grid>
               <Grid item xs={12}>

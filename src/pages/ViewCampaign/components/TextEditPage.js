@@ -135,7 +135,7 @@ const TextEditPage = () => {
 
   const SavingText = () => {
     return (
-      <Box display="flex" alingItems="center" color="grey.500" pr={1}>
+      <Box display="flex" alignItems="center" color="grey.500" pr={1}>
         {saveStatus === 'saving' ? (
           <Sync fontSize="small" sx={{ pr: 0.5 }} />
         ) : saveStatus === 'saved' ? (

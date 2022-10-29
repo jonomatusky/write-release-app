@@ -72,15 +72,17 @@ export const useRequest = () => {
     [user, dispatch]
   )
 
+  const cancel = () => {
+    activeAxiosSources.current.forEach(source =>
+      source.cancel('Operation canceled due to new request.')
+    )
+  }
+
   useEffect(() => {
-    return () => {
-      activeAxiosSources.current.forEach(source =>
-        source.cancel('Operation canceled due to new request.')
-      )
-    }
+    return () => cancel()
   }, [])
 
-  return { status, request }
+  return { status, request, cancel }
 }
 
 export default useRequest
