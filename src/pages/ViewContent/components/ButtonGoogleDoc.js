@@ -14,8 +14,6 @@ const ButtonGoogleDoc = ({ id, onUpdate }) => {
 
   const [loading, setLoading] = useState(false)
 
-  console.log(content.draftUrl)
-
   const handleClick = async () => {
     if (!!draftUrl) {
       window.open(draftUrl, '_blank')
