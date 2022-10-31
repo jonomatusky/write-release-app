@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { useParams } from 'react-router-dom'
-import { Grid, Box, Typography, Toolbar, AppBar } from '@mui/material'
+import { Grid, Box, Typography, Toolbar, AppBar, Button } from '@mui/material'
 import {
   Editor,
   EditorState,
@@ -22,7 +22,6 @@ import PanelAbout from './PanelAbout'
 import PanelResources from './PanelResources'
 import MenuContent from './MenuContent'
 import GeneratedOption from 'components/GeneratedOption'
-import { Button } from 'react-scroll'
 import useUserStore from 'hooks/store/use-user-store'
 
 const TextEditPage = () => {
@@ -135,7 +134,7 @@ const TextEditPage = () => {
 
   const SavingText = () => {
     return (
-      <Box display="flex" alingItems="center" color="grey.500" pr={1}>
+      <Box display="flex" alignItems="center" color="grey.500" pr={1}>
         {saveStatus === 'saving' ? (
           <Sync fontSize="small" sx={{ pr: 0.5 }} />
         ) : saveStatus === 'saved' ? (
