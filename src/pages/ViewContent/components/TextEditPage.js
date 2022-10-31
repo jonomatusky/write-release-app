@@ -14,8 +14,6 @@ import {
 } from 'draft-js'
 import usePageTitle from 'hooks/use-page-title'
 import useContentStore from 'hooks/store/use-content-store'
-// import ContentName from './ContentName'
-// import TextEditor from './TextEditor'
 import { use100vh } from 'hooks/use-100-vh'
 import useRequest from 'hooks/use-request'
 import { CheckCircleOutline, Sync } from '@mui/icons-material'
@@ -28,6 +26,7 @@ import PanelBackground from './PanelBackground'
 import PanelAbout from './PanelAbout'
 import PanelHiring from './PanelHiring'
 import PanelResources from './PanelResources'
+import ButtonGoogleDoc from './ButtonGoogleDoc'
 import MenuContent from './MenuContent'
 import GeneratedOption from 'components/GeneratedOption'
 import useUserStore from 'hooks/store/use-user-store'
@@ -493,6 +492,7 @@ const TextEditPage = () => {
             justifyContent="flex-end"
           >
             <SavingText />
+            <ButtonGoogleDoc id={id} onUpdate={handleUpdateText} />
             <MenuContent id={id} />
           </Box>
         </Toolbar>
