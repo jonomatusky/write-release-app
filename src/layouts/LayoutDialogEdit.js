@@ -46,7 +46,18 @@ const LayoutDialogEdit = ({
       </DialogTitle>
       <Divider />
       <DialogContent>
-        <Box overflow={noScroll ? null : 'scroll'}>{children}</Box>
+        <Box
+          overflow={noScroll ? null : 'scroll'}
+          sx={{
+            '&::-webkit-scrollbar': {
+              display: 'none',
+            },
+            msOverflowStyle: 'none',
+            scrollbarWidth: 'none',
+          }}
+        >
+          {children}
+        </Box>
       </DialogContent>
       <Divider />
       <DialogActions>

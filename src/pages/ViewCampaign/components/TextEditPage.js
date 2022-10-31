@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { useParams } from 'react-router-dom'
-import { Grid, Box, Typography, Toolbar, AppBar, Button } from '@mui/material'
+import { Grid, Box, Typography, Toolbar, AppBar } from '@mui/material'
 import {
   Editor,
   EditorState,
@@ -17,15 +17,12 @@ import { CheckCircleOutline, Sync } from '@mui/icons-material'
 import './inputs.css'
 import { LoadingButton } from '@mui/lab'
 import 'draft-js/dist/Draft.css'
-import PanelQuotes from './PanelQuotes'
 import PanelSubject from './PanelSubject'
-import PanelBackground from './PanelBackground'
 import PanelAbout from './PanelAbout'
-import PanelHiring from './PanelHiring'
 import PanelResources from './PanelResources'
-import ButtonGoogleDoc from './ButtonGoogleDoc'
 import MenuContent from './MenuContent'
 import GeneratedOption from 'components/GeneratedOption'
+import { Button } from 'react-scroll'
 import useUserStore from 'hooks/store/use-user-store'
 
 const TextEditPage = () => {
@@ -34,7 +31,7 @@ const TextEditPage = () => {
   const content = select(id)
   const { titleInternal } = content
   const [saveStatus, setSaveStatus] = useState('saved')
-  const { title, subtitle, text, boilerplate } = content || {}
+  const { title, text } = content || {}
   const { item: user } = useUserStore()
 
   const [editorsState, setEditorsState] = useState({
@@ -44,12 +41,6 @@ const TextEditPage = () => {
     title: EditorState.createWithContent(
       ContentState.createFromText(title || '')
     ),
-    subtitle: EditorState.createWithContent(
-      ContentState.createFromText(subtitle || '')
-    ),
-    boilerplate: !!boilerplate
-      ? EditorState.createWithContent(convertFromRaw(JSON.parse(boilerplate)))
-      : EditorState.createEmpty(),
   })
 
   const textsState = Object.keys(editorsState).reduce((acc, key) => {
@@ -57,56 +48,13 @@ const TextEditPage = () => {
     return acc
   }, {})
 
-  const hasText = text => text.length > 0
-
-  // const getText = (field) => {
-  //   editorsState[field].getCurrentContent().getPlainText()
-  // }
-
-  let generationStep
-
-  if (
-    hasText(textsState.text) ||
-    (hasText(textsState.title) > 0 && hasText(textsState.subtitle) > 0)
-  ) {
-    generationStep = 'text'
-  } else if (hasText(textsState.title)) {
-    generationStep = 'subtitle'
-  } else {
-    generationStep = 'title'
-  }
+  let generationStep = 'text'
 
   const titleStyleFn = () => {
     return 'titleInput'
   }
 
-  const subtitleStyleFn = () => {
-    return 'subtitleInput'
-  }
-
   usePageTitle((!!titleInternal ? titleInternal + ' | ' : '') + 'SourceOn')
-
-  // const handleUpdate = async values => {
-  //   try {
-  //     await update({ id, ...values })
-  //   } catch (err) {
-  //     console.log(err)
-  //   }
-  // }
-
-  // const toolbarOptions = ['history', 'inline', 'list']
-
-  // const inlineOptions = ['bold', 'italic', 'underline']
-
-  // const [name, setName] = useState(titleInternal || '')
-
-  // useEffect(() => {
-  //   setName(titleInternal)
-  // }, [titleInternal])
-
-  // const handleUpdateName = () => {
-  //   update({ id, titleInternal: name })
-  // }
 
   const handleUpdateText = async () => {
     const newText = JSON.stringify(
@@ -147,6 +95,7 @@ const TextEditPage = () => {
     prompt: '',
     options: [],
   })
+
   const [isGenerating, setIsGenerating] = useState(false)
 
   const [generationIteration, setGenerationIteration] = useState(0)
@@ -207,57 +156,53 @@ const TextEditPage = () => {
     )
   }
 
-  const handleAppend = id => {
-    const generation = generations.options.find(g => g.id === id)
+  const handleAppend = i => {
+    if (generations.type === 'text') {
+      const currentContent = editorsState.text.getCurrentContent()
 
-    if (!!generation) {
-      if (generations.type === 'text') {
-        const currentContent = editorsState.text.getCurrentContent()
+      const editorStateWithFocusAtEnd = EditorState.moveFocusToEnd(
+        editorsState.text
+      )
+      const selection = editorStateWithFocusAtEnd.getSelection()
 
-        const editorStateWithFocusAtEnd = EditorState.moveFocusToEnd(
-          editorsState.text
-        )
-        const selection = editorStateWithFocusAtEnd.getSelection()
+      const blockContent = currentContent.getLastBlock().getText()
 
-        const blockContent = currentContent.getLastBlock().getText()
+      const textWithInsert = Modifier.insertText(
+        currentContent,
+        selection,
+        generations.options[i] + '\n',
+        null
+      )
 
-        const textWithInsert = Modifier.insertText(
-          currentContent,
-          selection,
-          generation.text + '\n',
-          null
-        )
+      let newContent = textWithInsert
 
-        let newContent = textWithInsert
-
-        if (blockContent !== '') {
-          newContent = Modifier.splitBlock(textWithInsert, selection)
-        } else {
-          newContent = textWithInsert
-        }
-
-        const editorWithInsert = EditorState.push(
-          editorsState.text,
-          newContent,
-          'split-block'
-        )
-
-        const newEditorState = EditorState.moveSelectionToEnd(editorWithInsert)
-
-        handleSetEditorsState('text', newEditorState)
+      if (blockContent !== '') {
+        newContent = Modifier.splitBlock(textWithInsert, selection)
       } else {
-        const newEditorState = EditorState.push(
-          editorsState[generations.type],
-          ContentState.createFromText(generation.text),
-          'insert-characters'
-        )
-
-        handleSetEditorsState(generations.type, newEditorState)
+        newContent = textWithInsert
       }
 
-      setSaveStatus('unsaved')
-      setGenerationIteration(0)
+      const editorWithInsert = EditorState.push(
+        editorsState.text,
+        newContent,
+        'split-block'
+      )
+
+      const newEditorState = EditorState.moveSelectionToEnd(editorWithInsert)
+
+      handleSetEditorsState('text', newEditorState)
+    } else {
+      const newEditorState = EditorState.push(
+        editorsState[generations.type],
+        ContentState.createFromText(generations.options[i]),
+        'insert-characters'
+      )
+
+      handleSetEditorsState(generations.type, newEditorState)
     }
+
+    setSaveStatus('unsaved')
+    setGenerationIteration(0)
   }
 
   const [messageOpen, setMessageOpen] = useState(false)
@@ -288,7 +233,6 @@ const TextEditPage = () => {
             justifyContent="flex-end"
           >
             <SavingText />
-            <ButtonGoogleDoc id={id} onUpdate={handleUpdateText} />
             <MenuContent id={id} />
           </Box>
         </Toolbar>
@@ -319,12 +263,7 @@ const TextEditPage = () => {
                 loading={isGenerating}
                 size="large"
               >
-                Generate{' '}
-                {generationStep === 'title'
-                  ? 'Headline'
-                  : generationStep === 'subtitle'
-                  ? 'Subheadline'
-                  : 'Text'}
+                Generate {generationStep}
               </LoadingButton>
             </Grid>
             {!isGenerating &&
@@ -332,8 +271,9 @@ const TextEditPage = () => {
                 return (
                   <Grid item xs={12} key={i}>
                     <GeneratedOption
-                      generation={generation}
+                      index={i}
                       onClick={handleAppend}
+                      text={generation}
                     />
                   </Grid>
                 )
@@ -388,18 +328,9 @@ const TextEditPage = () => {
                 <Editor
                   editorState={editorsState.title}
                   onChange={value => handleSetEditorsState('title', value)}
-                  placeholder="Headline"
+                  placeholder="Title"
                   stripPastedStyles
                   blockStyleFn={titleStyleFn}
-                />
-              </Grid>
-              <Grid item xs={12} id="subtitle">
-                <Editor
-                  editorState={editorsState.subtitle}
-                  onChange={value => handleSetEditorsState('subtitle', value)}
-                  placeholder="Subheadline"
-                  stripPastedStyles
-                  blockStyleFn={subtitleStyleFn}
                 />
               </Grid>
               <Grid item xs={12}>
@@ -407,15 +338,6 @@ const TextEditPage = () => {
                   editorState={editorsState.text}
                   onChange={value => handleSetEditorsState('text', value)}
                   placeholder="Body"
-                />
-              </Grid>
-              <Grid item xs={12}>
-                <Editor
-                  editorState={editorsState.boilerplate}
-                  onChange={value =>
-                    handleSetEditorsState('boilerplate', value)
-                  }
-                  placeholder="Boilerplate"
                 />
               </Grid>
             </Grid>
@@ -434,8 +356,6 @@ const TextEditPage = () => {
             scrollbarWidth: 'none',
           }}
         >
-          {/* <Toolbar variant="dense" /> */}
-
           <Grid
             item
             container
@@ -447,10 +367,7 @@ const TextEditPage = () => {
           >
             <PanelAbout id={id} />
             <PanelResources id={id} />
-            <PanelHiring id={id} />
             <PanelSubject id={id} />
-            <PanelBackground id={id} />
-            <PanelQuotes id={id} />
           </Grid>
         </Box>
       </Box>

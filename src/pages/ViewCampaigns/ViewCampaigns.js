@@ -29,19 +29,19 @@ import useContentStore from 'hooks/store/use-content-store'
 import useFetchContent from 'hooks/use-fetch-content'
 import useUsersStore from 'hooks/store/use-users-store'
 import { Box } from '@mui/system'
-import DialogAbout from 'pages/ViewContent/components/DialogAbout'
+import DialogAbout from 'pages/ViewCampaign/components/DialogAbout'
 import Panel from 'layouts/Panel'
 import useUserStore from 'hooks/store/use-user-store'
 import HeaderViews from 'components/HeaderViews'
 import useContentTypesStore from 'hooks/store/use-content-types-store'
 
-const ViewContents = () => {
+const ViewCampaigns = () => {
   const type = 'content'
   const { items } = useContentStore()
   const [searchParams, setSearchParams] = useSearchParams()
   const { items: organizations } = useOrganizationsStore()
-  const { select: selectUser } = useUsersStore()
   const { select: selectContentType } = useContentTypesStore()
+  const { select: selectUser } = useUsersStore()
   const navigate = useNavigate()
   const [selectedId, setSelectedId] = useState(null)
   const { item: user } = useUserStore()
@@ -75,7 +75,7 @@ const ViewContents = () => {
         primaryType: selectContentType(item.type).primary,
       }
     })
-    .filter(item => item.primaryType === 'Press Release')
+    .filter(item => item.primaryType === 'Social Media')
     .sort((a, b) => {
       return b.createdAt - a.createdAt
     })
@@ -253,7 +253,7 @@ const ViewContents = () => {
                       size="large"
                       sx={{ height: '56px' }}
                     >
-                      Start a Story
+                      Create Campaign
                     </Button>
                   </Grid>
                   <Grid item xs={12}>
@@ -270,7 +270,7 @@ const ViewContents = () => {
                           <ListItemIcon>
                             <Person />
                           </ListItemIcon>
-                          <ListItemText primary="Your Stories" />
+                          <ListItemText primary="Your Campaigns" />
                         </ListItemButton>
                       </ListItem>
                       <ListItem disablePadding>
@@ -285,7 +285,7 @@ const ViewContents = () => {
                           <ListItemIcon>
                             <Groups />
                           </ListItemIcon>
-                          <ListItemText primary="All Stories" />
+                          <ListItemText primary="All Campaigns" />
                         </ListItemButton>
                       </ListItem>
                     </List>
@@ -343,7 +343,7 @@ const ViewContents = () => {
                                   sx={{ cursor: 'pointer' }}
                                   onClick={() => {
                                     if (selectedId === item.id) {
-                                      navigate('/stories/' + item.id)
+                                      navigate('/social/' + item.id)
                                     } else {
                                       setSelectedId(item.id)
                                     }
@@ -429,4 +429,4 @@ const ViewContents = () => {
   )
 }
 
-export default ViewContents
+export default ViewCampaigns
