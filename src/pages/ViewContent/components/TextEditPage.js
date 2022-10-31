@@ -392,53 +392,57 @@ const TextEditPage = () => {
     )
   }
 
-  const handleAppend = i => {
-    if (generations.type === 'text') {
-      const currentContent = editorsState.text.getCurrentContent()
+  const handleAppend = id => {
+    const generation = generations.options.find(g => g.id === id)
 
-      const editorStateWithFocusAtEnd = EditorState.moveFocusToEnd(
-        editorsState.text
-      )
-      const selection = editorStateWithFocusAtEnd.getSelection()
+    if (!!generation) {
+      if (generations.type === 'text') {
+        const currentContent = editorsState.text.getCurrentContent()
 
-      const blockContent = currentContent.getLastBlock().getText()
+        const editorStateWithFocusAtEnd = EditorState.moveFocusToEnd(
+          editorsState.text
+        )
+        const selection = editorStateWithFocusAtEnd.getSelection()
 
-      const textWithInsert = Modifier.insertText(
-        currentContent,
-        selection,
-        generations.options[i] + '\n',
-        null
-      )
+        const blockContent = currentContent.getLastBlock().getText()
 
-      let newContent = textWithInsert
+        const textWithInsert = Modifier.insertText(
+          currentContent,
+          selection,
+          generation.text + '\n',
+          null
+        )
 
-      if (blockContent !== '') {
-        newContent = Modifier.splitBlock(textWithInsert, selection)
+        let newContent = textWithInsert
+
+        if (blockContent !== '') {
+          newContent = Modifier.splitBlock(textWithInsert, selection)
+        } else {
+          newContent = textWithInsert
+        }
+
+        const editorWithInsert = EditorState.push(
+          editorsState.text,
+          newContent,
+          'split-block'
+        )
+
+        const newEditorState = EditorState.moveSelectionToEnd(editorWithInsert)
+
+        handleSetEditorsState('text', newEditorState)
       } else {
-        newContent = textWithInsert
+        const newEditorState = EditorState.push(
+          editorsState[generations.type],
+          ContentState.createFromText(generation.text),
+          'insert-characters'
+        )
+
+        handleSetEditorsState(generations.type, newEditorState)
       }
 
-      const editorWithInsert = EditorState.push(
-        editorsState.text,
-        newContent,
-        'split-block'
-      )
-
-      const newEditorState = EditorState.moveSelectionToEnd(editorWithInsert)
-
-      handleSetEditorsState('text', newEditorState)
-    } else {
-      const newEditorState = EditorState.push(
-        editorsState[generations.type],
-        ContentState.createFromText(generations.options[i]),
-        'insert-characters'
-      )
-
-      handleSetEditorsState(generations.type, newEditorState)
+      setSaveStatus('unsaved')
+      setGenerationIteration(0)
     }
-
-    setSaveStatus('unsaved')
-    setGenerationIteration(0)
   }
 
   const myKeyBindingFn = e => {
@@ -497,7 +501,8 @@ const TextEditPage = () => {
         <Box
           height={vh100 - 48}
           width="30%"
-          p={3}
+          p={2}
+          pr={1.5}
           sx={{
             overflowY: 'scroll',
             overflowX: 'hidden',
@@ -516,6 +521,7 @@ const TextEditPage = () => {
                 variant="contained"
                 onClick={handleGenerate}
                 loading={isGenerating}
+                size="large"
               >
                 Generate{' '}
                 {operationType === 'title'
@@ -530,9 +536,8 @@ const TextEditPage = () => {
                 return (
                   <Grid item xs={12} key={i}>
                     <GeneratedOption
-                      index={i}
+                      generation={generation}
                       onClick={handleAppend}
-                      text={generation}
                     />
                   </Grid>
                 )
@@ -643,7 +648,15 @@ const TextEditPage = () => {
         >
           {/* <Toolbar variant="dense" /> */}
 
-          <Grid item container alignContent="start" spacing={2} p={1.5} pt={2}>
+          <Grid
+            item
+            container
+            alignContent="start"
+            spacing={2}
+            p={1.5}
+            pt={2}
+            pr={2}
+          >
             <PanelAbout id={id} />
             <PanelResources id={id} />
             <PanelHiring id={id} />
