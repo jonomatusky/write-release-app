@@ -1,8 +1,6 @@
 import {
   Add,
   Check,
-  EmojiFlags,
-  Flag,
   FlagOutlined,
   ThumbDown,
   ThumbDownOffAlt,
