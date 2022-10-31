@@ -10,6 +10,7 @@ import {
   Modifier,
   CompositeDecorator,
   SelectionState,
+  getDefaultKeyBinding,
 } from 'draft-js'
 import usePageTitle from 'hooks/use-page-title'
 import useContentStore from 'hooks/store/use-content-store'
@@ -137,8 +138,11 @@ const TextEditPage = () => {
 
   const textsState = Object.keys(editorsState).reduce((acc, key) => {
     acc[key] = editorsState[key].getCurrentContent().getPlainText()
+
     return acc
   }, {})
+
+  const [inlineAvailable, setInlineAvailable] = useState(false)
 
   const handleBlur = () => {
     setIsFocused(false)
@@ -151,6 +155,7 @@ const TextEditPage = () => {
       currentContent: contentState,
     })
 
+    setInlineAvailable(false)
     setEditorsState({
       ...editorsState,
       text: editorState,
@@ -195,9 +200,9 @@ const TextEditPage = () => {
   usePageTitle((!!titleInternal ? titleInternal + ' | ' : '') + 'SourceOn')
 
   const handleUpdateText = async () => {
-    const newText = JSON.stringify(
-      convertToRaw(editorsState.text.getCurrentContent())
-    )
+    const cleanedText = removeTabEntity(editorsState.text)
+
+    const newText = JSON.stringify(convertToRaw(cleanedText))
     const newTitle = textsState.title
     const newSubtitle = textsState.subtitle
     setSaveStatus('saving')
@@ -293,12 +298,13 @@ const TextEditPage = () => {
         currentContent: contentState,
         selection: selectionState,
       })
-
+      setInlineAvailable(false)
       setEditorsState({
         ...editorsState,
         text: newNewValue,
       })
     } else {
+      setInlineAvailable(false)
       setEditorsState({
         ...editorsState,
         [field]: value,
@@ -309,7 +315,7 @@ const TextEditPage = () => {
   }
 
   useEffect(() => {
-    if (isEditing) {
+    if (isEditing && !isGenerating) {
       const timer = setTimeout(() => {
         setIsEditing(false)
 
@@ -348,6 +354,9 @@ const TextEditPage = () => {
             //   selectorState
             // )
 
+            console.log('setting editors state')
+
+            setInlineAvailable(true)
             setEditorsState({
               ...editorsState,
               text: newEditorState,
@@ -358,7 +367,7 @@ const TextEditPage = () => {
 
       return () => clearTimeout(timer)
     }
-  }, [isEditing, editorsState, removeTabEntity, isFocused])
+  }, [isEditing, editorsState, removeTabEntity, isFocused, isGenerating])
 
   const SavingText = () => {
     return (
@@ -430,6 +439,26 @@ const TextEditPage = () => {
 
     setSaveStatus('unsaved')
     setGenerationIteration(0)
+  }
+
+  const myKeyBindingFn = e => {
+    if (e.keyCode === 9) {
+      return 'generate-inline'
+    }
+    return getDefaultKeyBinding(e)
+  }
+
+  const handleKeyCommand = command => {
+    if (command === 'generate-inline') {
+      if (inlineAvailable) {
+        handleGenerate()
+
+        return 'handled'
+      } else {
+        return 'not-handled'
+      }
+    }
+    return 'not-handled'
   }
 
   const [messageOpen, setMessageOpen] = useState(false)
@@ -583,6 +612,8 @@ const TextEditPage = () => {
                   placeholder="Body"
                   onBlur={handleBlur}
                   onFocus={handleFocus}
+                  handleKeyCommand={handleKeyCommand}
+                  keyBindingFn={myKeyBindingFn}
                 />
               </Grid>
               <Grid item xs={12}>
