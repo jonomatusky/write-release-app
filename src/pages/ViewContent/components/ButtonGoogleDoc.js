@@ -58,7 +58,13 @@ const ButtonGoogleDoc = ({ id, onUpdate }) => {
 
   return (
     <LoadingButton
-      endIcon={!!draftUrl ? <Visibility /> : <IosShare />}
+      endIcon={
+        !!draftUrl ? (
+          <Visibility sx={{ fontSize: 20 }} />
+        ) : (
+          <IosShare sx={{ fontSize: 20 }} />
+        )
+      }
       variant="contained"
       loading={loading}
       onClick={handleClick}

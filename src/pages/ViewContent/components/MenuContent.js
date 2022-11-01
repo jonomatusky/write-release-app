@@ -1,40 +1,20 @@
 import React, { useState } from 'react'
-import {
-  IconButton,
-  ListItemIcon,
-  ListItemText,
-  Menu,
-  MenuItem,
-} from '@mui/material'
-import {
-  ContentCopy,
-  DeleteForever,
-  Menu as MenuIcon,
-} from '@mui/icons-material'
+import { Box, Button } from '@mui/material'
+import { ContentCopy, DeleteForever } from '@mui/icons-material'
 import DialogDeleteContent from './DialogDeleteContent'
 import DialogCopyContent from './DialogCopyContent'
+import ButtonGoogleDoc from './ButtonGoogleDoc'
 
-const MenuContent = ({ id }) => {
-  const [anchorEl, setAnchorEl] = useState(null)
+const MenuContent = ({ id, onUpdate }) => {
   const [deleteIsOpen, setDeleteIsOpen] = useState(false)
   const [copyIsOpen, setCopyIsOpen] = useState(false)
 
-  const handleOpen = event => {
-    setAnchorEl(event.currentTarget)
-  }
-
-  const handleClose = event => {
-    setAnchorEl(null)
+  const handleCopyOpen = () => {
+    setCopyIsOpen(true)
   }
 
   const handleDeleteOpen = () => {
     setDeleteIsOpen(true)
-    handleClose()
-  }
-
-  const handleCopyOpen = () => {
-    setCopyIsOpen(true)
-    handleClose()
   }
 
   return (
@@ -43,41 +23,36 @@ const MenuContent = ({ id }) => {
         id={id}
         open={copyIsOpen}
         onClose={() => setCopyIsOpen(false)}
+        onUpdate={onUpdate}
       />
       <DialogDeleteContent
         id={id}
         open={deleteIsOpen}
         onClose={() => setDeleteIsOpen(false)}
       />
-      <IconButton onClick={handleOpen} edge="end">
-        <MenuIcon />
-      </IconButton>
-      <Menu
-        id="simple-menu"
-        anchorEl={anchorEl}
-        open={Boolean(anchorEl)}
-        transitionDuration={0}
-        anchorOrigin={{
-          horizontal: 'left',
-          vertical: 'bottom',
-        }}
-        anchorPosition={{ left: 0, top: -20 }}
-        onClose={handleClose}
-        MenuListProps={{ onMouseLeave: handleClose }}
-      >
-        <MenuItem onClick={handleCopyOpen}>
-          <ListItemIcon>
-            <ContentCopy fontSize="small" />
-          </ListItemIcon>
-          <ListItemText>Make a Copy</ListItemText>
-        </MenuItem>
-        <MenuItem onClick={handleDeleteOpen}>
-          <ListItemIcon>
-            <DeleteForever fontSize="small" />
-          </ListItemIcon>
-          <ListItemText>Delete Story</ListItemText>
-        </MenuItem>
-      </Menu>
+      <Box pr={1}>
+        <Button
+          onClick={handleCopyOpen}
+          variant="contained"
+          size="large"
+          sx={{ minWidth: 0, pr: '8px', pl: '8px' }}
+          disableElevation
+        >
+          <ContentCopy sx={{ fontSize: 20 }} />
+        </Button>
+      </Box>
+      <Box pr={1}>
+        <Button
+          onClick={handleDeleteOpen}
+          variant="contained"
+          size="large"
+          sx={{ minWidth: 0, pr: '8px', pl: '8px' }}
+          disableElevation
+        >
+          <DeleteForever sx={{ fontSize: 20 }} />
+        </Button>
+      </Box>
+      <ButtonGoogleDoc id={id} onUpdate={onUpdate} />
     </>
   )
 }
