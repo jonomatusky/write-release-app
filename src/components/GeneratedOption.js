@@ -1,6 +1,7 @@
 import {
   Add,
   Check,
+  ChevronRight,
   FlagOutlined,
   ThumbDown,
   ThumbDownOffAlt,
@@ -57,6 +58,7 @@ const GeneratedOption = ({ generation, onClick }) => {
   }
 
   const [isHovering, setIsHovering] = useState(false)
+  const [isHoveringAdd, setIsHoveringAdd] = useState(false)
 
   return (
     <Card variant="outlined" color="inherit">
@@ -85,9 +87,9 @@ const GeneratedOption = ({ generation, onClick }) => {
                 onClick={isGood ? () => {} : handleUpvote}
               >
                 {isGood ? (
-                  <ThumbUp fontSize="small" />
+                  <ThumbUp fontSize="12px" />
                 ) : (
-                  <ThumbUpOffAlt fontSize="small" />
+                  <ThumbUpOffAlt fontSize="12px" />
                 )}
               </IconButton>
             </Tooltip>
@@ -101,8 +103,8 @@ const GeneratedOption = ({ generation, onClick }) => {
               <IconButton
                 onClick={handleSelect}
                 sx={{
-                  mt: 1,
-                  mb: 1,
+                  mt: 0.5,
+                  mb: 0.5,
                   color: 'secondary.contrastText',
                   backgroundColor: 'secondary.main',
                   '&:hover, &.Mui-focusVisible': {
@@ -111,8 +113,17 @@ const GeneratedOption = ({ generation, onClick }) => {
                 }}
                 alt="Add to editor"
                 disabled={wasSelected}
+                size="small"
+                onMouseEnter={() => setIsHoveringAdd(true)}
+                onMouseLeave={() => setIsHoveringAdd(false)}
               >
-                {wasSelected ? <Check /> : <Add />}
+                {wasSelected ? (
+                  <Check />
+                ) : isHoveringAdd ? (
+                  <ChevronRight />
+                ) : (
+                  <Add />
+                )}
               </IconButton>
             </Box>
           </Tooltip>
@@ -134,11 +145,11 @@ const GeneratedOption = ({ generation, onClick }) => {
                 onMouseLeave={() => setIsHovering(false)}
               >
                 {isBad ? (
-                  <ThumbDown fontSize="small" />
+                  <ThumbDown fontSize="12px" />
                 ) : isHovering ? (
-                  <FlagOutlined fontSize="small" />
+                  <FlagOutlined fontSize="12px" />
                 ) : (
-                  <ThumbDownOffAlt fontSize="small" />
+                  <ThumbDownOffAlt fontSize="12px" />
                 )}
               </IconButton>
             </Tooltip>
