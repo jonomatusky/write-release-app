@@ -26,7 +26,6 @@ import PanelBackground from './PanelBackground'
 import PanelAbout from './PanelAbout'
 import PanelHiring from './PanelHiring'
 import PanelResources from './PanelResources'
-import ButtonGoogleDoc from './ButtonGoogleDoc'
 import MenuContent from './MenuContent'
 import GeneratedOption from 'components/GeneratedOption'
 import useUserStore from 'hooks/store/use-user-store'
@@ -205,7 +204,17 @@ const TextEditPage = () => {
     const newTitle = textsState.title
     const newSubtitle = textsState.subtitle
     setSaveStatus('saving')
-    await update({ id, text: newText, title: newTitle, subtitle: newSubtitle })
+    try {
+      await update({
+        id,
+        text: newText,
+        title: newTitle,
+        subtitle: newSubtitle,
+      })
+    } catch (err) {
+      console.log(err)
+    }
+
     setSaveStatus('saved')
   }
 
@@ -241,7 +250,7 @@ const TextEditPage = () => {
 
   const [generationIteration, setGenerationIteration] = useState(0)
 
-  const handleGenerate = async () => {
+  const handleGenerate = async (blockId, offset) => {
     setIsGenerating(true)
     cancel()
     const type = operationType
@@ -254,6 +263,8 @@ const TextEditPage = () => {
         data: {
           contentId: id,
           operationType: type,
+          // blockId,
+          // offset,
           iteration: generationIteration,
         },
         timeout: 15000,
@@ -352,8 +363,6 @@ const TextEditPage = () => {
             //   newEditorState,
             //   selectorState
             // )
-
-            console.log('setting editors state')
 
             setInlineAvailable(true)
             setEditorsState({
@@ -454,7 +463,10 @@ const TextEditPage = () => {
   const handleKeyCommand = command => {
     if (command === 'generate-inline') {
       if (inlineAvailable) {
-        handleGenerate()
+        const offset = editorsState.text.getSelection().getEndOffset()
+        const blockId = editorsState.text.getSelection().getEndKey()
+
+        handleGenerate(blockId, offset)
 
         return 'handled'
       } else {
