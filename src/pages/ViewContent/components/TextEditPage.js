@@ -85,6 +85,8 @@ const TextEditPage = () => {
       const key = block.getKey()
       const textBlock = block.getText()
 
+      console.log(textBlock)
+
       const start = textBlock.indexOf(tabEntity)
 
       if (start >= 0) {
@@ -417,16 +419,18 @@ const TextEditPage = () => {
         const textWithInsert = Modifier.insertText(
           currentContent,
           selection,
-          generation.text + '\n',
+          generation.text,
           null
         )
 
         let newContent = textWithInsert
 
+        if (hasText(textsState.text)) {
+          newContent = Modifier.splitBlock(newContent, selection)
+        }
+
         if (blockContent !== '') {
-          newContent = Modifier.splitBlock(textWithInsert, selection)
-        } else {
-          newContent = textWithInsert
+          newContent = Modifier.splitBlock(newContent, selection)
         }
 
         const editorWithInsert = EditorState.push(
