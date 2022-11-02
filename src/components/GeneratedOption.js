@@ -2,6 +2,7 @@ import {
   Add,
   Check,
   ChevronRight,
+  Clear,
   FlagOutlined,
   ThumbDown,
   ThumbDownOffAlt,
@@ -46,15 +47,21 @@ const GeneratedOption = ({ generation, onClick }) => {
   }
 
   const handleUpvote = () => {
-    handleUpdate({ isGood: true, isBad: false })
-    setIsGood(true)
-    setIsBad(false)
+    let good = !isGood
+    let bad = isGood === true ? isBad : false
+
+    handleUpdate({ isGood: good, isBad: bad })
+    setIsGood(good)
+    setIsBad(bad)
   }
 
   const handleDownvote = () => {
-    handleUpdate({ isBad: true, isGood: false })
-    setIsBad(true)
-    setIsGood(false)
+    let bad = !isBad
+    let good = isBad === true ? isGood : false
+
+    handleUpdate({ isGood: good, isBad: bad })
+    setIsGood(good)
+    setIsBad(bad)
   }
 
   const [isHovering, setIsHovering] = useState(false)
@@ -66,7 +73,7 @@ const GeneratedOption = ({ generation, onClick }) => {
       <Box display="flex" alignItems="center" p={1} pl={2}>
         <Box flexGrow={1} mr={1}>
           <Typography variant="body2" sx={{ whiteSpace: 'pre-line' }}>
-            {generation.text}
+            {generation.text.trim()}
           </Typography>
         </Box>
         <Box
@@ -84,7 +91,7 @@ const GeneratedOption = ({ generation, onClick }) => {
               <IconButton
                 size="small"
                 color={isGood ? 'primary' : 'inherit'}
-                onClick={isGood ? () => {} : handleUpvote}
+                onClick={handleUpvote}
               >
                 {isGood ? (
                   <ThumbUp fontSize="12px" />
@@ -112,7 +119,7 @@ const GeneratedOption = ({ generation, onClick }) => {
                   },
                 }}
                 alt="Add to editor"
-                disabled={wasSelected}
+                disabled={wasSelected || generation.disabled}
                 size="small"
                 onMouseEnter={() => setIsHoveringAdd(true)}
                 onMouseLeave={() => setIsHoveringAdd(false)}
@@ -121,6 +128,8 @@ const GeneratedOption = ({ generation, onClick }) => {
                   <Check />
                 ) : isHoveringAdd ? (
                   <ChevronRight />
+                ) : generation.disabled ? (
+                  <Clear />
                 ) : (
                   <Add />
                 )}
@@ -140,7 +149,7 @@ const GeneratedOption = ({ generation, onClick }) => {
               <IconButton
                 size="small"
                 color={isBad ? 'primary' : 'inherit'}
-                onClick={isBad ? () => {} : handleDownvote}
+                onClick={handleDownvote}
                 onMouseEnter={() => setIsHovering(true)}
                 onMouseLeave={() => setIsHovering(false)}
               >

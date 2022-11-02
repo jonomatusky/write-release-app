@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { useParams } from 'react-router-dom'
 import {
   Grid,
@@ -10,7 +10,6 @@ import {
   Toolbar,
   AppBar,
   Button,
-  Chip,
 } from '@mui/material'
 import {
   Editor,
@@ -19,7 +18,6 @@ import {
   convertToRaw,
   convertFromRaw,
   Modifier,
-  convertFromHTML,
   CompositeDecorator,
   SelectionState,
 } from 'draft-js'
@@ -346,44 +344,6 @@ const TextEditPage = () => {
   }
 
   useEffect(() => {
-    // const handleShowInline = () => {
-    //   const currentContent = editorsState.text.getCurrentContent()
-    //   const text = currentContent.getPlainText()
-
-    //   console.log(text)
-
-    //   // const editorStateWithFocusAtEnd = EditorState.moveFocusToEnd(
-    //   //   editorsState.text
-    //   // )
-
-    //   if (!text.includes(tabEntity)) {
-    //     const block = tabEntity
-    //     const blocksFromHTML = convertFromHTML(block)
-    //     const newBlockMap = ContentState.createFromBlockArray(
-    //       blocksFromHTML.contentBlocks,
-    //       blocksFromHTML.entityMap
-    //     )
-    //     const selection = editorsState.text.getSelection()
-    //     const textWithInsert = Modifier.replaceWithFragment(
-    //       currentContent,
-    //       selection,
-    //       newBlockMap.getBlockMap()
-    //     )
-    //     // const newContent = Modifier.splitBlock(textWithInsert, selection)
-    //     // let newContent = textWithInsert
-    //     const editorWithInsert = EditorState.push(
-    //       editorsState.text,
-    //       textWithInsert,
-    //       'insert-fragment'
-    //     )
-    //     // const newEditorState = EditorState.moveSelectionToEnd(editorWithInsert)
-    //     setEditorsState({
-    //       ...editorsState,
-    //       text: editorWithInsert,
-    //     })
-    //   }
-    // }
-
     if (isEditing) {
       const timer = setTimeout(() => {
         setIsEditing(false)
@@ -481,7 +441,33 @@ const TextEditPage = () => {
       : 'Unsaved Changes'
 
   const handleAppend = i => {
-    if (generations.type === 'text') {
+    const textToAppend = generations.options[i]
+    const { blockId, offset } = generations
+
+    if (generations.type === 'inline') {
+      const currentContent = editorsState.text.getCurrentContent()
+
+      const selection = SelectionState.createEmpty(blockId).merge({
+        anchorOffset: offset,
+        focusOffset: offset + tabEntity.length,
+      })
+
+      let newContent = Modifier.insertText(
+        currentContent,
+        selection,
+        textToAppend
+      )
+
+      const editorWithInsert = EditorState.push(
+        editorsState.text,
+        newContent,
+        'split-block'
+      )
+
+      const newEditorState = EditorState.moveSelectionToEnd(editorWithInsert)
+
+      handleSetEditorsState('text', newEditorState)
+    } else if (generations.type === 'text' || generations.type === 'inline') {
       const currentContent = editorsState.text.getCurrentContent()
 
       const editorStateWithFocusAtEnd = EditorState.moveFocusToEnd(

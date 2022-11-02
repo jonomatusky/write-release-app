@@ -85,8 +85,6 @@ const TextEditPage = () => {
       const key = block.getKey()
       const textBlock = block.getText()
 
-      console.log(textBlock)
-
       const start = textBlock.indexOf(tabEntity)
 
       if (start >= 0) {
@@ -253,27 +251,32 @@ const TextEditPage = () => {
   const [generationIteration, setGenerationIteration] = useState(0)
 
   const handleGenerate = async (blockId, offset) => {
+    console.log('generating')
     setIsGenerating(true)
-    cancel()
     const type = operationType
 
     try {
+      cancel()
+      console.log('updating text')
       await handleUpdateText()
+      console.log('making request')
       const res = await request({
         url: `/generator`,
         method: 'POST',
         data: {
           contentId: id,
           operationType: type,
-          // blockId,
-          // offset,
+          blockId,
+          offset,
           iteration: generationIteration,
         },
         timeout: 15000,
       })
 
+      console.log('response received')
+
       if (!!res) {
-        const { message, options } = res.data
+        const { message, options, blockId, offset } = res.data
 
         if (type !== 'inline') {
           setGenerationIteration(generationIteration + 1)
@@ -281,14 +284,19 @@ const TextEditPage = () => {
 
         // if (isGenerating) {
         //   console.log('setting generations')
-        setGenerations({ type, message, options })
+        setGenerations({ type, message, options, blockId, offset })
         // }
       }
     } catch (err) {
+      console.log('error')
       console.log(err)
     }
 
     setIsGenerating(false)
+  }
+
+  const handleGenerateClick = () => {
+    handleGenerate()
   }
 
   // console.log(editorsState.text.getCurrentContent().getPlainText())
@@ -404,9 +412,48 @@ const TextEditPage = () => {
 
   const handleAppend = id => {
     const generation = generations.options.find(g => g.id === id)
+    const textToAppend = generation.text
 
     if (!!generation) {
-      if (generations.type === 'text') {
+      const { blockId, offset } = generations
+
+      console.log('blockId', blockId)
+      console.log('offset', offset)
+
+      if (generations.type === 'inline') {
+        const currentContent = editorsState.text.getCurrentContent()
+
+        const selection = SelectionState.createEmpty(blockId).merge({
+          anchorOffset: offset,
+          focusOffset: offset,
+        })
+
+        let newContent = Modifier.insertText(
+          currentContent,
+          selection,
+          textToAppend,
+          null
+        )
+
+        const editorWithInsert = EditorState.push(
+          editorsState.text,
+          newContent,
+          'split-block'
+        )
+
+        const newEditorState = EditorState.moveSelectionToEnd(editorWithInsert)
+
+        handleSetEditorsState('text', newEditorState)
+        setGenerations({
+          ...generations,
+          options: generations.options.map(g => {
+            if (g.id !== id) {
+              return { ...g, disabled: true }
+            }
+            return g
+          }),
+        })
+      } else if (generations.type === 'text') {
         const currentContent = editorsState.text.getCurrentContent()
 
         const editorStateWithFocusAtEnd = EditorState.moveFocusToEnd(
@@ -419,7 +466,7 @@ const TextEditPage = () => {
         const textWithInsert = Modifier.insertText(
           currentContent,
           selection,
-          generation.text,
+          textToAppend,
           null
         )
 
@@ -534,7 +581,7 @@ const TextEditPage = () => {
               <LoadingButton
                 fullWidth
                 variant="contained"
-                onClick={handleGenerate}
+                onClick={handleGenerateClick}
                 loading={isGenerating}
                 size="large"
               >
