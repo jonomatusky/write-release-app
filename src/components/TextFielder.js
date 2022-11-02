@@ -5,18 +5,12 @@ const TextFielder = ({ label, helpText, error, ...props }) => {
   return (
     <label>
       {!!label && (
-        <Typography color="secondary" pb={1} variant="body2">
+        <Typography pb={1} variant="body2">
           {label}
         </Typography>
       )}
       {!!helpText && (
-        <Typography
-          variant="body2"
-          fontSize="14px"
-          color="secondary"
-          mt={-0.5}
-          pb={1}
-        >
+        <Typography variant="body2" fontSize="14px" mt={-0.5} pb={1}>
           <i>{helpText}</i>
         </Typography>
       )}
