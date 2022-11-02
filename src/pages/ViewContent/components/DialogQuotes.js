@@ -65,8 +65,6 @@ const DialogQuotes = ({ open, onClose, id }) => {
       name: 'otherIndividualsQuoted',
       options: individualsOptions || [],
       type: 'textarea',
-      AddDialog: DialogCreateIndividual,
-      addDialogProps: { organizationId },
     },
   ]
 

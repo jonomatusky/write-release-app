@@ -270,9 +270,8 @@ const TextEditPage = () => {
                 return (
                   <Grid item xs={12} key={i}>
                     <GeneratedOption
-                      index={i}
+                      generation={generation}
                       onClick={handleAppend}
-                      text={generation}
                     />
                   </Grid>
                 )
