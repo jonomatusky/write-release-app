@@ -11,8 +11,6 @@ import {
 } from 'draft-js'
 import usePageTitle from 'hooks/use-page-title'
 import useContentStore from 'hooks/store/use-content-store'
-// import ContentName from './ContentName'
-// import TextEditor from './TextEditor'
 import { use100vh } from 'hooks/use-100-vh'
 import useRequest from 'hooks/use-request'
 import { CheckCircleOutline, Sync } from '@mui/icons-material'
@@ -187,15 +185,15 @@ const TextEditPage = () => {
 
   const SavingText = () => {
     return (
-      <Box display="flex" alignItems="center" color="grey.500" pr={1}>
+      <Box display="flex" alignItems="center" color="grey.500" pr={1.5}>
         {saveStatus === 'saving' ? (
-          <Sync fontSize="small" sx={{ pr: 0.5 }} />
+          <Sync fontSize="small" sx={{ pr: 0.75 }} />
         ) : saveStatus === 'saved' ? (
-          <CheckCircleOutline fontSize="small" sx={{ pr: 0.5 }} />
+          <CheckCircleOutline fontSize="small" sx={{ pr: 0.75 }} />
         ) : (
           <></>
         )}
-        <Typography color="inherit" variant="body2" fontSize="12px" pt="2px">
+        <Typography color="inherit" variant="body2" fontSize="14px" pt="1px">
           <b>
             {saveStatus === 'saving'
               ? 'Saving...'
@@ -281,7 +279,7 @@ const TextEditPage = () => {
         }}
         open={true}
       >
-        <Toolbar variant="dense">
+        <Toolbar variant="dense" disableGutters sx={{ pr: 2 }}>
           <Box
             display="flex"
             width="100%"
@@ -289,7 +287,7 @@ const TextEditPage = () => {
             justifyContent="flex-end"
           >
             <SavingText />
-            <MenuContent id={id} />
+            <MenuContent id={id} onUpdate={handleUpdateText} />
           </Box>
         </Toolbar>
       </AppBar>

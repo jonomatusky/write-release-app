@@ -149,6 +149,7 @@ const contentsSlice = createSlice({
       } else {
         newItems[matchingIndex] = newItem
       }
+      console.log(newItem)
       state.items = newItems
       state.getStatus = 'succeeded'
     },
