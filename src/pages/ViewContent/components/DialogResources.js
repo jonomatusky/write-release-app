@@ -22,6 +22,7 @@ const DialogResources = ({ open, onClose, id }) => {
   const { items: resources, create, createStatus } = useResourcesStore()
 
   const content = !!id ? selectContent(id) : {}
+  const contentType = selectContentType(content.type)
 
   const setupStage = !!id ? content.setupStage : null
   const isSetup = setupStage === 'resources'
@@ -113,6 +114,15 @@ const DialogResources = ({ open, onClose, id }) => {
     }
   }
 
+  const onBack = async () => {
+    isSetup &&
+      (await updateContent({
+        id,
+        setupStage: 'hiring',
+      }))
+    reset()
+  }
+
   return (
     <>
       <DialogResourceAdd
@@ -125,6 +135,13 @@ const DialogResources = ({ open, onClose, id }) => {
         contentId={id}
         formFields={formFields}
         loading={createStatus === 'loading'}
+        onBack={
+          isSetup &&
+          (contentType.secondary === 'New Hire' ||
+            contentType.secondary === 'Board Appointment')
+            ? onBack
+            : null
+        }
       />
       <LayoutDialogEdit
         title={
@@ -138,7 +155,7 @@ const DialogResources = ({ open, onClose, id }) => {
         // onSave={submit}
         loading={updateContentStatus === 'loading'}
         // label={isSetup ? 'Next' : 'Save'}
-        cancelLabel={isSetup ? 'Skip' : 'Cancel'}
+        cancelLabel={isSetup ? 'Next' : 'Done'}
       >
         <Grid container justifyContent="center" spacing={3} pb={2} pt={1}>
           <Grid item xs={12}>

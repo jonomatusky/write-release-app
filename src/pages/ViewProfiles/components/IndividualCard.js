@@ -12,7 +12,6 @@ import {
   Mic,
   TimerOutlined,
   OfflineBolt,
-  LocalOffer,
   LocationOn,
   Business,
 } from '@mui/icons-material'
@@ -21,6 +20,7 @@ import ResponsiveAvatar from 'components/ResponsiveAvatar'
 import useIndividualStore from 'hooks/store/use-individuals-store'
 import useFetchAvatar from 'hooks/use-fetch-avatar'
 import useOrganizationsStore from 'hooks/store/use-organizations-store'
+import IndustryTag from 'components/IndustryTag'
 
 const IndividualCard = ({ id, onClick, hideTags }) => {
   const { select } = useIndividualStore()
@@ -79,14 +79,7 @@ const IndividualCard = ({ id, onClick, hideTags }) => {
                   </Box>
                 )}
                 {title && <Typography>{title}</Typography>}
-                {industry && industry.name !== 'Other' && (
-                  <Box display="flex" alignItems="center">
-                    <Box pr={0.5} display="flex" alignItems="center">
-                      <LocalOffer color="primary" fontSize="12" />
-                    </Box>
-                    <Typography>{industry.name}</Typography>
-                  </Box>
-                )}
+                {industry && <IndustryTag id={industry} />}
                 {location && (
                   <Box display="flex" alignItems="center">
                     <Box pr={0.5} display="flex" alignItems="center">
