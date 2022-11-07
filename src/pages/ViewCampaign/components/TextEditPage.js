@@ -232,7 +232,7 @@ const TextEditPage = () => {
             justifyContent="flex-end"
           >
             <SavingText />
-            <MenuContent id={id} />
+            <MenuContent id={id} onUpdate={handleUpdateText} />
           </Box>
         </Toolbar>
       </AppBar>

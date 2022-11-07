@@ -108,6 +108,7 @@ const TextEditPage = () => {
   // }
 
   const handleUpdateText = async () => {
+    console.log('updating')
     const newText = JSON.stringify(
       convertToRaw(editorsState.text.getCurrentContent())
     )
