@@ -206,6 +206,20 @@ const TextEditPage = () => {
     )
   }
 
+  const filteredGenerationText = (generations.options || [])
+    .filter(option => option.text !== undefined && option.text !== 'undefined')
+    .filter(
+      option =>
+        !option.text.includes('To learn more') &&
+        !option.text.includes('For more information') &&
+        !option.text.includes('is available now at') &&
+        option.text !== 'Press Release' &&
+        option.text !== '# # #' &&
+        !option.text.startsWith('About ') &&
+        !option.text.startsWith('url: ') &&
+        !option.text.startsWith('Contact:')
+    )
+
   const handleAppend = id => {
     const generation = generations.options.find(g => g.id === id)
 
@@ -326,7 +340,7 @@ const TextEditPage = () => {
               </LoadingButton>
             </Grid>
             {!isGenerating &&
-              (generations.options || []).map((generation, i) => {
+              filteredGenerationText.map((generation, i) => {
                 return (
                   <Grid item xs={12} key={i}>
                     <GeneratedOption
@@ -336,6 +350,22 @@ const TextEditPage = () => {
                   </Grid>
                 )
               })}
+            {filteredGenerationText.length === 0 &&
+              (generations.options || []).length > 0 && (
+                <Grid item xs={12}>
+                  <Typography variant="body2" textAlign="center" pt={1}>
+                    <span style={{ whiteSpace: 'pre-line' }}>
+                      Looks like you've reached the end of the story!
+                    </span>
+                  </Typography>
+                  <Typography variant="body2" textAlign="center">
+                    <span style={{ whiteSpace: 'pre-line' }}>
+                      Continue editing in the editor or export your story to
+                      Google Docs.
+                    </span>
+                  </Typography>
+                </Grid>
+              )}
             {!isGenerating && generations.message && user.admin && (
               <>
                 <Grid item xs={12} container justifyContent="center">

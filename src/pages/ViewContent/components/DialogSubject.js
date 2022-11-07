@@ -6,15 +6,12 @@ import useContentStore from 'hooks/store/use-content-store'
 import useQuestionsStore from 'hooks/store/use-questions-store'
 import useFormHelper from 'hooks/use-form-helper'
 import Form from 'components/Form/Form'
-import useContentTypesStore from 'hooks/store/use-content-types-store'
 
 const DialogSubject = ({ open, onClose, id }) => {
   const { update, updateStatus, select: selectContent } = useContentStore()
-  const { select: selectContentType } = useContentTypesStore()
   const { items: questions, select: selectQuestion } = useQuestionsStore()
 
   const content = selectContent(id)
-  const contentType = selectContentType(content.type)
 
   const { setupStage } = content
   const isSetup = setupStage === 'subject'
@@ -97,7 +94,7 @@ const DialogSubject = ({ open, onClose, id }) => {
     isSetup &&
       (await update({
         id,
-        setupStage: 'hiring',
+        setupStage: 'resources',
       }))
     reset()
   }
@@ -116,13 +113,7 @@ const DialogSubject = ({ open, onClose, id }) => {
       loading={updateStatus === 'loading'}
       label={isSetup ? 'Next' : 'Save'}
       cancelLabel={isSetup ? 'Skip' : 'Cancel'}
-      onBack={
-        isSetup &&
-        (contentType.secondary === 'New Hire' ||
-          contentType.secondary === 'Board Appointment')
-          ? onBack
-          : null
-      }
+      onBack={isSetup ? onBack : null}
     >
       <Grid container justifyContent="center" spacing={3} pb={2} pt={1}>
         <Grid item xs={12}>
