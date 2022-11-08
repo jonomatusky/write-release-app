@@ -232,7 +232,7 @@ const TextEditPage = () => {
             justifyContent="flex-end"
           >
             <SavingText />
-            <MenuContent id={id} />
+            <MenuContent id={id} onUpdate={handleUpdateText} />
           </Box>
         </Toolbar>
       </AppBar>
@@ -270,9 +270,8 @@ const TextEditPage = () => {
                 return (
                   <Grid item xs={12} key={i}>
                     <GeneratedOption
-                      index={i}
+                      generation={generation}
                       onClick={handleAppend}
-                      text={generation}
                     />
                   </Grid>
                 )

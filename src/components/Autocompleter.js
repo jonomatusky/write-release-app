@@ -64,7 +64,11 @@ const Autocompleter = ({
       if (multi) {
         const newValue = v.map(value => value.id)
         if (newValue.includes(addValue.id)) {
-          !!AddDialog ? setIsOpen(true) : onAddItem()
+          if (!!AddDialog) {
+            setIsOpen(true)
+          } else if (onAddItem) {
+            onAddItem()
+          }
         } else {
           onChange(newValue)
         }
@@ -77,22 +81,35 @@ const Autocompleter = ({
         }
 
         if (newValue === addValue.id) {
-          !!AddDialog ? setIsOpen(true) : onAddItem()
+          if (!!AddDialog) {
+            setIsOpen(true)
+          } else if (onAddItem) {
+            onAddItem()
+          }
         } else {
           onChange(newValue)
         }
       }
     } else {
       const newValue = v
+
       if (multi) {
         if (v.includes(addValue)) {
-          onAddItem()
+          if (!!AddDialog) {
+            setIsOpen(true)
+          } else if (onAddItem) {
+            onAddItem()
+          }
         } else {
           onChange(newValue)
         }
       } else {
         if (v === addValue) {
-          onAddItem()
+          if (!!AddDialog) {
+            setIsOpen(true)
+          } else if (onAddItem) {
+            onAddItem()
+          }
         } else {
           onChange(newValue)
         }

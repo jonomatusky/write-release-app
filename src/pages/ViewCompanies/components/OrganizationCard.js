@@ -58,7 +58,7 @@ const OrganizationCard = ({ id, hideTags }) => {
                 <Typography variant="h6">
                   <b>{name}</b>
                 </Typography>
-                <IndustryTag id={industry} />
+                {industry && <IndustryTag id={industry} />}
                 {location && (
                   <Box display="flex" alignItems="center">
                     <Box pr={0.5} display="flex" alignItems="center">

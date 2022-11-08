@@ -65,6 +65,12 @@ const MenuContent = ({ id }) => {
         onClose={handleClose}
         MenuListProps={{ onMouseLeave: handleClose }}
       >
+        <MenuItem onClick={handleDeleteOpen}>
+          <ListItemIcon>
+            <DeleteForever fontSize="small" />
+          </ListItemIcon>
+          <ListItemText>Delete Story</ListItemText>
+        </MenuItem>
         <MenuItem onClick={handleCopyOpen}>
           <ListItemIcon>
             <ContentCopy fontSize="small" />

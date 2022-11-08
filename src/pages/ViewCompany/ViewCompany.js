@@ -170,6 +170,8 @@ const ViewCompany = () => {
                         bullets={facts}
                         field="facts"
                         placeholders={factsPlaceholders}
+                        update={handleUpdate}
+                        updateStatus={updateStatus}
                       />
                     </Grid>
                   )}

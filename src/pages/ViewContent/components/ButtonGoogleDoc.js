@@ -20,7 +20,7 @@ const ButtonGoogleDoc = ({ id, onUpdate }) => {
   const { select, get } = useContentStore()
   const { setError } = useAlertStore()
   const content = select(id)
-  const { draftUrl, title } = content
+  const { draftUrl } = content
   const { request } = useRequest()
 
   const [status, setStatus] = useState(false)
@@ -44,10 +44,8 @@ const ButtonGoogleDoc = ({ id, onUpdate }) => {
       await get(id)
 
       if (!!draftUrl) {
+        setStatus('succeeded')
         window.open(draftUrl, '_blank')
-      } else if (!title) {
-        setError({ message: 'Please add a title before creating a draft' })
-        setStatus('idle')
       } else {
         await request({
           url: '/google-doc',
@@ -58,12 +56,13 @@ const ButtonGoogleDoc = ({ id, onUpdate }) => {
         const timer = setTimeout(async () => {
           await get(id)
 
-          if (!!draftUrl) {
-          }
-
+          setShowSuccessScreen(true)
           setStatus('succeeded')
           setIsOpen(false)
-          setShowSuccessScreen(true)
+
+          if (!!draftUrl) {
+            window.open(draftUrl, '_blank')
+          }
         }, 10000)
 
         return () => clearTimeout(timer)
