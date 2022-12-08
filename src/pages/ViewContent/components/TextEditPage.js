@@ -164,7 +164,7 @@ const TextEditPage = () => {
           operationType: generationStep,
           iteration: generationIteration,
         },
-        timeout: 15000,
+        timeout: 30000,
       })
       const { message, options } = res.data
       setGenerations({ type: generationStep, message, options })
