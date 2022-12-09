@@ -27,7 +27,9 @@ export const request = async config => {
         'Unable to connect to server. Please check your internet connection.'
       )
     } else {
-      return
+      throw new Error(
+        'Sorry, something went wrong. Please try again. If the problem persists, please contact support.'
+      )
     }
   }
 }

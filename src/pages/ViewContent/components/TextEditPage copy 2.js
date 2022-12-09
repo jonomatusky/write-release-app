@@ -1,6 +1,16 @@
 import React, { useCallback, useEffect, useState } from 'react'
 import { useParams } from 'react-router-dom'
-import { Grid, Box, Typography, Toolbar, AppBar, Button } from '@mui/material'
+import {
+  Grid,
+  Box,
+  Typography,
+  IconButton,
+  Card,
+  CardActionArea,
+  Toolbar,
+  AppBar,
+  Button,
+} from '@mui/material'
 import {
   Editor,
   EditorState,
@@ -10,13 +20,14 @@ import {
   Modifier,
   CompositeDecorator,
   SelectionState,
-  getDefaultKeyBinding,
 } from 'draft-js'
 import usePageTitle from 'hooks/use-page-title'
 import useContentStore from 'hooks/store/use-content-store'
+// import ContentName from './ContentName'
+// import TextEditor from './TextEditor'
 import { use100vh } from 'hooks/use-100-vh'
 import useRequest from 'hooks/use-request'
-import { CheckCircleOutline, Sync } from '@mui/icons-material'
+import { Add } from '@mui/icons-material'
 import './inputs.css'
 import { LoadingButton } from '@mui/lab'
 import 'draft-js/dist/Draft.css'
@@ -25,9 +36,8 @@ import PanelSubject from './PanelSubject'
 import PanelBackground from './PanelBackground'
 import PanelAbout from './PanelAbout'
 import PanelHiring from './PanelHiring'
+import ButtonCopyContent from './ButtonCopyContent'
 import PanelResources from './PanelResources'
-import MenuContent from './MenuContent'
-import GeneratedOption from 'components/GeneratedOption'
 import useUserStore from 'hooks/store/use-user-store'
 
 const tabEntity = `{{TAB}}`
@@ -45,7 +55,7 @@ const TextEditPage = () => {
   const [isEditing, setIsEditing] = useState(false)
   const [isFocused, setIsFocused] = useState(false)
 
-  const getCompositeDecorator = useCallback(() => {
+  const getCompositeDecorator = useCallback(show => {
     const findInstructions = (contentBlock, callback, contentState) => {
       const text = contentBlock.getText()
       let start
@@ -60,12 +70,16 @@ const TextEditPage = () => {
     }
 
     let TabEntity = () => {
-      return (
-        <span contentEditable={false} style={{ color: '#ababab' }}>
-          {' '}
-          Press <b>tab</b> to continue writing
-        </span>
-      )
+      if (!show) {
+        return <span></span>
+      } else {
+        return (
+          <span contentEditable={false} style={{ color: '#ababab' }}>
+            {' '}
+            Press <b>tab</b> to continue writing
+          </span>
+        )
+      }
     }
 
     return new CompositeDecorator([
@@ -136,33 +150,24 @@ const TextEditPage = () => {
 
   const textsState = Object.keys(editorsState).reduce((acc, key) => {
     acc[key] = editorsState[key].getCurrentContent().getPlainText()
-
     return acc
   }, {})
 
-  const [inlineAvailable, setInlineAvailable] = useState(false)
-
   const handleBlur = () => {
+    console.log(isFocused)
     setIsFocused(false)
     setIsEditing(false)
-    setFocusField(null)
     const text = editorsState.text
 
     const contentState = removeTabEntity(text)
-    const editorState = EditorState.set(text, {
-      currentContent: contentState,
-    })
+    const editorState = EditorState.push(text, contentState)
 
-    setInlineAvailable(false)
     setEditorsState({
       ...editorsState,
-      text: editorState,
+      text: EditorState.set(editorState, {
+        decorator: getCompositeDecorator(),
+      }),
     })
-  }
-
-  const handleFocus = () => {
-    setFocusField('inline')
-    setIsFocused(true)
   }
 
   const hasText = text => text.length > 0
@@ -180,13 +185,6 @@ const TextEditPage = () => {
     generationStep = 'title'
   }
 
-  const [focusField, setFocusField] = useState(null)
-  const operationType = focusField || generationStep
-
-  useEffect(() => {
-    setGenerationIteration(0)
-  }, [operationType])
-
   const titleStyleFn = () => {
     return 'titleInput'
   }
@@ -198,23 +196,13 @@ const TextEditPage = () => {
   usePageTitle((!!titleInternal ? titleInternal + ' | ' : '') + 'SourceOn')
 
   const handleUpdateText = async () => {
-    const cleanedText = removeTabEntity(editorsState.text)
-
-    const newText = JSON.stringify(convertToRaw(cleanedText))
+    const newText = JSON.stringify(
+      convertToRaw(editorsState.text.getCurrentContent())
+    )
     const newTitle = textsState.title
     const newSubtitle = textsState.subtitle
     setSaveStatus('saving')
-    try {
-      await update({
-        id,
-        text: newText,
-        title: newTitle,
-        subtitle: newSubtitle,
-      })
-    } catch (err) {
-      console.log(err)
-    }
-
+    await update({ id, text: newText, title: newTitle, subtitle: newSubtitle })
     setSaveStatus('saved')
   }
 
@@ -239,7 +227,7 @@ const TextEditPage = () => {
     document.body.style.height = vh100
   }, [vh100])
 
-  const { request, cancel } = useRequest()
+  const { request } = useRequest()
 
   const [generations, setGenerations] = useState({
     type: 'none',
@@ -250,61 +238,34 @@ const TextEditPage = () => {
 
   const [generationIteration, setGenerationIteration] = useState(0)
 
-  const handleGenerate = async (blockId, offset) => {
-    console.log('generating')
+  const handleGenerate = async () => {
     setIsGenerating(true)
-    const type = operationType
 
     try {
-      cancel()
-      console.log('updating text')
       await handleUpdateText()
-      console.log('making request')
       const res = await request({
         url: `/generator`,
         method: 'POST',
         data: {
           contentId: id,
-          operationType: type,
-          blockId,
-          offset,
+          operationType: generationStep,
           iteration: generationIteration,
         },
-        timeout: 30000,
+        timeout: 15000,
       })
-
-      console.log('response received')
-
-      if (!!res) {
-        const { message, options, blockId, offset } = res.data
-
-        if (type !== 'inline') {
-          setGenerationIteration(generationIteration + 1)
-        }
-
-        // if (isGenerating) {
-        //   console.log('setting generations')
-        setGenerations({ type, message, options, blockId, offset })
-        // }
-      }
+      const { message, options } = res.data
+      setGenerations({ type: generationStep, message, options })
+      setGenerationIteration(generationIteration + 1)
     } catch (err) {
-      console.log('error')
       console.log(err)
     }
 
     setIsGenerating(false)
   }
 
-  const handleGenerateClick = () => {
-    handleGenerate()
-  }
-
   // console.log(editorsState.text.getCurrentContent().getPlainText())
 
   const handleSetEditorsState = (field, value) => {
-    setIsGenerating(false)
-    cancel()
-
     if (!isEditing) {
       setIsEditing(true)
     }
@@ -312,19 +273,16 @@ const TextEditPage = () => {
     if (field === 'text') {
       const selectionState = value.getSelection()
       const contentState = removeTabEntity(value)
-      // let newValue = EditorState.push(value, contentState)
-      // let newNewValue = EditorState.acceptSelection(newValue, selectionState)
-      let newNewValue = EditorState.set(value, {
-        currentContent: contentState,
-        selection: selectionState,
-      })
-      setInlineAvailable(false)
+      let newValue = EditorState.push(value, contentState)
+      let newNewValue = EditorState.acceptSelection(newValue, selectionState)
+
       setEditorsState({
         ...editorsState,
-        text: newNewValue,
+        text: EditorState.set(newNewValue, {
+          decorator: getCompositeDecorator(),
+        }),
       })
     } else {
-      setInlineAvailable(false)
       setEditorsState({
         ...editorsState,
         [field]: value,
@@ -335,11 +293,13 @@ const TextEditPage = () => {
   }
 
   useEffect(() => {
-    if (isEditing && !isGenerating) {
+    if (isEditing) {
       const timer = setTimeout(() => {
         setIsEditing(false)
+        console.log('inserting tab')
 
         if (isFocused) {
+          console.log('focused')
           const text = editorsState.text
           const selectorState = text.getSelection()
 
@@ -349,35 +309,32 @@ const TextEditPage = () => {
           const block = contentState.getBlockForKey(selectorState.getEndKey())
 
           let blockLength = block.getLength()
-          const position = selectorState.getEndOffset()
 
           const cursorIsAtEnd =
-            selectorState.isCollapsed() &&
-            (selectorState.getEndOffset() === blockLength ||
-              block.getText()[position] === '\n')
+            selectorState.getEndOffset() === blockLength &&
+            selectorState.isCollapsed()
 
           if (cursorIsAtEnd) {
             // change selector state to only at end
+            console.log('cursor is at end')
+
             const newContentState = Modifier.insertText(
               contentState,
               selectorState,
               tabEntity
             )
 
-            const newEditorState = EditorState.set(text, {
-              currentContent: newContentState,
-              selection: selectorState,
-            })
+            const newEditorState = EditorState.push(text, newContentState)
+            const newestEditorState = EditorState.acceptSelection(
+              newEditorState,
+              selectorState
+            )
 
-            // const newestEditorState = EditorState.acceptSelection(
-            //   newEditorState,
-            //   selectorState
-            // )
-
-            setInlineAvailable(true)
             setEditorsState({
               ...editorsState,
-              text: newEditorState,
+              text: EditorState.set(newestEditorState, {
+                decorator: getCompositeDecorator(true),
+              }),
             })
           }
         }
@@ -385,160 +342,68 @@ const TextEditPage = () => {
 
       return () => clearTimeout(timer)
     }
-  }, [isEditing, editorsState, removeTabEntity, isFocused, isGenerating])
+  }, [
+    isEditing,
+    editorsState,
+    getCompositeDecorator,
+    removeTabEntity,
+    isFocused,
+  ])
 
-  const SavingText = () => {
-    return (
-      <Box display="flex" alignItems="center" color="grey.500" pr={1.5}>
-        {saveStatus === 'saving' ? (
-          <Sync fontSize="small" sx={{ pr: 0.75 }} />
-        ) : saveStatus === 'saved' ? (
-          <CheckCircleOutline fontSize="small" sx={{ pr: 0.75 }} />
-        ) : (
-          <></>
-        )}
-        <Typography color="inherit" variant="body2" fontSize="14px" pt="1px">
-          <b>
-            {saveStatus === 'saving'
-              ? 'Saving...'
-              : saveStatus === 'saved'
-              ? 'Saved'
-              : 'Unsaved Changes'}
-          </b>
-        </Typography>
-      </Box>
-    )
-  }
+  const savingText =
+    saveStatus === 'saving'
+      ? 'Saving...'
+      : saveStatus === 'saved'
+      ? 'Saved'
+      : 'Unsaved Changes'
 
-  const filteredGenerationText = (generations.options || [])
-    .filter(option => option.text !== undefined && option.text !== 'undefined')
-    .filter(
-      option =>
-        !option.text.includes('To learn more') &&
-        !option.text.includes('For more information') &&
-        !option.text.includes('is available now at') &&
-        option.text !== 'Press Release' &&
-        option.text !== '# # #' &&
-        !option.text.startsWith('About ') &&
-        !option.text.startsWith('url: ') &&
-        !option.text.startsWith('Contact:')
-    )
+  const handleAppend = i => {
+    if (generations.type === 'text') {
+      const currentContent = editorsState.text.getCurrentContent()
 
-  const handleAppend = id => {
-    const generation = generations.options.find(g => g.id === id)
-    const textToAppend = generation.text
+      const editorStateWithFocusAtEnd = EditorState.moveFocusToEnd(
+        editorsState.text
+      )
+      const selection = editorStateWithFocusAtEnd.getSelection()
 
-    if (!!generation) {
-      const { blockId, offset } = generations
+      const blockContent = currentContent.getLastBlock().getText()
 
-      console.log('blockId', blockId)
-      console.log('offset', offset)
+      const textWithInsert = Modifier.insertText(
+        currentContent,
+        selection,
+        generations.options[i] + '\n',
+        null
+      )
 
-      if (generations.type === 'inline') {
-        const currentContent = editorsState.text.getCurrentContent()
+      let newContent = textWithInsert
 
-        const selection = SelectionState.createEmpty(blockId).merge({
-          anchorOffset: offset,
-          focusOffset: offset,
-        })
-
-        let newContent = Modifier.insertText(
-          currentContent,
-          selection,
-          textToAppend,
-          null
-        )
-
-        const editorWithInsert = EditorState.push(
-          editorsState.text,
-          newContent,
-          'split-block'
-        )
-
-        const newEditorState = EditorState.moveSelectionToEnd(editorWithInsert)
-
-        handleSetEditorsState('text', newEditorState)
-        setGenerations({
-          ...generations,
-          options: generations.options.map(g => {
-            if (g.id !== id) {
-              return { ...g, disabled: true }
-            }
-            return g
-          }),
-        })
-      } else if (generations.type === 'text') {
-        const currentContent = editorsState.text.getCurrentContent()
-
-        const editorStateWithFocusAtEnd = EditorState.moveFocusToEnd(
-          editorsState.text
-        )
-        const selection = editorStateWithFocusAtEnd.getSelection()
-
-        const blockContent = currentContent.getLastBlock().getText()
-
-        const textWithInsert = Modifier.insertText(
-          currentContent,
-          selection,
-          textToAppend,
-          null
-        )
-
-        let newContent = textWithInsert
-
-        if (hasText(textsState.text)) {
-          newContent = Modifier.splitBlock(newContent, selection)
-        }
-
-        if (blockContent !== '') {
-          newContent = Modifier.splitBlock(newContent, selection)
-        }
-
-        const editorWithInsert = EditorState.push(
-          editorsState.text,
-          newContent,
-          'split-block'
-        )
-
-        const newEditorState = EditorState.moveSelectionToEnd(editorWithInsert)
-
-        handleSetEditorsState('text', newEditorState)
+      if (blockContent !== '') {
+        newContent = Modifier.splitBlock(textWithInsert, selection)
       } else {
-        const newEditorState = EditorState.push(
-          editorsState[generations.type],
-          ContentState.createFromText(generation.text),
-          'insert-characters'
-        )
-
-        handleSetEditorsState(generations.type, newEditorState)
+        newContent = textWithInsert
       }
 
-      setSaveStatus('unsaved')
-      setGenerationIteration(0)
+      const editorWithInsert = EditorState.push(
+        editorsState.text,
+        newContent,
+        'split-block'
+      )
+
+      const newEditorState = EditorState.moveSelectionToEnd(editorWithInsert)
+
+      handleSetEditorsState('text', newEditorState)
+    } else {
+      const newEditorState = EditorState.push(
+        editorsState[generations.type],
+        ContentState.createFromText(generations.options[i]),
+        'insert-characters'
+      )
+
+      handleSetEditorsState(generations.type, newEditorState)
     }
-  }
 
-  const myKeyBindingFn = e => {
-    if (e.keyCode === 9) {
-      return 'generate-inline'
-    }
-    return getDefaultKeyBinding(e)
-  }
-
-  const handleKeyCommand = command => {
-    if (command === 'generate-inline') {
-      if (inlineAvailable) {
-        const offset = editorsState.text.getSelection().getEndOffset()
-        const blockId = editorsState.text.getSelection().getEndKey()
-
-        handleGenerate(blockId, offset)
-
-        return 'handled'
-      } else {
-        return 'not-handled'
-      }
-    }
-    return 'not-handled'
+    setSaveStatus('unsaved')
+    setGenerationIteration(0)
   }
 
   const [messageOpen, setMessageOpen] = useState(false)
@@ -561,15 +426,25 @@ const TextEditPage = () => {
         }}
         open={true}
       >
-        <Toolbar variant="dense" disableGutters sx={{ pr: 2 }}>
+        <Toolbar variant="dense">
           <Box
             display="flex"
             width="100%"
             alignItems="center"
             justifyContent="flex-end"
           >
-            <SavingText />
-            <MenuContent id={id} onUpdate={handleUpdateText} />
+            <Box>
+              <Typography
+                color="grey.500"
+                variant="body2"
+                fontSize="12px"
+                pt="2px"
+              >
+                <b>{savingText}</b>
+              </Typography>
+            </Box>
+
+            <ButtonCopyContent id={id} color="grey.800" />
           </Box>
         </Toolbar>
       </AppBar>
@@ -577,8 +452,7 @@ const TextEditPage = () => {
         <Box
           height={vh100 - 48}
           width="30%"
-          p={2}
-          pr={1.5}
+          p={3}
           sx={{
             overflowY: 'scroll',
             overflowX: 'hidden',
@@ -595,45 +469,43 @@ const TextEditPage = () => {
               <LoadingButton
                 fullWidth
                 variant="contained"
-                onClick={handleGenerateClick}
+                onClick={handleGenerate}
                 loading={isGenerating}
-                size="large"
               >
                 Generate{' '}
-                {operationType === 'title'
+                {generationStep === 'title'
                   ? 'Headline'
-                  : operationType === 'subtitle'
+                  : generationStep === 'subtitle'
                   ? 'Subheadline'
                   : 'Text'}
               </LoadingButton>
             </Grid>
             {!isGenerating &&
-              filteredGenerationText.map((generation, i) => {
+              (generations.options || []).map((generation, i) => {
                 return (
                   <Grid item xs={12} key={i}>
-                    <GeneratedOption
-                      generation={generation}
-                      onClick={handleAppend}
-                    />
+                    <Card variant="outlined" color="inherit">
+                      <CardActionArea onClick={() => handleAppend(i)}>
+                        <Box display="flex" alignItems="center" p={1}>
+                          <Box flexGrow={1}>
+                            <Typography
+                              variant="body2"
+                              sx={{ whiteSpace: 'pre-line' }}
+                            >
+                              {generation}
+                            </Typography>
+                          </Box>
+                          <Box>
+                            <IconButton color="inherit" size="small" ml={1}>
+                              <Add />
+                            </IconButton>
+                          </Box>
+                        </Box>
+                      </CardActionArea>
+                    </Card>
                   </Grid>
                 )
               })}
-            {filteredGenerationText.length === 0 &&
-              (generations.options || []).length > 0 && (
-                <Grid item xs={12}>
-                  <Typography variant="body2" textAlign="center" pt={1}>
-                    <span style={{ whiteSpace: 'pre-line' }}>
-                      Looks like you've reached the end of the story!
-                    </span>
-                  </Typography>
-                  <Typography variant="body2" textAlign="center">
-                    <span style={{ whiteSpace: 'pre-line' }}>
-                      Continue editing in the editor or export your story to
-                      Google Docs.
-                    </span>
-                  </Typography>
-                </Grid>
-              )}
             {!isGenerating && generations.message && user.admin && (
               <>
                 <Grid item xs={12} container justifyContent="center">
@@ -687,8 +559,6 @@ const TextEditPage = () => {
                   placeholder="Headline"
                   stripPastedStyles
                   blockStyleFn={titleStyleFn}
-                  // onBlur={() => setFocusField(null)}
-                  onFocus={() => setFocusField('title')}
                 />
               </Grid>
               <Grid item xs={12} id="subtitle">
@@ -698,8 +568,6 @@ const TextEditPage = () => {
                   placeholder="Subheadline"
                   stripPastedStyles
                   blockStyleFn={subtitleStyleFn}
-                  // onBlur={() => setFocusField(null)}
-                  onFocus={() => setFocusField('subtitle')}
                 />
               </Grid>
               <Grid item xs={12}>
@@ -708,9 +576,7 @@ const TextEditPage = () => {
                   onChange={value => handleSetEditorsState('text', value)}
                   placeholder="Body"
                   onBlur={handleBlur}
-                  onFocus={handleFocus}
-                  handleKeyCommand={handleKeyCommand}
-                  keyBindingFn={myKeyBindingFn}
+                  onFocus={() => setIsFocused(true)}
                 />
               </Grid>
               <Grid item xs={12}>
@@ -740,15 +606,7 @@ const TextEditPage = () => {
         >
           {/* <Toolbar variant="dense" /> */}
 
-          <Grid
-            item
-            container
-            alignContent="start"
-            spacing={2}
-            p={1.5}
-            pt={2}
-            pr={2}
-          >
+          <Grid item container alignContent="start" spacing={2} p={1.5} pt={2}>
             <PanelAbout id={id} />
             <PanelResources id={id} />
             <PanelHiring id={id} />
