@@ -427,12 +427,10 @@ const TextEditPage = () => {
   const handleAppend = id => {
     const generation = generations.options.find(g => g.id === id)
     const textToAppend = generation.text
+    setFocusField(null)
 
     if (!!generation) {
       const { blockId, offset } = generations
-
-      console.log('blockId', blockId)
-      console.log('offset', offset)
 
       if (generations.type === 'inline') {
         const currentContent = editorsState.text.getCurrentContent()

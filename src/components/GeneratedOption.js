@@ -119,7 +119,7 @@ const GeneratedOption = ({ generation, onClick }) => {
                   },
                 }}
                 alt="Add to editor"
-                disabled={wasSelected || generation.disabled}
+                disabled={generation.disabled}
                 size="small"
                 onMouseEnter={() => setIsHoveringAdd(true)}
                 onMouseLeave={() => setIsHoveringAdd(false)}

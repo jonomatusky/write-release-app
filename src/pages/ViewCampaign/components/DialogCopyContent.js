@@ -7,10 +7,12 @@ import { useNavigate } from 'react-router'
 import useFormHelper from 'hooks/use-form-helper'
 import Form from 'components/Form/Form'
 import useAlertStore from 'hooks/store/use-alert-store'
+import useResourcesStore from 'hooks/store/use-resources-store'
 
 const DialogCopyContent = ({ open: isOpen, onClose, id }) => {
   const { create, createStatus, select } = useContentStore()
   const { items: organizations } = useOrganizationsStore()
+  const { items: resources, create: createResource } = useResourcesStore()
   const { item: user } = useUserStore()
   const navigate = useNavigate()
   const content = select(id)
@@ -42,10 +44,27 @@ const DialogCopyContent = ({ open: isOpen, onClose, id }) => {
       owner: user,
       organizations: [values.organization],
       date: values.date,
+      draftUrl: null,
     }
+
+    console.log(newValues)
 
     try {
       const newContent = await create(newValues)
+
+      const newResources = resources.map(resource => {
+        return {
+          ...resource,
+          owner: user,
+          organizations: [values.organization],
+          content: newContent.id,
+        }
+      })
+
+      for (let resource of newResources) {
+        await createResource(resource)
+      }
+
       onClose()
       navigate('/stories/' + newContent.id)
       setMessage({ message: 'Content copied successfully' })
