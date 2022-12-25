@@ -257,6 +257,13 @@ const LayoutDrawer = ({ open, children }) => {
                   path="/stories"
                   beta
                 />
+                <DrawerItem
+                  open={open}
+                  label="Content (Beta)"
+                  Icon={Create}
+                  path="/content"
+                  beta
+                />
               </List>
             </Box>
             <Box>

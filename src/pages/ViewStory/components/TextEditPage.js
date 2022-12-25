@@ -20,16 +20,15 @@ import { CheckCircleOutline, Sync } from '@mui/icons-material'
 import './inputs.css'
 import { LoadingButton } from '@mui/lab'
 import 'draft-js/dist/Draft.css'
-// import PanelQuotes from './PanelQuotes'
+import PanelQuotes from './PanelQuotes'
 import PanelSubject from './PanelSubject'
-// import PanelBackground from './PanelBackground'
+import PanelBackground from './PanelBackground'
 import PanelAbout from './PanelAbout'
-// import PanelHiring from './PanelHiring'
+import PanelHiring from './PanelHiring'
 import PanelResources from './PanelResources'
 import MenuContent from './MenuContent'
 import GeneratedOption from 'components/GeneratedOption'
 import useUserStore from 'hooks/store/use-user-store'
-import PanelAuthor from './PanelAuthor'
 
 const tabEntity = `{{TAB}}`
 const tabEntity2 = `{{TAB}`
@@ -40,7 +39,7 @@ const TextEditPage = () => {
   const content = select(id)
   const { titleInternal } = content
   const [saveStatus, setSaveStatus] = useState('saved')
-  const { title, text } = content || {}
+  const { title, subtitle, text, boilerplate } = content || {}
   const { item: user } = useUserStore()
 
   const [isEditing, setIsEditing] = useState(false)
@@ -127,6 +126,12 @@ const TextEditPage = () => {
     title: EditorState.createWithContent(
       ContentState.createFromText(title || '')
     ),
+    subtitle: EditorState.createWithContent(
+      ContentState.createFromText(subtitle || '')
+    ),
+    boilerplate: !!boilerplate
+      ? EditorState.createWithContent(convertFromRaw(JSON.parse(boilerplate)))
+      : EditorState.createEmpty(),
   })
 
   const textsState = Object.keys(editorsState).reduce((acc, key) => {
@@ -164,8 +169,13 @@ const TextEditPage = () => {
 
   let generationStep
 
-  if (hasText(textsState.text) || hasText(textsState.title) > 0) {
+  if (
+    hasText(textsState.text) ||
+    (hasText(textsState.title) > 0 && hasText(textsState.subtitle) > 0)
+  ) {
     generationStep = 'text'
+  } else if (hasText(textsState.title)) {
+    generationStep = 'subtitle'
   } else {
     generationStep = 'title'
   }
@@ -181,6 +191,10 @@ const TextEditPage = () => {
     return 'titleInput'
   }
 
+  const subtitleStyleFn = () => {
+    return 'subtitleInput'
+  }
+
   usePageTitle((!!titleInternal ? titleInternal + ' | ' : '') + 'SourceOn')
 
   const handleUpdateText = async () => {
@@ -188,12 +202,14 @@ const TextEditPage = () => {
 
     const newText = JSON.stringify(convertToRaw(cleanedText))
     const newTitle = textsState.title
+    const newSubtitle = textsState.subtitle
     setSaveStatus('saving')
     try {
       await update({
         id,
         text: newText,
         title: newTitle,
+        subtitle: newSubtitle,
       })
     } catch (err) {
       console.log(err)
@@ -267,7 +283,6 @@ const TextEditPage = () => {
         // }
       }
     } catch (err) {
-      console.log('error')
       console.log(err)
     }
 
@@ -389,9 +404,19 @@ const TextEditPage = () => {
     )
   }
 
-  const filteredGenerationText = (generations.options || []).filter(
-    option => option.text !== undefined && option.text !== 'undefined'
-  )
+  const filteredGenerationText = (generations.options || [])
+    .filter(option => option.text !== undefined && option.text !== 'undefined')
+    .filter(
+      option =>
+        !option.text.includes('To learn more') &&
+        !option.text.includes('For more information') &&
+        !option.text.includes('is available now at') &&
+        option.text !== 'Press Release' &&
+        option.text !== '# # #' &&
+        !option.text.startsWith('About ') &&
+        !option.text.startsWith('url: ') &&
+        !option.text.startsWith('Contact:')
+    )
 
   const handleAppend = id => {
     const generation = generations.options.find(g => g.id === id)
@@ -566,7 +591,12 @@ const TextEditPage = () => {
                 loading={isGenerating}
                 size="large"
               >
-                Generate {operationType === 'title' ? 'Title' : 'Text'}
+                Generate{' '}
+                {operationType === 'title'
+                  ? 'Headline'
+                  : operationType === 'subtitle'
+                  ? 'Subheadline'
+                  : 'Text'}
               </LoadingButton>
             </Grid>
             {!isGenerating &&
@@ -646,11 +676,22 @@ const TextEditPage = () => {
                 <Editor
                   editorState={editorsState.title}
                   onChange={value => handleSetEditorsState('title', value)}
-                  placeholder="Title"
+                  placeholder="Headline"
                   stripPastedStyles
                   blockStyleFn={titleStyleFn}
                   // onBlur={() => setFocusField(null)}
                   onFocus={() => setFocusField('title')}
+                />
+              </Grid>
+              <Grid item xs={12} id="subtitle">
+                <Editor
+                  editorState={editorsState.subtitle}
+                  onChange={value => handleSetEditorsState('subtitle', value)}
+                  placeholder="Subheadline"
+                  stripPastedStyles
+                  blockStyleFn={subtitleStyleFn}
+                  // onBlur={() => setFocusField(null)}
+                  onFocus={() => setFocusField('subtitle')}
                 />
               </Grid>
               <Grid item xs={12}>
@@ -662,6 +703,15 @@ const TextEditPage = () => {
                   onFocus={handleFocus}
                   handleKeyCommand={handleKeyCommand}
                   keyBindingFn={myKeyBindingFn}
+                />
+              </Grid>
+              <Grid item xs={12}>
+                <Editor
+                  editorState={editorsState.boilerplate}
+                  onChange={value =>
+                    handleSetEditorsState('boilerplate', value)
+                  }
+                  placeholder="Boilerplate"
                 />
               </Grid>
             </Grid>
@@ -692,12 +742,11 @@ const TextEditPage = () => {
             pr={2}
           >
             <PanelAbout id={id} />
-            <PanelSubject id={id} />
             <PanelResources id={id} />
-            {/* <PanelAuthor id={id} /> */}
-            {/* <PanelHiring id={id} /> */}
-            {/* <PanelBackground id={id} /> */}
-            {/* <PanelQuotes id={id} /> */}
+            <PanelHiring id={id} />
+            <PanelSubject id={id} />
+            <PanelBackground id={id} />
+            <PanelQuotes id={id} />
           </Grid>
         </Box>
       </Box>

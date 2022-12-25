@@ -21,6 +21,8 @@ import NotFound from 'pages/NotFound/NotFound'
 import DialogContactForm from 'components/DialogContactForm'
 import ViewCompanies from 'pages/ViewCompanies/ViewCompanies'
 import ViewCompany from 'pages/ViewCompany/ViewCompany'
+import ViewStories from 'pages/ViewStories/ViewStories'
+import ViewStory from 'pages/ViewStory/ViewStory'
 import ViewContents from 'pages/ViewContents/ViewContents'
 import ViewContent from 'pages/ViewContent/ViewContent'
 import EditorTest from 'pages/EditorTest'
@@ -64,7 +66,8 @@ const App = () => {
             <Route path="/" element={<HeaderView />}>
               <Route path="/login" element={<Login />} />
               <Route path="/" element={<BetaRoute component={Outlet} />}>
-                <Route path="/stories/:id" element={<ViewContent />} />
+                <Route path="/stories/:id" element={<ViewStory />} />
+                <Route path="/content/:id" element={<ViewContent />} />
                 <Route path="/social/:id" element={<ViewCampaign />} />
               </Route>
             </Route>
@@ -75,7 +78,8 @@ const App = () => {
               <Route path="/companies" element={<ViewCompanies />} />
               <Route path="*" element={<NotFound />} />
               <Route path="/" element={<BetaRoute component={Outlet} />}>
-                <Route path="/stories" element={<ViewContents />} />
+                <Route path="/content" element={<ViewContents />} />
+                <Route path="/stories" element={<ViewStories />} />
                 <Route path="/social" element={<ViewCampaigns />} />
               </Route>
             </Route>

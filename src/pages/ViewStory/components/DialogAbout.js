@@ -11,8 +11,11 @@ import useFormHelper from 'hooks/use-form-helper'
 import Form from 'components/Form/Form'
 import DialogCreateEditCompany from 'pages/ViewStory/components/DialogCreateEditCompany'
 import useUserStore from 'hooks/store/use-user-store'
+import OrganizationPanel from './OrganizationPanel'
+import { ContentState, convertToRaw } from 'draft-js'
+import useSession from 'hooks/use-session'
 
-const DialogContentCreate = ({ open, onClose, id }) => {
+const DialogAbout = ({ open, onClose, id }) => {
   const {
     create,
     update,
@@ -25,6 +28,7 @@ const DialogContentCreate = ({ open, onClose, id }) => {
   const { items: organizations, select: selectOrganization } =
     useOrganizationsStore()
   const { item: user } = useUserStore()
+  const { user: authUser } = useSession()
 
   const content = !!id ? selectContent(id) : {}
 
@@ -32,11 +36,13 @@ const DialogContentCreate = ({ open, onClose, id }) => {
   const isSetup = setupStage === 'about'
 
   const handleSubmit = async values => {
-    let { organization: organizationId, primary, ...newValues } = values
+    let { organization: organizationId, ...newValues } = values
     let contentType = selectContentType(values.type)
 
     !id && (newValues.owner = user.id)
-    newValues.organizations = [organizationId]
+    !id && (newValues.organizations = [organizationId])
+
+    let date = values.date ? new Date(values.date) : new Date()
 
     const organization = selectOrganization(organizationId) || {}
 
@@ -45,17 +51,48 @@ const DialogContentCreate = ({ open, onClose, id }) => {
       ' ' +
       contentType.secondary +
       ' ' +
-      contentType.primary
+      contentType.primary +
+      ' ' +
+      date.toLocaleDateString('en-us', {
+        year: 'numeric',
+        month: 'short',
+        day: 'numeric',
+      })
 
-    newValues.setupStage = !isSetup && !!id ? null : 'subject'
+    newValues.setupStage = !isSetup && !!id ? null : 'resources'
 
     try {
       if (!!id) {
         await update({ id, ...newValues })
       } else {
-        const c = await create(newValues)
+        const boilerplateText = `To learn more, visit: ${
+          values.ctaUrl || organization.website
+        }
+
+About ${organization.name}
+${
+  !!organization.boilerplate
+    ? organization.boilerplate
+    : '[Add company boilerplate]'
+}
+
+Contacts
+Gregory FCA for ${organization.name}
+${!!authUser?.displayName ? authUser.displayName : '[Contact Name]'} ${
+          !!authUser?.phoneNumber
+            ? authUser.phoneNumber
+            : '[Contact phone number]'
+        }
+${organization.email}
+`
+
+        const boilerplate = JSON.stringify(
+          convertToRaw(ContentState.createFromText(boilerplateText))
+        )
+
+        const c = await create({ boilerplate, ...newValues })
         window.location.hash = ''
-        navigate(`/content/${c.id}`)
+        navigate(`/stories/${c.id}`)
       }
 
       onClose()
@@ -64,7 +101,12 @@ const DialogContentCreate = ({ open, onClose, id }) => {
 
   const formFields = [
     {
-      label: `What type of piece are you writing?`,
+      label: 'When is this release going out?',
+      name: 'date',
+      type: 'date',
+    },
+    {
+      label: 'What type of press are you writing?',
       name: 'type',
       options:
         contentTypes
@@ -72,13 +114,10 @@ const DialogContentCreate = ({ open, onClose, id }) => {
             ...contentType,
             name: contentType.secondary,
           }))
-          .filter(
-            contentType =>
-              contentType.primary !== 'Press Release' &&
-              contentType.primary !== 'Social Media'
-          ) || [],
+          .filter(contentType => contentType.primary === 'Press Release') || [],
       type: 'auto',
       validation: Yup.string().required('Type is required'),
+      disabled: !!id,
     },
     {
       label: 'Which company is this for?',
@@ -86,17 +125,20 @@ const DialogContentCreate = ({ open, onClose, id }) => {
       options: organizations || [],
       type: 'auto',
       validation: Yup.string().required('Company is required'),
+      disabled: !!id,
       AddDialog: DialogCreateEditCompany,
+    },
+    {
+      label: 'What URL can readers visit to learn more?',
+      name: 'ctaUrl',
+      type: 'url',
+      validation: Yup.string().url('Must be a valid URL'),
     },
   ]
 
-  const { control, submit, reset } = useFormHelper({
+  const { control, submit, reset, watch } = useFormHelper({
     formFields,
-    initialValues: {
-      primary: selectContentType(content.type).primary,
-      type: content.type,
-      organization: content.organizations?.[0],
-    },
+    initialValues: { ...content, organization: content.organizations?.[0] },
     onSubmit: handleSubmit,
   })
 
@@ -104,11 +146,14 @@ const DialogContentCreate = ({ open, onClose, id }) => {
     if (isSetup && !!id) {
       await update({
         id,
+        setupStage: 'resources',
       })
     }
     reset()
     onClose()
   }
+
+  const orgId = watch('organization')
 
   const navigate = useNavigate()
 
@@ -118,7 +163,7 @@ const DialogContentCreate = ({ open, onClose, id }) => {
         title={
           <Box display="flex" alignItems="center" justifyContent="center">
             {/* <NoteAdd /> */}
-            <Box>{!!id ? 'Basics' : 'Create New'}</Box>
+            <Box>{!!id ? 'About' : 'Start a Story'}</Box>
           </Box>
         }
         open={open || isSetup}
@@ -132,10 +177,15 @@ const DialogContentCreate = ({ open, onClose, id }) => {
           <Grid item xs={12}>
             <Form formFields={formFields} submit={submit} control={control} />
           </Grid>
+          {!!orgId && (
+            <Grid item xs={12}>
+              <OrganizationPanel id={orgId} />
+            </Grid>
+          )}
         </Grid>
       </LayoutDialogEdit>
     </>
   )
 }
 
-export default DialogContentCreate
+export default DialogAbout

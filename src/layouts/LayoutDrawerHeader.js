@@ -17,7 +17,14 @@ import {
   IconButton,
   Typography,
 } from '@mui/material'
-import { Business, Person, Description, Flag, Tag } from '@mui/icons-material'
+import {
+  Business,
+  Person,
+  Description,
+  Flag,
+  Tag,
+  Edit,
+} from '@mui/icons-material'
 import useUserStore from 'hooks/store/use-user-store'
 import Logo from 'assets/images/logo40svg.svg'
 // import ButtonCopy from 'components/ButtonCopy'
@@ -239,9 +246,40 @@ const LayoutDrawerHeader = ({ open, children }) => {
                 <List>
                   <DrawerItem
                     open={open}
-                    label="Profiles"
-                    Icon={Person}
-                    path="/profiles"
+                    label="Stories"
+                    Icon={Description}
+                    path="/stories"
+                    beta
+                  />
+                  <DrawerItem
+                    open={open}
+                    label={
+                      <>
+                        Content
+                        <sup style={{ fontSize: '7pt', color: '#777777' }}>
+                          {' '}
+                          <b>BETA</b>
+                        </sup>
+                      </>
+                    }
+                    Icon={Edit}
+                    path="/content"
+                    beta
+                  />
+                  <DrawerItem
+                    open={open}
+                    label={
+                      <>
+                        Social
+                        <sup style={{ fontSize: '7pt', color: '#777777' }}>
+                          {' '}
+                          <b>BETA</b>
+                        </sup>
+                      </>
+                    }
+                    Icon={Tag}
+                    path="/social"
+                    beta
                   />
                   <DrawerItem
                     open={open}
@@ -251,17 +289,9 @@ const LayoutDrawerHeader = ({ open, children }) => {
                   />
                   <DrawerItem
                     open={open}
-                    label="Stories"
-                    Icon={Description}
-                    path="/stories"
-                    beta
-                  />
-                  <DrawerItem
-                    open={open}
-                    label="Social"
-                    Icon={Tag}
-                    path="/social"
-                    beta
+                    label="Profiles"
+                    Icon={Person}
+                    path="/profiles"
                   />
                 </List>
               </Box>

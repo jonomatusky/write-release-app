@@ -1,7 +1,7 @@
 import React from 'react'
 import { Grid, Box, Chip, Typography } from '@mui/material'
 import useContentStore from 'hooks/store/use-content-store'
-import { Business, Newspaper } from '@mui/icons-material'
+import { Business, Description, Newspaper } from '@mui/icons-material'
 import './inputs.css'
 import 'draft-js/dist/Draft.css'
 import PanelEdit from 'layouts/PanelEdit'
@@ -24,12 +24,12 @@ const PanelAbout = ({ id }) => {
           <Grid container spacing={0.5}>
             <Grid item xs={12}>
               <Typography color="primary" pb={0.5} variant="body2">
-                <b>Basics</b>
+                <b>About</b>
               </Typography>
             </Grid>
-            {/* <Grid item>
+            <Grid item>
               <Chip label={type.primary} size="small" icon={<Description />} />
-            </Grid> */}
+            </Grid>
             <Grid item>
               <Chip label={type.secondary} size="small" icon={<Newspaper />} />
             </Grid>

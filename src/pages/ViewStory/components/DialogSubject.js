@@ -66,8 +66,10 @@ const DialogSubject = ({ open, onClose, id }) => {
         selectQuestion(a.question).order - selectQuestion(b.question).order
     )
 
+    const newSetupStage = !isSetup ? null : 'background'
+
     try {
-      await update({ id, answers, setupStage: null })
+      await update({ id, answers, setupStage: newSetupStage })
       onClose()
     } catch (err) {}
   }
@@ -79,8 +81,22 @@ const DialogSubject = ({ open, onClose, id }) => {
   })
 
   const handleClose = async () => {
+    isSetup &&
+      (await update({
+        id,
+        setupStage: 'background',
+      }))
     reset()
     onClose()
+  }
+
+  const onBack = async () => {
+    isSetup &&
+      (await update({
+        id,
+        setupStage: 'resources',
+      }))
+    reset()
   }
 
   return (
@@ -95,8 +111,9 @@ const DialogSubject = ({ open, onClose, id }) => {
       onClose={handleClose}
       onSave={submit}
       loading={updateStatus === 'loading'}
-      label="Save"
-      // cancelLabel={isSetup ? 'Skip' : 'Cancel'}
+      label={isSetup ? 'Next' : 'Save'}
+      cancelLabel={isSetup ? 'Skip' : 'Cancel'}
+      onBack={isSetup ? onBack : null}
     >
       <Grid container justifyContent="center" spacing={3} pb={2} pt={1}>
         <Grid item xs={12}>

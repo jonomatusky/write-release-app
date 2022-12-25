@@ -59,10 +59,10 @@ const DialogBackground = ({ open, onClose, id }) => {
         selectQuestion(a.question).order - selectQuestion(b.question).order
     )
 
-    const newSetupStage = !isSetup ? null : 'quotes'
+    // const newSetupStage = !isSetup ? null : 'quotes'
 
     try {
-      await update({ id, answers, setupStage: newSetupStage })
+      await update({ id, answers, setupStage: null })
       onClose()
     } catch (err) {}
   }
@@ -83,15 +83,6 @@ const DialogBackground = ({ open, onClose, id }) => {
     onClose()
   }
 
-  const onBack = async () => {
-    isSetup &&
-      (await update({
-        id,
-        setupStage: 'subject',
-      }))
-    reset()
-  }
-
   return (
     <LayoutDialogEdit
       title={
@@ -106,7 +97,6 @@ const DialogBackground = ({ open, onClose, id }) => {
       loading={updateStatus === 'loading'}
       label={isSetup ? 'Next' : 'Save'}
       cancelLabel={isSetup ? 'Skip' : 'Cancel'}
-      onBack={isSetup ? onBack : null}
     >
       <Grid container justifyContent="center" spacing={3} pb={2} pt={1}>
         <Grid item xs={12}>
