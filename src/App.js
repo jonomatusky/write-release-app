@@ -62,7 +62,7 @@ const App = () => {
               <Route path="/profiles/:id" element={<ViewProfile />} />
               <Route path="/companies/:id" element={<ViewCompany />} />
               <Route path="/stories/:id" element={<ViewStory />} />
-              <Route path="/" element={<Navigate replace to="/profiles" />} />
+              <Route path="/" element={<Navigate replace to="/stories" />} />
             </Route>
             <Route path="/" element={<HeaderView />}>
               <Route path="/login" element={<Login />} />
