@@ -232,7 +232,7 @@ const ViewContents = () => {
                           <ListItemIcon>
                             <Person />
                           </ListItemIcon>
-                          <ListItemText primary="Your Stories" />
+                          <ListItemText primary="Your Content" />
                         </ListItemButton>
                       </ListItem>
                       <ListItem disablePadding>
@@ -247,7 +247,7 @@ const ViewContents = () => {
                           <ListItemIcon>
                             <Groups />
                           </ListItemIcon>
-                          <ListItemText primary="All Stories" />
+                          <ListItemText primary="All Content" />
                         </ListItemButton>
                       </ListItem>
                     </List>
