@@ -29,7 +29,7 @@ import PanelResources from './PanelResources'
 import MenuContent from './MenuContent'
 import GeneratedOption from 'components/GeneratedOption'
 import useUserStore from 'hooks/store/use-user-store'
-import PanelAuthor from './PanelAuthor'
+// import PanelAuthor from './PanelAuthor'
 
 const tabEntity = `{{TAB}}`
 const tabEntity2 = `{{TAB}`

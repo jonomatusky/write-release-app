@@ -249,7 +249,6 @@ const LayoutDrawerHeader = ({ open, children }) => {
                     label="Stories"
                     Icon={Description}
                     path="/stories"
-                    beta
                   />
                   <DrawerItem
                     open={open}

@@ -61,12 +61,12 @@ const App = () => {
             <Route path="/" element={<HeaderView copy />}>
               <Route path="/profiles/:id" element={<ViewProfile />} />
               <Route path="/companies/:id" element={<ViewCompany />} />
+              <Route path="/stories/:id" element={<ViewStory />} />
               <Route path="/" element={<Navigate replace to="/profiles" />} />
             </Route>
             <Route path="/" element={<HeaderView />}>
               <Route path="/login" element={<Login />} />
               <Route path="/" element={<BetaRoute component={Outlet} />}>
-                <Route path="/stories/:id" element={<ViewStory />} />
                 <Route path="/content/:id" element={<ViewContent />} />
                 <Route path="/social/:id" element={<ViewCampaign />} />
               </Route>
@@ -76,10 +76,10 @@ const App = () => {
             <Route path="/" element={<PrivateRoute component={Outlet} />}>
               <Route path="/profiles" element={<ViewProfiles />} />
               <Route path="/companies" element={<ViewCompanies />} />
+              <Route path="/stories" element={<ViewStories />} />
               <Route path="*" element={<NotFound />} />
               <Route path="/" element={<BetaRoute component={Outlet} />}>
                 <Route path="/content" element={<ViewContents />} />
-                <Route path="/stories" element={<ViewStories />} />
                 <Route path="/social" element={<ViewCampaigns />} />
               </Route>
             </Route>
