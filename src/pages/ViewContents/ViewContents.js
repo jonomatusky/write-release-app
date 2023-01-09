@@ -55,8 +55,6 @@ const ViewContents = () => {
   usePageTitle()
   useFetchContent()
 
-  const [userFilter, setUserFilter] = useState(user.id)
-
   const [chunkCount, setChunkCount] = useState(1)
 
   const viewAll = searchParams.get('view') === 'all'
