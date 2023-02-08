@@ -612,7 +612,7 @@ const TextEditPage = () => {
                   <LoadingButton
                     fullWidth
                     variant="contained"
-                    onClick={handleGenerateClick}
+                    onClick={() => handleGenerateClick()}
                     loading={isGenerating}
                     size="large"
                   >
