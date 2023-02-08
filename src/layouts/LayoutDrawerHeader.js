@@ -242,7 +242,6 @@ const LayoutDrawerHeader = ({ open, children }) => {
                     label="Content"
                     Icon={Edit}
                     path="/content"
-                    beta
                   />
                   <DrawerItem
                     open={open}

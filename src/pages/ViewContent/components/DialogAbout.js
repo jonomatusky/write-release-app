@@ -9,6 +9,7 @@ import useContentStore from 'hooks/store/use-content-store'
 import useFormHelper from 'hooks/use-form-helper'
 import Form from 'components/Form/Form'
 import DialogCreateEditCompany from 'pages/ViewStory/components/DialogCreateEditCompany'
+import useUserStore from 'hooks/store/use-user-store'
 
 const DialogContentCreate = ({ open, onClose, id }) => {
   const {
@@ -19,6 +20,7 @@ const DialogContentCreate = ({ open, onClose, id }) => {
     select: selectContent,
   } = useContentStore()
   const { items: organizations } = useOrganizationsStore()
+  const { item: user } = useUserStore()
 
   const content = !!id ? selectContent(id) : {}
 
@@ -30,7 +32,7 @@ const DialogContentCreate = ({ open, onClose, id }) => {
       if (!!id) {
         await update({ id, ...values })
       } else {
-        const c = await create(values)
+        const c = await create({ ...values, owner: user.id })
         window.location.hash = ''
         navigate(`/content/${c.id}`)
       }
