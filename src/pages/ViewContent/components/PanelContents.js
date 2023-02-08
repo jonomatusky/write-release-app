@@ -1,37 +1,36 @@
 import React from 'react'
 import { Grid, Box, Chip, Typography } from '@mui/material'
 import useContentStore from 'hooks/store/use-content-store'
-import useIndividualsStore from 'hooks/store/use-individuals-store'
 import { Person } from '@mui/icons-material'
 import './inputs.css'
 import 'draft-js/dist/Draft.css'
 import PanelEdit from 'layouts/PanelEdit'
-import DialogQuotes from './DialogQuotes'
+import DialogContents from './DialogContents'
 
-const PanelQuotes = ({ id }) => {
+const PanelContents = ({ id }) => {
   const { select } = useContentStore()
   const content = select(id)
 
-  const { select: selectIndividual } = useIndividualsStore()
+  const contents = content.individuals
 
   return (
     <Grid item xs={12}>
-      <PanelEdit dialog={DialogQuotes} dialogProps={{ id }}>
+      <PanelEdit dialog={DialogContents} dialogProps={{ id }}>
         <Box p={2} pt={1}>
           <Grid container spacing={0.5}>
             <Grid item xs={12}>
               <Typography color="primary" pb={0.5} variant="body2">
-                <b>Quotes</b>
+                <b>Individuals</b>
               </Typography>
             </Grid>
-            {content.individualsQuoted &&
-              content.individualsQuoted.length > 0 &&
-              content.individualsQuoted.map(individualId => {
-                const individual = selectIndividual(individualId)
+            {contents &&
+              contents.length > 0 &&
+              contents.map(contentId => {
+                const content = select(contentId)
                 return (
-                  <Grid item xs={12} key={individualId}>
+                  <Grid item xs={12} key={contentId}>
                     <Chip
-                      label={individual.name}
+                      label={content.titleInternal}
                       size="small"
                       icon={<Person />}
                     />
@@ -44,4 +43,4 @@ const PanelQuotes = ({ id }) => {
     </Grid>
   )
 }
-export default PanelQuotes
+export default PanelContents

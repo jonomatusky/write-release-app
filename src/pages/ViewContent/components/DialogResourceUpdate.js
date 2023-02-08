@@ -31,7 +31,6 @@ const DialogAddResource = ({ open, onClose, contentId, id }) => {
       if (!!id) {
         await update({ id, ...values })
       } else {
-        console.log('submitting')
         await create(values)
       }
 
@@ -45,19 +44,43 @@ const DialogAddResource = ({ open, onClose, contentId, id }) => {
     'Website',
     'Notes',
     'Meeting Notes',
-    'Transcript',
-    'Emails',
+    'Meeting Transcript',
+    'Article/Byline',
+    'Blog Post',
+    'Brainstorm',
+    'Email(s)',
     'Q&A',
+    'Questions',
+    'Answers',
     'Resume',
     'Product Sheet',
+    'Product Description',
+    'Product Features',
     'One-Pager',
+    'Quotes',
+    'Press Release',
+    'Video Transcript',
+    'Pitch',
+    'Presentation',
+    'Presentation Transcript',
+    'Interview',
+    'Speech Transcript',
+    'Webinar Transcript',
+    'Case Study',
+    'White Paper',
+    'Wikipedia',
   ]
 
   const formFields = [
     {
+      label: 'Resource Name',
+      name: 'title',
+      validation: Yup.string().required('Name is required'),
+    },
+    {
       label: 'Resource Type',
       name: 'type',
-      options: types,
+      options: types.sort(),
       type: 'auto',
       validation: Yup.string().required('Type is required'),
     },
@@ -73,8 +96,9 @@ const DialogAddResource = ({ open, onClose, contentId, id }) => {
   const { control, submit, reset, watch } = useFormHelper({
     formFields,
     initialValues: {
-      type: resource.type || 'Notes',
-      text: resource.text,
+      title: !!id ? resource.title : null,
+      type: !!id ? resource.type : 'Notes',
+      text: !!id ? resource.text : null,
     },
     onSubmit: handleSubmit,
   })
@@ -89,7 +113,6 @@ const DialogAddResource = ({ open, onClose, contentId, id }) => {
       <LayoutDialogEdit
         title={
           <Box display="flex" alignItems="center" justifyContent="center">
-            {/* <NoteAdd /> */}
             <Box>Add Resource</Box>
           </Box>
         }

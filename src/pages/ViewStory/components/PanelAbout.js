@@ -1,4 +1,5 @@
 import React from 'react'
+import { Link as RouterLink } from 'react-router-dom'
 import { Grid, Box, Chip, Typography } from '@mui/material'
 import useContentStore from 'hooks/store/use-content-store'
 import { Business, Description, Newspaper } from '@mui/icons-material'
@@ -41,6 +42,9 @@ const PanelAbout = ({ id }) => {
                     label={organization.name}
                     size="small"
                     icon={<Business />}
+                    component={RouterLink}
+                    to={`/companies/${organizationId}`}
+                    clickable
                   />
                 </Grid>
               )

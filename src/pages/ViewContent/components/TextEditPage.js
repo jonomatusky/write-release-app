@@ -16,20 +16,22 @@ import usePageTitle from 'hooks/use-page-title'
 import useContentStore from 'hooks/store/use-content-store'
 import { use100vh } from 'hooks/use-100-vh'
 import useRequest from 'hooks/use-request'
-import { CheckCircleOutline, Sync } from '@mui/icons-material'
+import {
+  CheckCircleOutline,
+  Sync,
+  TimesOneMobiledata,
+} from '@mui/icons-material'
 import './inputs.css'
 import { LoadingButton } from '@mui/lab'
 import 'draft-js/dist/Draft.css'
-// import PanelQuotes from './PanelQuotes'
-import PanelSubject from './PanelSubject'
-// import PanelBackground from './PanelBackground'
+import PanelIndividuals from './PanelIndividuals'
 import PanelAbout from './PanelAbout'
-// import PanelHiring from './PanelHiring'
 import PanelResources from './PanelResources'
 import MenuContent from './MenuContent'
 import GeneratedOption from 'components/GeneratedOption'
 import useUserStore from 'hooks/store/use-user-store'
-// import PanelAuthor from './PanelAuthor'
+import TextFielder from 'components/TextFielder'
+import PanelOrganizations from './PanelOrganizations'
 
 const tabEntity = `{{TAB}}`
 const tabEntity2 = `{{TAB}`
@@ -40,7 +42,7 @@ const TextEditPage = () => {
   const content = select(id)
   const { titleInternal } = content
   const [saveStatus, setSaveStatus] = useState('saved')
-  const { title, text } = content || {}
+  const { text } = content || {}
   const { item: user } = useUserStore()
 
   const [isEditing, setIsEditing] = useState(false)
@@ -124,9 +126,6 @@ const TextEditPage = () => {
           getCompositeDecorator()
         )
       : EditorState.createEmpty(getCompositeDecorator()),
-    title: EditorState.createWithContent(
-      ContentState.createFromText(title || '')
-    ),
   })
 
   const textsState = Object.keys(editorsState).reduce((acc, key) => {
@@ -162,38 +161,59 @@ const TextEditPage = () => {
 
   const hasText = text => text.length > 0
 
-  let generationStep
+  // let generationStep
 
-  if (hasText(textsState.text) || hasText(textsState.title) > 0) {
-    generationStep = 'text'
-  } else {
-    generationStep = 'title'
-  }
+  // if (hasText(textsState.text) || hasText(textsState.title) > 0) {
+  //   generationStep = 'text'
+  // } else {
+  //   generationStep = 'title'
+  // }
 
   const [focusField, setFocusField] = useState(null)
-  const operationType = focusField || generationStep
+  // const operationType = focusField || generationStep
 
   useEffect(() => {
     setGenerationIteration(0)
-  }, [operationType])
+  }, [focusField])
 
-  const titleStyleFn = () => {
-    return 'titleInput'
-  }
+  // const titleStyleFn = () => {
+  //   return 'titleInput'
+  // }
 
   usePageTitle((!!titleInternal ? titleInternal + ' | ' : '') + 'SourceOn')
+
+  const [userPrompt, setUserPrompt] = useState(content.userPrompt || '')
+  const [errorMessage, setErrorMessage] = useState(
+    content.userPrompt && content.userPrompt.length > 1000
+      ? 'User prompt must be less than 1000 characters'
+      : null
+  )
+
+  const handleUpdateUserPrompt = e => {
+    const newPrompt = e.target.value
+
+    if (newPrompt > 1000) {
+      setErrorMessage('User prompt must be less than 1000 characters')
+    } else if (newPrompt === 0) {
+      setErrorMessage('Please enter a prompt')
+    } else {
+      setErrorMessage(null)
+      setUserPrompt(e.target.value)
+    }
+  }
 
   const handleUpdateText = async () => {
     const cleanedText = removeTabEntity(editorsState.text)
 
     const newText = JSON.stringify(convertToRaw(cleanedText))
-    const newTitle = textsState.title
+    // const newTitle = textsState.title
     setSaveStatus('saving')
     try {
       await update({
         id,
         text: newText,
-        title: newTitle,
+        userPrompt,
+        // title: newTitle,
       })
     } catch (err) {
       console.log(err)
@@ -234,9 +254,19 @@ const TextEditPage = () => {
 
   const [generationIteration, setGenerationIteration] = useState(0)
 
-  const handleGenerate = async (blockId, offset) => {
+  const handleGenerate = async (blockId, offset, oneShot) => {
+    if (userPrompt.length === 0) {
+      setErrorMessage('Please enter a prompt')
+      return
+    }
+
+    if (userPrompt.length > 1000) {
+      setErrorMessage('User prompt must be less than 1000 characters')
+      return
+    }
+
     setIsGenerating(true)
-    const type = operationType
+    const type = focusField || 'text'
 
     try {
       cancel()
@@ -250,6 +280,8 @@ const TextEditPage = () => {
           blockId,
           offset,
           iteration: generationIteration,
+          userPrompt,
+          oneShot,
         },
         timeout: 30000,
       })
@@ -267,15 +299,14 @@ const TextEditPage = () => {
         // }
       }
     } catch (err) {
-      console.log('error')
       console.log(err)
     }
 
     setIsGenerating(false)
   }
 
-  const handleGenerateClick = () => {
-    handleGenerate()
+  const handleGenerateClick = oneShot => {
+    handleGenerate(null, null, oneShot)
   }
 
   // console.log(editorsState.text.getCurrentContent().getPlainText())
@@ -352,8 +383,10 @@ const TextEditPage = () => {
             //   newEditorState,
             //   selectorState
             // )
+            if (!errorMessage) {
+              setInlineAvailable(true)
+            }
 
-            setInlineAvailable(true)
             setEditorsState({
               ...editorsState,
               text: newEditorState,
@@ -364,7 +397,14 @@ const TextEditPage = () => {
 
       return () => clearTimeout(timer)
     }
-  }, [isEditing, editorsState, removeTabEntity, isFocused, isGenerating])
+  }, [
+    isEditing,
+    editorsState,
+    removeTabEntity,
+    isFocused,
+    isGenerating,
+    errorMessage,
+  ])
 
   const SavingText = () => {
     return (
@@ -521,9 +561,6 @@ const TextEditPage = () => {
         position="fixed"
         elevation={0}
         sx={{
-          // zIndex: theme => theme.zIndex.drawer + 1,
-          // width: `calc(100% - ${drawerWidth}px)`,
-          // ml: `${drawerWidth}px`,
           borderBottom: '1px solid #e0e0e0',
         }}
         open={true}
@@ -559,15 +596,50 @@ const TextEditPage = () => {
           {/* <Toolbar variant="dense" /> */}
           <Grid item container spacing={2} alignContent="start">
             <Grid item xs={12}>
-              <LoadingButton
-                fullWidth
-                variant="contained"
-                onClick={handleGenerateClick}
-                loading={isGenerating}
-                size="large"
-              >
-                Generate {operationType === 'title' ? 'Title' : 'Text'}
-              </LoadingButton>
+              <TextFielder
+                multiline
+                rows={8}
+                value={userPrompt}
+                onChange={handleUpdateUserPrompt}
+                placeholder="Enter your prompt here"
+                error={!!errorMessage}
+                helperText={errorMessage}
+              />
+            </Grid>
+            <Grid item xs={12}>
+              <Box display="flex" justifyContent="space-between">
+                <Box flexGrow={1} pr={1}>
+                  <LoadingButton
+                    fullWidth
+                    variant="contained"
+                    onClick={handleGenerateClick}
+                    loading={isGenerating}
+                    size="large"
+                  >
+                    Generate
+                  </LoadingButton>
+                </Box>
+                <Box>
+                  <LoadingButton
+                    fullWidth
+                    variant="contained"
+                    onClick={() => handleGenerateClick(true)}
+                    loading={isGenerating}
+                    size="large"
+                    sx={{
+                      minWidth: 0,
+                      width: 'auto',
+                      pr: 1,
+                      pl: 1,
+                      // '& .MuiButton-label': {
+                      //   fontSize: '0.75rem',
+                      // },
+                    }}
+                  >
+                    <TimesOneMobiledata />
+                  </LoadingButton>
+                </Box>
+              </Box>
             </Grid>
             {!isGenerating &&
               filteredGenerationText.map((generation, i) => {
@@ -628,13 +700,7 @@ const TextEditPage = () => {
           borderLeft={1}
           borderRight={1}
           borderColor="divider"
-          // display="flex"
-          // mt="48px"
           height={vh100 - 48}
-          // pl={3}
-          // pr={1}
-          // pt={2}
-          // position="relative"
         >
           <Box
             sx={{ overflowY: 'scroll', overflowX: 'hidden' }}
@@ -642,22 +708,11 @@ const TextEditPage = () => {
             p={2}
           >
             <Grid container spacing={2}>
-              <Grid item xs={12} id="title">
-                <Editor
-                  editorState={editorsState.title}
-                  onChange={value => handleSetEditorsState('title', value)}
-                  placeholder="Title"
-                  stripPastedStyles
-                  blockStyleFn={titleStyleFn}
-                  // onBlur={() => setFocusField(null)}
-                  onFocus={() => setFocusField('title')}
-                />
-              </Grid>
               <Grid item xs={12}>
                 <Editor
                   editorState={editorsState.text}
                   onChange={value => handleSetEditorsState('text', value)}
-                  placeholder="Body"
+                  placeholder="Hit the 'Generate Text' button to get started!"
                   onBlur={handleBlur}
                   onFocus={handleFocus}
                   handleKeyCommand={handleKeyCommand}
@@ -680,8 +735,6 @@ const TextEditPage = () => {
             scrollbarWidth: 'none',
           }}
         >
-          {/* <Toolbar variant="dense" /> */}
-
           <Grid
             item
             container
@@ -692,12 +745,9 @@ const TextEditPage = () => {
             pr={2}
           >
             <PanelAbout id={id} />
-            <PanelSubject id={id} />
             <PanelResources id={id} />
-            {/* <PanelAuthor id={id} /> */}
-            {/* <PanelHiring id={id} /> */}
-            {/* <PanelBackground id={id} /> */}
-            {/* <PanelQuotes id={id} /> */}
+            <PanelOrganizations id={id} />
+            <PanelIndividuals id={id} />
           </Grid>
         </Box>
       </Box>

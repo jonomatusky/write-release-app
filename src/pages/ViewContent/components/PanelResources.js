@@ -7,7 +7,9 @@ import DialogResources from './DialogResources'
 import useResourcesStore from 'hooks/store/use-resources-store'
 
 const PanelResources = ({ id }) => {
-  const { items: resources } = useResourcesStore()
+  const { items } = useResourcesStore()
+
+  const resources = items.filter(item => item.content === id)
 
   return (
     <Grid item xs={12}>
@@ -22,7 +24,7 @@ const PanelResources = ({ id }) => {
             {resources.map(resource => {
               return (
                 <Grid item key={resource.id}>
-                  <Chip label={resource.type} size="small" />
+                  <Chip label={resource.title} size="small" />
                 </Grid>
               )
             })}

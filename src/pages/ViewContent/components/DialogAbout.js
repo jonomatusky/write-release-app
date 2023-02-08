@@ -6,11 +6,9 @@ import { useNavigate } from 'react-router'
 import useOrganizationsStore from 'hooks/store/use-organizations-store'
 import LayoutDialogEdit from 'layouts/LayoutDialogEdit'
 import useContentStore from 'hooks/store/use-content-store'
-import useContentTypesStore from 'hooks/store/use-content-types-store'
 import useFormHelper from 'hooks/use-form-helper'
 import Form from 'components/Form/Form'
 import DialogCreateEditCompany from 'pages/ViewStory/components/DialogCreateEditCompany'
-import useUserStore from 'hooks/store/use-user-store'
 
 const DialogContentCreate = ({ open, onClose, id }) => {
   const {
@@ -20,11 +18,7 @@ const DialogContentCreate = ({ open, onClose, id }) => {
     createStatus,
     select: selectContent,
   } = useContentStore()
-  const { items: contentTypes, select: selectContentType } =
-    useContentTypesStore()
-  const { items: organizations, select: selectOrganization } =
-    useOrganizationsStore()
-  const { item: user } = useUserStore()
+  const { items: organizations } = useOrganizationsStore()
 
   const content = !!id ? selectContent(id) : {}
 
@@ -32,28 +26,11 @@ const DialogContentCreate = ({ open, onClose, id }) => {
   const isSetup = setupStage === 'about'
 
   const handleSubmit = async values => {
-    let { organization: organizationId, primary, ...newValues } = values
-    let contentType = selectContentType(values.type)
-
-    !id && (newValues.owner = user.id)
-    newValues.organizations = [organizationId]
-
-    const organization = selectOrganization(organizationId) || {}
-
-    newValues.titleInternal =
-      organization.name +
-      ' ' +
-      contentType.secondary +
-      ' ' +
-      contentType.primary
-
-    newValues.setupStage = !isSetup && !!id ? null : 'subject'
-
     try {
       if (!!id) {
-        await update({ id, ...newValues })
+        await update({ id, ...values })
       } else {
-        const c = await create(newValues)
+        const c = await create(values)
         window.location.hash = ''
         navigate(`/content/${c.id}`)
       }
@@ -64,28 +41,15 @@ const DialogContentCreate = ({ open, onClose, id }) => {
 
   const formFields = [
     {
-      label: `What type of piece are you writing?`,
-      name: 'type',
-      options:
-        contentTypes
-          .map(contentType => ({
-            ...contentType,
-            name: contentType.secondary,
-          }))
-          .filter(
-            contentType =>
-              contentType.primary !== 'Press Release' &&
-              contentType.primary !== 'Social Media'
-          ) || [],
-      type: 'auto',
+      label: `Give it a name (internal use only)`,
+      name: 'titleInternal',
       validation: Yup.string().required('Type is required'),
     },
     {
-      label: 'Which company is this for?',
+      label: 'Which client is this for?',
       name: 'organization',
       options: organizations || [],
       type: 'auto',
-      validation: Yup.string().required('Company is required'),
       AddDialog: DialogCreateEditCompany,
     },
   ]
@@ -93,8 +57,7 @@ const DialogContentCreate = ({ open, onClose, id }) => {
   const { control, submit, reset } = useFormHelper({
     formFields,
     initialValues: {
-      primary: selectContentType(content.type).primary,
-      type: content.type,
+      titleInternal: content.titleInternal,
       organization: content.organizations?.[0],
     },
     onSubmit: handleSubmit,

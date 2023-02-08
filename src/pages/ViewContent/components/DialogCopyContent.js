@@ -3,7 +3,6 @@ import useContentStore from 'hooks/store/use-content-store'
 import LayoutDialogEdit from 'layouts/LayoutDialogEdit'
 import useOrganizationsStore from 'hooks/store/use-organizations-store'
 import useUserStore from 'hooks/store/use-user-store'
-import { useNavigate } from 'react-router'
 import useFormHelper from 'hooks/use-form-helper'
 import Form from 'components/Form/Form'
 import useAlertStore from 'hooks/store/use-alert-store'
@@ -14,7 +13,6 @@ const DialogCopyContent = ({ open: isOpen, onClose, id }) => {
   const { items: organizations } = useOrganizationsStore()
   const { items: resources, create: createResource } = useResourcesStore()
   const { item: user } = useUserStore()
-  const navigate = useNavigate()
   const content = select(id)
   const organization = content.organizations[0]
   const { setMessage } = useAlertStore()
@@ -26,11 +24,11 @@ const DialogCopyContent = ({ open: isOpen, onClose, id }) => {
       type: 'auto',
       options: organizations || [],
     },
-    {
-      name: 'date',
-      type: 'date',
-      label: 'Date',
-    },
+    // {
+    //   name: 'date',
+    //   type: 'date',
+    //   label: 'Date',
+    // },
   ]
 
   const initialValues = {
@@ -50,22 +48,32 @@ const DialogCopyContent = ({ open: isOpen, onClose, id }) => {
     try {
       const newContent = await create(newValues)
 
-      const newResources = resources.map(resource => {
-        return {
-          ...resource,
-          owner: user,
-          organizations: [values.organization],
-          content: newContent.id,
-        }
-      })
+      const newResources = resources
+        .filter(resource => resource.content === id)
+        .map(resource => {
+          return {
+            ...resource,
+            owner: user,
+            organizations: [values.organization],
+            content: newContent.id,
+          }
+        })
 
       for (let resource of newResources) {
         await createResource(resource)
       }
 
       onClose()
-      navigate('/stories/' + newContent.id)
-      setMessage({ message: 'Content copied successfully' })
+
+      setMessage({
+        message: 'Content successfully copied.',
+      })
+
+      if (newContent.type?.primary === 'Press Release') {
+        window.open('/stories/' + newContent.id, '_blank')
+      } else {
+        window.open('/content/' + newContent.id, '_blank')
+      }
     } catch (err) {}
   }
 

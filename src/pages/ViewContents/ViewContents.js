@@ -16,7 +16,6 @@ import {
   ListItemButton,
   ListItemIcon,
   ListItemText,
-  Chip,
 } from '@mui/material'
 import FabAdd from 'components/FabAdd'
 import FuzzySearch from 'fuzzy-search'
@@ -68,16 +67,14 @@ const ViewContents = () => {
       return {
         ...item,
         owner: selectUser(item.owner)?.email,
-        organization: selectOrganization(item.organizations[0])?.name,
+        organization: selectOrganization(
+          item.organization || item.organizations[0]
+        )?.name,
         primaryType: selectContentType(item.type).primary,
         secondaryType: selectContentType(item.type).secondary,
       }
     })
-    .filter(
-      item =>
-        item.primaryType !== 'Press Release' &&
-        item.primaryType !== 'Social Media'
-    )
+    .filter(item => item.primaryType !== 'Press Release')
     .sort((a, b) => {
       return b.createdAt - a.createdAt
     })
@@ -177,33 +174,6 @@ const ViewContents = () => {
       {!user.id && <Loading />}
       {!!user.id && (
         <Container maxWidth="xl">
-          {/* <Grid container spacing={2} pt={2}> */}
-          {/* <Grid item xs={12}>
-            <Grid container spacing={2} justifyContent="space-between">
-              <Grid item xs={12} sm={6} md={3} lg={3}>
-                <Button
-                  fullWidth
-                  onClick={() => (window.location.hash = '#create')}
-                  endIcon={<NoteAdd />}
-                  variant="contained"
-                  sx={{ height: '40px' }}
-                >
-                  Start a Story
-                </Button>
-              </Grid>
-              <Grid item xs={12} sm={6} md={4} lg={3}>
-                <Box width="100%">
-                  <SearchBar
-                    value={searchValue}
-                    setValue={handleUpdateSearch}
-                    size="small"
-                  />
-                </Box>
-              </Grid>
-            </Grid>
-          </Grid> */}
-
-          {/* <Grid item xs={12}> */}
           <Box width="100%" display="flex" mt={2}>
             <Box
               width="300px"
@@ -293,8 +263,7 @@ const ViewContents = () => {
                           <Table>
                             <TableHead>
                               <TableRow>
-                                <TableCell width="15%">Type</TableCell>
-                                <TableCell width="50%">Name</TableCell>
+                                <TableCell width="55%">Name</TableCell>
                                 <TableCell width="15%">Company</TableCell>
                                 <TableCell width="15%">Owner</TableCell>
                                 <TableCell width="15%">Edited</TableCell>
@@ -323,21 +292,7 @@ const ViewContents = () => {
                                     selected={selectedId === item.id}
                                   >
                                     <TableCell
-                                      width="15%"
-                                      sx={{
-                                        maxWidth: 0,
-                                        overflow: 'hidden',
-                                        textOverflow: 'ellipsis',
-                                        whiteSpace: 'nowrap',
-                                      }}
-                                    >
-                                      <Chip
-                                        label={item.secondaryType}
-                                        size="small"
-                                      />
-                                    </TableCell>
-                                    <TableCell
-                                      width="50%"
+                                      width="55%"
                                       sx={{
                                         maxWidth: 0,
                                         overflow: 'hidden',
@@ -381,11 +336,6 @@ const ViewContents = () => {
                                         whiteSpace: 'nowrap',
                                       }}
                                     >
-                                      {/* <Box
-                                      overflow="hidden"
-                                      textOverflow="ellipsis"
-                                      whiteSpace="nowrap"
-                                      > */}
                                       {new Date(
                                         item.updatedAt || item.createdAt
                                       ).toLocaleDateString('en-us', {
@@ -393,7 +343,6 @@ const ViewContents = () => {
                                         month: 'short',
                                         day: 'numeric',
                                       })}
-                                      {/* </Box> */}
                                     </TableCell>
                                   </TableRow>
                                 ))}

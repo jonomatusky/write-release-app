@@ -36,9 +36,13 @@ const ResourceItem = ({ id }) => {
             justifyContent="space-between"
             alignItems="center"
           >
-            <Box>
-              <Typography>
-                <b>{resource.type}</b>
+            <Box overflow="hidden">
+              <Typography
+                whiteSpace="nowrap"
+                textOverflow="ellipsis"
+                overflow="hidden"
+              >
+                <b>{resource.title}</b>
               </Typography>
             </Box>
             <Box>

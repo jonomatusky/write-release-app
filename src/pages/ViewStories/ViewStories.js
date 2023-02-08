@@ -250,7 +250,7 @@ const ViewContents = () => {
                         size="large"
                         sx={{ height: '56px' }}
                       >
-                        Start a Story
+                        Start a Release
                       </Button>
                     </Grid>
                     <Grid item xs={12}>
@@ -267,7 +267,7 @@ const ViewContents = () => {
                             <ListItemIcon>
                               <Person />
                             </ListItemIcon>
-                            <ListItemText primary="Your Stories" />
+                            <ListItemText primary="Your Releases" />
                           </ListItemButton>
                         </ListItem>
                         <ListItem disablePadding>
@@ -282,7 +282,7 @@ const ViewContents = () => {
                             <ListItemIcon>
                               <Groups />
                             </ListItemIcon>
-                            <ListItemText primary="All Stories" />
+                            <ListItemText primary="All Releases" />
                           </ListItemButton>
                         </ListItem>
                       </List>

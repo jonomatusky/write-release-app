@@ -42,7 +42,7 @@ const PanelBasic = ({ logoUrl, name, location, website, industry }) => {
                 </Box>
               )}
             </Box>
-            <IndustryTag id={industry} />
+            {industry && <IndustryTag id={industry} />}
             {location && (
               <Box display="flex" alignItems="center">
                 <Box pr={0.5} display="flex" alignItems="center">
