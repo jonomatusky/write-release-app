@@ -19,8 +19,8 @@ const PanelIndividuals = ({ id }) => {
   return (
     <Grid item xs={12}>
       <PanelEdit dialog={DialogQuotes} dialogProps={{ id }}>
-        <Box p={2} pt={1}>
-          <Grid container spacing={0.5}>
+        <Box p={1.5} pt={1} overflow="hidden">
+          <Grid container spacing={0.5} overflow="hidden">
             <Grid item xs={12}>
               <Typography color="primary" pb={0.5} variant="body2">
                 <b>Individuals</b>
