@@ -196,9 +196,11 @@ const TextEditPage = () => {
       setErrorMessage('User prompt must be less than 1000 characters')
     } else if (newPrompt === 0) {
       setErrorMessage('Please enter a prompt')
+      setSaveStatus('unsaved')
     } else {
       setErrorMessage(null)
       setUserPrompt(e.target.value)
+      setSaveStatus('unsaved')
     }
   }
 
