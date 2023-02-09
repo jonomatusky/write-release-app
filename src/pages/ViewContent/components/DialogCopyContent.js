@@ -89,22 +89,16 @@ const DialogCopyContent = ({ open: isOpen, onClose, id }) => {
   }
 
   return (
-    <>
-      {user.admin && (
-        <>
-          <LayoutDialogEdit
-            open={isOpen}
-            onClose={handleClose}
-            title="Duplicate Content"
-            onSave={submit}
-            loading={createStatus === 'loading'}
-            label="Create Copy"
-          >
-            <Form control={control} formFields={formFields} />
-          </LayoutDialogEdit>
-        </>
-      )}
-    </>
+    <LayoutDialogEdit
+      open={isOpen}
+      onClose={handleClose}
+      title="Duplicate Content"
+      onSave={submit}
+      loading={createStatus === 'loading'}
+      label="Create Copy"
+    >
+      <Form control={control} formFields={formFields} />
+    </LayoutDialogEdit>
   )
 }
 
