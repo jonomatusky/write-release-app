@@ -1,6 +1,5 @@
 import { useEffect } from 'react'
 import useContentStore from './store/use-content-store'
-import useContentTypesStore from './store/use-content-types-store'
 import useQuestionsStore from './store/use-questions-store'
 import useUsersStore from './store/use-users-store'
 import useSession from './use-session'
@@ -8,8 +7,6 @@ import useSession from './use-session'
 const useFetchContent = () => {
   const { fetch: fetchContent, fetchStatus: fetchContentStatus } =
     useContentStore()
-  const { fetch: fetchContentTypes, fetchStatus: fetchContentTypesStatus } =
-    useContentTypesStore()
   const { fetch: fetchQuestions, fetchStatus: fetchQuestionsStatus } =
     useQuestionsStore()
   const { fetch: fetchUsers, fetchStatus: fetchUsersStatus } = useUsersStore()
@@ -22,14 +19,6 @@ const useFetchContent = () => {
       } catch (err) {}
     }
   }, [fetchContent, fetchContentStatus, user])
-
-  useEffect(() => {
-    if (!!user && fetchContentTypesStatus === 'idle') {
-      try {
-        fetchContentTypes()
-      } catch (err) {}
-    }
-  }, [fetchContentTypes, fetchContentTypesStatus, user])
 
   useEffect(() => {
     if (!!user && fetchQuestionsStatus === 'idle') {

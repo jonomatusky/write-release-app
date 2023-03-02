@@ -7,12 +7,23 @@ import {
   Menu,
   MenuItem,
   IconButton,
+  Button,
 } from '@mui/material'
+import { Link } from 'react-router-dom'
 import useSession from 'hooks/use-session'
 import SearchBar from 'components/SearchBar'
 import { AccountCircle } from '@mui/icons-material'
+import Logo from 'assets/images/writerelease_logo.jpeg'
 
-const HeaderViews = ({ searchValue, setSearchValue, open }) => {
+const HeaderViews = ({
+  hideLogo,
+  showSearch,
+  showAvatar,
+  showCreateButton,
+  searchValue,
+  setSearchValue,
+  open,
+}) => {
   const { user, logout } = useSession()
 
   const [anchorEl, setAnchorEl] = useState(null)
@@ -44,42 +55,76 @@ const HeaderViews = ({ searchValue, setSearchValue, open }) => {
             display="flex"
             width="100%"
             alignItems="center"
-            justifyContent="flex-end"
+            justifyContent="space-between"
           >
-            <Box width="350px" flexShrink={1}>
-              <SearchBar
-                size="small"
-                value={searchValue}
-                setValue={setSearchValue}
-              />
-            </Box>
-            <Box pl={2}>
-              <IconButton onClick={handleOpen} sx={{ p: 0 }}>
-                {user.photoURL ? (
-                  <Avatar alt="My Account" src={user.photoURL} />
-                ) : (
-                  <Avatar alt="My Account">
-                    <AccountCircle />
-                  </Avatar>
-                )}
-              </IconButton>
-              <Menu
-                id="simple-menu"
-                anchorEl={anchorEl}
-                open={Boolean(anchorEl)}
-                transitionDuration={0}
-                anchorOrigin={{
-                  horizontal: 'left',
-                  vertical: 'bottom',
-                }}
-                anchorPosition={{ left: 0, top: -20 }}
-                onClose={handleClose}
-                MenuListProps={{ onMouseLeave: handleClose }}
+            <Box display="flex" height="100%" alignItems="center">
+              <Box
+                component={Link}
+                to="/"
+                display="flex"
+                alignItems="center"
+                height="64px"
+                sx={{ textDecoration: 'none' }}
               >
-                <MenuItem onClick={logout}>Log Out</MenuItem>
-              </Menu>
+                <img src={Logo} alt="WriteRelease" height="100%" />
+              </Box>
             </Box>
-
+            <Box display="flex" flexGrow={1} justifyContent="flex-end">
+              {showSearch && (
+                <Box width="350px" flexShrink={1}>
+                  <SearchBar
+                    size="small"
+                    value={searchValue}
+                    setValue={setSearchValue}
+                  />
+                </Box>
+              )}
+              {showCreateButton && (
+                <Box pl={2}>
+                  <Button
+                    fullWidth
+                    onClick={() => (window.location.hash = '#create')}
+                    variant="contained"
+                    // size="large"
+                    sx={{ height: '40px' }}
+                    elevation={0}
+                  >
+                    Start a Release
+                  </Button>
+                </Box>
+              )}
+              {showAvatar && (
+                <Box pl={2}>
+                  <IconButton onClick={handleOpen} sx={{ p: 0 }}>
+                    {user.photoURL ? (
+                      <Avatar alt="My Account" src={user.photoURL} />
+                    ) : (
+                      <Avatar alt="My Account">
+                        <AccountCircle />
+                      </Avatar>
+                    )}
+                  </IconButton>
+                  <Menu
+                    id="simple-menu"
+                    anchorEl={anchorEl}
+                    open={Boolean(anchorEl)}
+                    transitionDuration={0}
+                    anchorOrigin={{
+                      horizontal: 'left',
+                      vertical: 'bottom',
+                    }}
+                    anchorPosition={{ left: 0, top: -20 }}
+                    onClose={handleClose}
+                    MenuListProps={{ onMouseLeave: handleClose }}
+                  >
+                    <MenuItem component={Link} to="/account">
+                      My Account
+                    </MenuItem>
+                    <MenuItem onClick={logout}>Log Out</MenuItem>
+                  </Menu>
+                </Box>
+              )}
+            </Box>
             {/* <Box flexGrow={0}>
               <Button color="primary" size="small" onClick={logout}>
                 Log Out

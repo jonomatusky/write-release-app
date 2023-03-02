@@ -19,7 +19,7 @@ export const useUserStore = () => {
     [dispatchThunk]
   )
 
-  const _delete = useCallback(async () => {
+  const _remove = useCallback(async () => {
     await dispatchThunk(remove)
   }, [dispatchThunk])
 
@@ -34,7 +34,7 @@ export const useUserStore = () => {
   return {
     fetch: _fetch,
     update: _update,
-    delete: _delete,
+    remove: _remove,
     clear: _clear,
     item,
     fetchStatus,

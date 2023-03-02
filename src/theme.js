@@ -12,8 +12,8 @@ const theme = createTheme({
     borderRadius: 8,
   },
   palette: {
-    primary: { main: '#673C7C' },
-    secondary: { main: '#657BA4' },
+    primary: { main: '#6547ef' },
+    secondary: { main: '#444444' },
     // website: { main: '#fafafa' },
     // error: { main: '#FF9516' },
     background: {

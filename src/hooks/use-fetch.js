@@ -7,6 +7,8 @@ import useTagsStore from './store/use-tags-store'
 import useSession from './use-session'
 import useAlertStore from './store/use-alert-store'
 import useIndustriesStore from './store/use-industries-store'
+import useContentTypesStore from './store/use-content-types-store'
+import useTonesStore from './store/use-tones-store'
 
 export const useFetch = () => {
   const { user } = useSession()
@@ -20,6 +22,9 @@ export const useFetch = () => {
   const { fetch: fetchIndustries, fetchStatus: industriesStatus } =
     useIndustriesStore()
   const { fetch: fetchUser, fetchStatus: userStatus } = useUserStore()
+  const { fetch: fetchContentTypes, fetchStatus: fetchContentTypesStatus } =
+    useContentTypesStore()
+  const { fetch: fetchTones, fetchStatus: fetchTonesStatus } = useTonesStore()
 
   useEffect(() => {
     const get = async () => {
@@ -133,6 +138,22 @@ export const useFetch = () => {
       get()
     }
   }, [userStatus, fetchUser, setError, user])
+
+  useEffect(() => {
+    if (fetchContentTypesStatus === 'idle') {
+      try {
+        fetchContentTypes()
+      } catch (err) {}
+    }
+  }, [fetchContentTypes, fetchContentTypesStatus])
+
+  useEffect(() => {
+    if (fetchTonesStatus === 'idle') {
+      try {
+        fetchTones()
+      } catch (err) {}
+    }
+  }, [fetchTones, fetchTonesStatus])
 
   return
 }

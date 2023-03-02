@@ -1,80 +1,30 @@
 import React from 'react'
-import { useNavigate, useLocation } from 'react-router-dom'
-import { Container, Box, Grid, Typography, Button, Paper } from '@mui/material'
-import firebase from 'config/firebase'
-
-import useAlertStore from 'hooks/store/use-alert-store'
-import GoogleLogo from 'assets/images/google_logo.svg'
+import { Container, Box, Grid, Typography, Paper } from '@mui/material'
 import usePageTitle from 'hooks/use-page-title'
+import FormSignIn from 'components/FormSignIn'
 
 const Login = ({ title, text }) => {
-  const navigate = useNavigate()
-  const location = useLocation()
-
-  let from = location.state?.from?.pathname || '/'
-
-  const { setError, clearError } = useAlertStore()
-
-  var provider = new firebase.auth.GoogleAuthProvider()
-
-  const handleSignInWithGoogle = async () => {
-    clearError()
-    try {
-      await firebase.auth().signInWithPopup(provider)
-      navigate(from, { replace: true })
-    } catch (err) {
-      console.log(err)
-      setError({ message: 'Unable to sign in' })
-    }
-  }
-
   usePageTitle('Login | SourceOn')
 
   return (
     <Container maxWidth="xs">
       <Box mt={10}>
         <Paper variant="outlined">
-          <Box p={2}>
-            <Grid container justifyContent="flex-start" spacing={3}>
-              <Grid item xs={12}>
-                <Typography variant="h4">
-                  <b>{title || 'Sign In'}</b>
+          <Box p={4}>
+            <Grid container justifyContent="center" spacing={3}>
+              <Grid item xs={12} mt={2}>
+                <Typography variant="h5">
+                  <b>{title || 'Login or Sign Up'}</b>
                 </Typography>
               </Grid>
-              <Grid item xs={12} mb={2}>
-                <Typography>
-                  Pleae log in to continue. Access is restricted to
-                  @gregoryfca.com users.
+              <Grid item xs={12}>
+                <Typography variant="body2">
+                  {text ||
+                    `Use your email or another service to continue with Write Release (it's free)!`}
                 </Typography>
               </Grid>
-
               <Grid item xs={12}>
-                <Button
-                  type="button"
-                  variant="outlined"
-                  size="large"
-                  color="secondary"
-                  fullWidth
-                  sx={{
-                    height: '51.5px',
-                    textTransform: 'none',
-                    backgroundColor: '#ffffff',
-                    '&:hover': {
-                      backgroundColor: '#ffffff',
-                    },
-                    letterSpacing: '0.5px',
-                  }}
-                  onClick={handleSignInWithGoogle}
-                >
-                  <Box display="flex" mr="20px">
-                    <img
-                      src={GoogleLogo}
-                      alt="Google Logo"
-                      style={{ height: '24px', width: '24px' }}
-                    />
-                  </Box>
-                  Sign in with Google
-                </Button>
+                <FormSignIn />
               </Grid>
             </Grid>
           </Box>

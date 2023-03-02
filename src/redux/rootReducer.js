@@ -6,6 +6,7 @@ import tagsReducer from './tagsSlice'
 import coverageReducer from './coverageSlice'
 import contentReducer from './contentSlice'
 import contentTypesReducer from './contentTypesSlice'
+import tonesReducer from './tonesSlice'
 import questionsReducer from './questionsSlice'
 import inquiryReducer from './inquiriesSlice'
 import organizationsReducer from './organizationsSlice'
@@ -24,6 +25,7 @@ const rootReducer = combineReducers({
   coverage: coverageReducer,
   content: contentReducer,
   contentTypes: contentTypesReducer,
+  tones: tonesReducer,
   resources: resourcesReducer,
   questions: questionsReducer,
   inquiries: inquiryReducer,

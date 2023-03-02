@@ -3,7 +3,7 @@ import {
   Container,
   Grid,
   CircularProgress,
-  Button,
+  Box,
   Paper,
   TableContainer,
   Table,
@@ -11,11 +11,6 @@ import {
   TableRow,
   TableCell,
   TableBody,
-  List,
-  ListItem,
-  ListItemButton,
-  ListItemIcon,
-  ListItemText,
 } from '@mui/material'
 import FabAdd from 'components/FabAdd'
 import FuzzySearch from 'fuzzy-search'
@@ -23,14 +18,12 @@ import InfiniteScroll from 'react-infinite-scroll-component'
 import usePageTitle from 'hooks/use-page-title'
 // import LayoutDrawer from 'layouts/LayoutDrawer'
 import { useNavigate, useSearchParams } from 'react-router-dom'
-import { Groups, NoteAdd, Person } from '@mui/icons-material'
+import { NoteAdd } from '@mui/icons-material'
 import useOrganizationsStore from 'hooks/store/use-organizations-store'
 import useContentStore from 'hooks/store/use-content-store'
 import useFetchContent from 'hooks/use-fetch-content'
 import useUsersStore from 'hooks/store/use-users-store'
-import { Box } from '@mui/system'
 import DialogAbout from 'pages/ViewStory/components/DialogAbout'
-import Panel from 'layouts/Panel'
 import useUserStore from 'hooks/store/use-user-store'
 import HeaderViews from 'components/HeaderViews'
 import useContentTypesStore from 'hooks/store/use-content-types-store'
@@ -185,119 +178,20 @@ const ViewContents = () => {
 
   useOutsideAlerter(wrapperRef)
 
-  const handleSetViewAll = value => {
-    let params = !!search && search !== '' ? [['search', search]] : []
-    if (!!value && value !== '') {
-      params = [...params, ['view', 'all']]
-    }
-    setSearchParams(new URLSearchParams(params))
-  }
-
   return (
     <>
       <FabAdd Icon={NoteAdd} Dialog={DialogAbout} />
       <HeaderViews
         searchValue={searchValue}
         setSearchValue={handleUpdateSearch}
+        showSearch
+        showCreateButton
+        showAvatar
       />
       {!user.id && <Loading />}
       {!!user.id && (
-        <Container maxWidth="xl">
-          {/* <Grid container spacing={2} pt={2}> */}
-          {/* <Grid item xs={12}>
-            <Grid container spacing={2} justifyContent="space-between">
-              <Grid item xs={12} sm={6} md={3} lg={3}>
-                <Button
-                  fullWidth
-                  onClick={() => (window.location.hash = '#create')}
-                  endIcon={<NoteAdd />}
-                  variant="contained"
-                  sx={{ height: '40px' }}
-                >
-                  Start a Story
-                </Button>
-              </Grid>
-              <Grid item xs={12} sm={6} md={4} lg={3}>
-                <Box width="100%">
-                  <SearchBar
-                    value={searchValue}
-                    setValue={handleUpdateSearch}
-                    size="small"
-                  />
-                </Box>
-              </Grid>
-            </Grid>
-          </Grid> */}
-
-          {/* <Grid item xs={12}> */}
+        <Container maxWidth="md">
           <Box width="100%" display="flex" mt={2}>
-            <Box
-              width="300px"
-              pr={2}
-              sx={{ display: { xs: 'none', md: 'block' } }}
-              position="fixed"
-              flexShrink={0}
-            >
-              <Panel>
-                <Box p={2} display="flex">
-                  <Grid container spacing={2}>
-                    <Grid item xs={12}>
-                      <Button
-                        fullWidth
-                        onClick={() => (window.location.hash = '#create')}
-                        endIcon={<NoteAdd />}
-                        variant="contained"
-                        size="large"
-                        sx={{ height: '56px' }}
-                      >
-                        Start a Release
-                      </Button>
-                    </Grid>
-                    <Grid item xs={12}>
-                      <List disablePadding>
-                        <ListItem disablePadding sx={{ pb: 1.5 }}>
-                          <ListItemButton
-                            selected={!viewAll}
-                            sx={{
-                              minHeight: 48,
-                              borderRadius: 1,
-                            }}
-                            onClick={() => handleSetViewAll(false)}
-                          >
-                            <ListItemIcon>
-                              <Person />
-                            </ListItemIcon>
-                            <ListItemText primary="Your Releases" />
-                          </ListItemButton>
-                        </ListItem>
-                        <ListItem disablePadding>
-                          <ListItemButton
-                            selected={viewAll}
-                            sx={{
-                              minHeight: 48,
-                              borderRadius: 1,
-                            }}
-                            onClick={() => handleSetViewAll(true)}
-                          >
-                            <ListItemIcon>
-                              <Groups />
-                            </ListItemIcon>
-                            <ListItemText primary="All Releases" />
-                          </ListItemButton>
-                        </ListItem>
-                      </List>
-                    </Grid>
-                  </Grid>
-                </Box>
-              </Panel>
-            </Box>
-            <Box
-              width="300px"
-              pr={2}
-              sx={{ display: { xs: 'none', md: 'block' } }}
-              visibility="hidden"
-              flexShrink={0}
-            />
             <Box flexGrow={1} width="100px">
               <InfiniteScroll
                 dataLength={itemsOnScreen.length}
@@ -319,10 +213,10 @@ const ViewContents = () => {
                           <Table>
                             <TableHead>
                               <TableRow>
-                                <TableCell width="50%">Name</TableCell>
-                                <TableCell width="15%">Company</TableCell>
-                                <TableCell width="15%">Owner</TableCell>
-                                <TableCell width="15%">Last Modified</TableCell>
+                                <TableCell width="75%">Name</TableCell>
+                                <TableCell width="25%" align="right">
+                                  Last Modified
+                                </TableCell>
                               </TableRow>
                             </TableHead>
                             <TableBody>
@@ -340,7 +234,9 @@ const ViewContents = () => {
                                     sx={{ cursor: 'pointer' }}
                                     onClick={() => {
                                       if (selectedId === item.id) {
-                                        navigate('/stories/' + item.id)
+                                        navigate(
+                                          '/releases/' + item.id + '/edit'
+                                        )
                                       } else {
                                         setSelectedId(item.id)
                                       }
@@ -348,7 +244,7 @@ const ViewContents = () => {
                                     selected={selectedId === item.id}
                                   >
                                     <TableCell
-                                      width="55%"
+                                      width="75%"
                                       sx={{
                                         maxWidth: 0,
                                         overflow: 'hidden',
@@ -361,30 +257,10 @@ const ViewContents = () => {
                                         item.titleInternal ||
                                         'No Title'}
                                     </TableCell>
+
                                     <TableCell
-                                      width="15%"
-                                      sx={{
-                                        maxWidth: 0,
-                                        overflow: 'hidden',
-                                        textOverflow: 'ellipsis',
-                                        whiteSpace: 'nowrap',
-                                      }}
-                                    >
-                                      {item.organization}
-                                    </TableCell>
-                                    <TableCell
-                                      width="15%"
-                                      sx={{
-                                        maxWidth: 0,
-                                        overflow: 'hidden',
-                                        textOverflow: 'ellipsis',
-                                        whiteSpace: 'nowrap',
-                                      }}
-                                    >
-                                      {item.owner}
-                                    </TableCell>
-                                    <TableCell
-                                      width="15%"
+                                      width="25%"
+                                      align="right"
                                       sx={{
                                         maxWidth: 0,
                                         overflow: 'hidden',
