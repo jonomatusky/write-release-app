@@ -51,16 +51,18 @@ const GridButtons = ({ onNext, onBack, disabled }) => {
           <KeyboardArrowDown fontSize="large" />
         </Button> */}
       </Box>
-      <Button
-        variant="contained"
-        size="large"
-        onClick={onNext}
-        disabled={disabled}
-      >
-        <Typography variant="h6" fontWeight="bold" component="p">
-          Next
-        </Typography>
-      </Button>
+      {!!onNext && (
+        <Button
+          variant="contained"
+          size="large"
+          onClick={onNext}
+          disabled={disabled}
+        >
+          <Typography variant="h6" fontWeight="bold" component="p">
+            Next
+          </Typography>
+        </Button>
+      )}
     </Box>
   )
 }

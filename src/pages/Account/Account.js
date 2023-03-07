@@ -3,7 +3,7 @@ import { Container, Box, Grid, Typography, Button } from '@mui/material'
 import { useUserStore } from 'hooks/store/use-user-store'
 import { useSession } from 'hooks/use-session'
 import TextFielder from 'components/TextFielder'
-import HeaderViews from 'components/HeaderViews'
+import HeaderViews from 'components/Header'
 import DialogDeleteAcccount from './components/DialogDeleteAccount'
 
 const Account = () => {

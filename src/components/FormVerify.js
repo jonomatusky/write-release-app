@@ -41,7 +41,7 @@ const FormSignIn = ({ onSubmit, redirectUrl }) => {
     }
   }
 
-  const handleSignUpWithEmailLink = async ({ email }) => {
+  const handleVerifyWithEmailLink = async ({ email }) => {
     setEmailSignInIsLoading(true)
     clearError()
     try {

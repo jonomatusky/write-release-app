@@ -4,7 +4,7 @@ import StepGetStarted from './components/StepGetStarted'
 import StepType from './components/StepType'
 import StepTone from './components/StepTone'
 import { use100vh } from 'hooks/use-100-vh'
-// import { useSearchParams } from 'react-router-dom'
+import { useSearchParams } from 'react-router-dom'
 import StepWho from './components/StepWho'
 import StepWhere from './components/StepWhere'
 import StepVerify from './components/StepVerify'
@@ -12,11 +12,18 @@ import Emoji from 'components/Emoji'
 import useSession from 'hooks/use-session'
 import Loading from 'pages/Loading/Loading'
 import { Navigate } from 'react-router'
+import StepBreakLongQuestions from './components/StepBreakLongQuestions'
+import StepSummary from './components/StepSummary'
 
 const NewRelease = ({ requireVerification }) => {
   const { user, initializing } = useSession()
   const [answers, setAnswers] = useState({})
-  // const [searchParams, setSearchParams] = useSearchParams()
+  const [prevStep, setPrevStep] = useState(-1)
+  const [searchParams, setSearchParams] = useSearchParams()
+
+  const s = searchParams.get('s')
+
+  console.log(answers)
 
   let steps = [
     { name: 'start', isBreak: true },
@@ -28,25 +35,30 @@ const NewRelease = ({ requireVerification }) => {
 
   if (!!requireVerification) {
     steps.push({ name: 'verify', isBreak: true })
-  } else {
-    steps.push([])
   }
 
-  const unansweredQuestions = steps
-    .filter(step => !step.isBreak)
-    .filter(step => !answers[step.name])
+  steps = [
+    ...steps,
+    { name: 'startLongQuestions', isBreak: true, key: 'lq' },
+    { name: 'summary' },
+  ]
 
-  const startStepName =
-    unansweredQuestions.length > 0
-      ? unansweredQuestions[0]
-      : steps[steps.length - 1]
-  const startStep = Math.max(
-    steps.findIndex(step => step.name === startStepName),
-    0
-  )
+  // const unansweredQuestions = steps
+  //   .filter(step => !step.isBreak)
+  //   .filter(step => !answers[step.name])
+
+  // const startStepName =
+  //   unansweredQuestions.length > 0
+  //     ? unansweredQuestions[0]
+  //     : steps[steps.length - 1]
+  // const startStep = Math.max(
+  //   steps.findIndex(step => step.name === startStepName),
+  //   0
+  // )
+
+  const startStep = steps.findIndex(step => step.key === s) || 0
 
   const [step, setStep] = useState(startStep)
-  const [prevStep, setPrevStep] = useState(-1)
 
   // const stepValue = searchParams.get('step')
   // const stepInt = parseInt(stepValue)
@@ -69,12 +81,15 @@ const NewRelease = ({ requireVerification }) => {
         {name === 'subject' && <StepWho {...props} />}
         {name === 'location' && <StepWhere {...props} />}
         {name === 'verify' && <StepVerify {...props} />}
+        {name === 'startLongQuestions' && <StepBreakLongQuestions {...props} />}
+        {name === 'summary' && <StepSummary {...props} />}
       </>
     )
   }
 
   const handleSetStep = useCallback(
     async newStep => {
+      console.log(newStep)
       if (newStep < 0) return
       if (newStep + 1 > steps.length) return
 
@@ -140,7 +155,7 @@ const NewRelease = ({ requireVerification }) => {
         height={height}
       >
         {steps.map((stepItem, index) => {
-          const { name, Component } = stepItem
+          const { name } = stepItem
 
           return (
             <Box

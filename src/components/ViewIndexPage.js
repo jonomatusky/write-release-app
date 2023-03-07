@@ -25,7 +25,7 @@ import IndustriesBar from 'components/IndustriesBar'
 import { Add, Clear } from '@mui/icons-material'
 import OrgBar from './OrgBar'
 import useOrganizationsStore from 'hooks/store/use-organizations-store'
-import HeaderViews from './HeaderViews'
+import HeaderViews from './Header'
 
 const ViewIndexPage = ({ items, Item, type, mode, Dialog, Icon }) => {
   const [searchParams, setSearchParams] = useSearchParams()

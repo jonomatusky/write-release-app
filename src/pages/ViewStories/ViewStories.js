@@ -25,7 +25,7 @@ import useFetchContent from 'hooks/use-fetch-content'
 import useUsersStore from 'hooks/store/use-users-store'
 import DialogAbout from 'pages/ViewStory/components/DialogAbout'
 import useUserStore from 'hooks/store/use-user-store'
-import HeaderViews from 'components/HeaderViews'
+import HeaderViews from 'components/Header'
 import useContentTypesStore from 'hooks/store/use-content-types-store'
 import Loading from 'pages/Loading/Loading'
 
@@ -70,6 +70,7 @@ const ViewContents = () => {
       }
     })
     .filter(item => item.primaryType === 'Press Release')
+    .filter(item => item.forWriteRelease === true)
     .sort((a, b) => {
       return b.createdAt - a.createdAt
     })

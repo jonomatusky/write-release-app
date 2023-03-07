@@ -8,18 +8,23 @@ import {
   MenuItem,
   IconButton,
   Button,
+  Link as MuiLink,
 } from '@mui/material'
 import { Link } from 'react-router-dom'
 import useSession from 'hooks/use-session'
 import SearchBar from 'components/SearchBar'
 import { AccountCircle } from '@mui/icons-material'
-import Logo from 'assets/images/writerelease_logo.jpeg'
+import Logo from 'assets/images/writerelease_logo_simple.png'
 
-const HeaderViews = ({
+const Header = ({
   hideLogo,
+  logoHref,
+  logoTo,
   showSearch,
   showAvatar,
   showCreateButton,
+  showTryItButton,
+  showSignInButton,
   searchValue,
   setSearchValue,
   open,
@@ -50,7 +55,13 @@ const HeaderViews = ({
         }}
         open={open}
       >
-        <Toolbar>
+        <Toolbar
+          disableGutters
+          sx={{
+            paddingLeft: '12px',
+            paddingRight: '16px',
+          }}
+        >
           <Box
             display="flex"
             width="100%"
@@ -58,16 +69,20 @@ const HeaderViews = ({
             justifyContent="space-between"
           >
             <Box display="flex" height="100%" alignItems="center">
-              <Box
-                component={Link}
-                to="/"
-                display="flex"
-                alignItems="center"
-                height="64px"
-                sx={{ textDecoration: 'none' }}
-              >
-                <img src={Logo} alt="WriteRelease" height="100%" />
-              </Box>
+              {!hideLogo && (
+                <Box
+                  component={!!logoHref ? MuiLink : !!logoTo ? Link : null}
+                  to={logoTo}
+                  href={logoHref}
+                  display="flex"
+                  alignItems="center"
+                  height="32px"
+                  pb="4px"
+                  sx={{ textDecoration: 'none' }}
+                >
+                  <img src={Logo} alt="WriteRelease" height="100%" />
+                </Box>
+              )}
             </Box>
             <Box display="flex" flexGrow={1} justifyContent="flex-end">
               {showSearch && (
@@ -83,7 +98,23 @@ const HeaderViews = ({
                 <Box pl={2}>
                   <Button
                     fullWidth
-                    onClick={() => (window.location.hash = '#create')}
+                    component={Link}
+                    to="/create"
+                    variant="contained"
+                    // size="large"
+                    sx={{ height: '40px' }}
+                    elevation={0}
+                  >
+                    Start a Release
+                  </Button>
+                </Box>
+              )}
+              {showTryItButton && (
+                <Box pl={2}>
+                  <Button
+                    fullWidth
+                    component={Link}
+                    to="/try-it"
                     variant="contained"
                     // size="large"
                     sx={{ height: '40px' }}
@@ -138,4 +169,4 @@ const HeaderViews = ({
   )
 }
 
-export default HeaderViews
+export default Header
