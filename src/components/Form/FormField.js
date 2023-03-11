@@ -121,7 +121,8 @@ const FormField = ({
               error={error}
               type={type}
               multiline
-              rows={4}
+              rows={8}
+              // minRows={4}
               disabled={disabled}
               helpText={helpText}
             />

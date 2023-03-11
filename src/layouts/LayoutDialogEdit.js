@@ -24,23 +24,28 @@ const LayoutDialogEdit = ({
   noScroll,
   label,
   cancelLabel,
+  backLabel,
   maxWidth,
+  disableBackdropClick,
+  disabled,
 }) => {
   return (
     <Dialog
       open={open}
-      onClose={onClose}
+      onClose={disableBackdropClick ? () => {} : onClose}
       fullWidth
       maxWidth={maxWidth || 'sm'}
       transitionDuration={{ appear: 250, exit: 0 }}
     >
       <DialogTitle textAlign="center">
         <Box position="relative" maxHeight="100%">
-          <Box position="absolute" zIndex="50" top="-3px" right="-10px">
-            <IconButton onClick={onClose}>
-              <Close fontSize="medium" />
-            </IconButton>
-          </Box>
+          {!disableBackdropClick && (
+            <Box position="absolute" zIndex="50" top="-3px" right="-10px">
+              <IconButton onClick={onClose}>
+                <Close fontSize="medium" />
+              </IconButton>
+            </Box>
+          )}
           {title}
         </Box>
       </DialogTitle>
@@ -79,19 +84,21 @@ const LayoutDialogEdit = ({
                 size="large"
                 startIcon={<ArrowBackIos />}
               >
-                Back
+                {!!backLabel ? backLabel : 'Back'}
               </Button>
             )}
           </Box>
-          <Box flexGrow={0}>
-            <Button
-              variant={!!onSave ? 'outlined' : 'contained'}
-              onClick={onClose}
-              size="large"
-            >
-              {!!cancelLabel ? cancelLabel : !!onSave ? 'Cancel' : 'Close'}
-            </Button>
-          </Box>
+          {!!onClose && (
+            <Box flexGrow={0}>
+              <Button
+                variant={!!onSave ? 'outlined' : 'contained'}
+                onClick={onClose}
+                size="large"
+              >
+                {!!cancelLabel ? cancelLabel : !!onSave ? 'Cancel' : 'Close'}
+              </Button>
+            </Box>
+          )}
           {!!onSave && (
             <Box flexGrow={0} pl={1}>
               <LoadingButton
@@ -99,6 +106,7 @@ const LayoutDialogEdit = ({
                 onClick={onSave}
                 size="large"
                 loading={loading}
+                disabled={disabled}
               >
                 {label || 'Save'}
               </LoadingButton>

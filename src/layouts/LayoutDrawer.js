@@ -187,12 +187,7 @@ const LayoutDrawer = ({ open, children }) => {
                       justifyContent: 'center',
                     }}
                   >
-                    <img
-                      src={Logo}
-                      width="30px"
-                      height="30px"
-                      alt="sourceonlogo"
-                    />
+                    <img src={Logo} width="30px" height="30px" alt="logo" />
                   </Box>
                 }
                 color="primary"

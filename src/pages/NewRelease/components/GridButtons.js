@@ -1,14 +1,10 @@
 import { KeyboardArrowUp, KeyboardArrowDown } from '@mui/icons-material'
-import {
-  Button,
-  ToggleButton,
-  ToggleButtonGroup,
-  Typography,
-} from '@mui/material'
+import { LoadingButton } from '@mui/lab'
+import { ToggleButton, ToggleButtonGroup, Typography } from '@mui/material'
 import { Box } from '@mui/system'
 import React from 'react'
 
-const GridButtons = ({ onNext, onBack, disabled }) => {
+const GridButtons = ({ onNext, onBack, disabled, loading }) => {
   return (
     <Box display="flex" justifyContent="space-between">
       <Box>
@@ -52,16 +48,17 @@ const GridButtons = ({ onNext, onBack, disabled }) => {
         </Button> */}
       </Box>
       {!!onNext && (
-        <Button
+        <LoadingButton
           variant="contained"
           size="large"
           onClick={onNext}
           disabled={disabled}
+          loading={loading}
         >
           <Typography variant="h6" fontWeight="bold" component="p">
             Next
           </Typography>
-        </Button>
+        </LoadingButton>
       )}
     </Box>
   )

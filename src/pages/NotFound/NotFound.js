@@ -4,7 +4,7 @@ import { Container, Grid, Typography, Link, Box } from '@mui/material'
 import usePageTitle from 'hooks/use-page-title'
 
 const NotFound = () => {
-  usePageTitle('Not Found | SourceOn')
+  usePageTitle('Not Found | Write Release')
 
   return (
     <Container maxWidth="md">

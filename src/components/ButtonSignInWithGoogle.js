@@ -27,6 +27,7 @@ const ButtonSignInWithGoogle = ({
       await firebase.auth().signInWithPopup(provider)
       !!onSuccess && (await onSuccess())
       !!redirectUrl && navigate(redirectUrl, { replace })
+      return () => setGoogleSignInIsLoading(false)
     } catch (err) {
       setGoogleSignInIsLoading(false)
       setError({ message: 'An error occurred. Please try again.' })

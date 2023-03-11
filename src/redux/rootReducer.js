@@ -2,7 +2,6 @@ import { combineReducers } from '@reduxjs/toolkit'
 import userReducer from './userSlice'
 import individualsReducer from './individualsSlice'
 import alertReducer from './alertSlice'
-import tagsReducer from './tagsSlice'
 import coverageReducer from './coverageSlice'
 import contentReducer from './contentSlice'
 import contentTypesReducer from './contentTypesSlice'
@@ -21,7 +20,6 @@ const rootReducer = combineReducers({
   organizations: organizationsReducer,
   users: usersReducer,
   alert: alertReducer,
-  tags: tagsReducer,
   coverage: coverageReducer,
   content: contentReducer,
   contentTypes: contentTypesReducer,

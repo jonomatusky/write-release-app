@@ -4,6 +4,7 @@ import FormSignIn from 'components/FormSignIn'
 import useContentStore from 'hooks/store/use-content-store'
 import { setError } from 'redux/alertSlice'
 import GridButtons from './GridButtons'
+import Emoji from 'components/Emoji'
 
 const StepVerify = ({ answers, verificationType, onBack, onNext, onAnswer }) => {
   const { create } = useContentStore()
@@ -14,7 +15,7 @@ const StepVerify = ({ answers, verificationType, onBack, onNext, onAnswer }) => 
       const content = await create(answers)
       onAnswer({ method })
 
-      setRedirectUrl('/releases/edit/' + content.id)
+      setRedirectUrl('/releases/' + content.id)
     } catch (error) {
       setError({
         message:
@@ -27,29 +28,16 @@ const StepVerify = ({ answers, verificationType, onBack, onNext, onAnswer }) => 
     <Grid container justifyContent="flex-start" spacing={3} maxWidth="500px">
       <Grid item xs={12}>
         <Typography variant="h4">
-          <b>Great! Now, what's your email?</b>
+          <b>We're ready to generate you're release</b>
         </Typography>
       </Grid>
       <Grid item xs={12} mb={1}>
         <Typography>
-          We ask users to verify their email address to prevent abuse.
+          We just need you to verify your email to make sure you're not a bot. There can only be one bot, and that's us <Emoji symbol="🤖" label="robot" />
         </Typography>
       </Grid>
       <Grid item xs={12}>
         <FormSignIn redirectUrl={redirectUrl} onSubmit={handleSubmit} />
-      </Grid>
-      <Grid item xs={12}>
-        <Typography variant="body2">
-          By signing up, you agree to our{' '}
-          <Link href="/terms" target="_blank" rel="noreferrer">
-            Terms of Service
-          </Link>{' '}
-          and{' '}
-          <Link href="/privacy" target="_blank" rel="noreferrer">
-            Privacy Policy
-          </Link>
-          . We'll occasionally send you account related emails.
-        </Typography>
       </Grid>
       <Grid item xs={12}>
         <GridButtons onBack={onBack} />

@@ -16,7 +16,6 @@ import { ArrowBackIos } from '@mui/icons-material'
 
 const Login = ({ isLogin }) => {
   const [showEmailWasSent, setShowEmailWasSent] = useState(false)
-  usePageTitle('Login | SourceOn')
 
   const handleSubmit = ({ method }) => {
     if (method === 'email') {
@@ -83,7 +82,7 @@ const Login = ({ isLogin }) => {
                 </Typography>
               </Grid> */}
                     <Grid item xs={12}>
-                      <FormSignIn onSubmit={handleSubmit} />
+                      <FormSignIn onSubmit={handleSubmit} redirectUrl={'/'} />
                     </Grid>
                   </>
                 )}

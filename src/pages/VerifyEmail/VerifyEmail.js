@@ -1,15 +1,57 @@
-import React from 'react'
-import { Container, Box, Grid, Typography, Paper, Button } from '@mui/material'
+import React, { useState } from 'react'
+import { Container, Box, Grid, Typography, Paper } from '@mui/material'
 import * as Yup from 'yup'
 
-import usePageTitle from 'hooks/use-page-title'
+import firebase from 'config/firebase'
 import useFormHelper from 'hooks/use-form-helper'
 import Form from 'components/Form/Form'
+import useAlertStore from 'hooks/store/use-alert-store'
+import { LoadingButton } from '@mui/lab'
 
-const VerifyEmail = ({ title, text }) => {
-  usePageTitle('Login | SourceOn')
+const VerifyEmail = ({ component: ReactComponent }) => {
+  const isEmailLink = firebase
+    .auth()
+    .isSignInWithEmailLink(window.location.href)
 
-  const handleSubmit = () => {}
+  let email = window.localStorage.getItem('email')
+
+  const { setError } = useAlertStore()
+
+  const showPage = isEmailLink && !email
+
+  const [isLoading, setIsLoading] = useState(false)
+
+  const signIn = async email => {
+    setIsLoading(true)
+    try {
+      await firebase.auth().signInWithEmailLink(email, window.location.href)
+    } catch (err) {
+      setError({
+        message: 'Sorry, something went wrong. Please try signing in instead.',
+        // message: (
+        //   <span>
+        //     Sorry, something went wrong. Try{' '}
+        //     <Link href="/login" color="inherit">
+        //       signing in
+        //     </Link>{' '}
+        //     instead.
+        //   </span>
+        // ),
+      })
+    }
+
+    window.localStorage.removeItem('email')
+    setIsLoading(false)
+  }
+
+  const handleSubmit = ({ email }) => {
+    console.log('submitting')
+    try {
+      signIn(email)
+    } catch (err) {
+      setError({ message: 'An error occurred. Please try again.' })
+    }
+  }
 
   const formFields = [
     {
@@ -29,38 +71,43 @@ const VerifyEmail = ({ title, text }) => {
   })
 
   return (
-    <Container maxWidth="xs">
-      <Box mt={10}>
-        <Paper variant="outlined">
-          <Box p={4}>
-            <Grid container justifyContent="center" spacing={3}>
-              <Grid item xs={12} mt={2}>
-                <Typography variant="h5">
-                  <b>Confirm your Email Address</b>
-                </Typography>
-              </Grid>
-              <Grid item xs={12}>
-                <Typography variant="body2">
-                  Please enter the email address you used to sign up
-                </Typography>
-              </Grid>
-              <Grid item xs={12}>
-                <Form
-                  control={control}
-                  formFields={formFields}
-                  submit={submit}
-                />
-              </Grid>
-              <Grid item xs={12}>
-                <Button variant="contained" onClick={submit}>
-                  Confirm
-                </Button>
-              </Grid>
-            </Grid>
+    <>
+      {!showPage && <ReactComponent />}
+      {showPage && (
+        <Container maxWidth="xs">
+          <Box mt={10}>
+            <Paper variant="outlined">
+              <Box p={4}>
+                <Grid container justifyContent="center" spacing={3}>
+                  <Grid item xs={12} mt={2}>
+                    <Typography variant="h5">
+                      <b>Confirm your Email Address</b>
+                    </Typography>
+                  </Grid>
+                  <Grid item xs={12}>
+                    <Form
+                      control={control}
+                      formFields={formFields}
+                      submit={submit}
+                    />
+                  </Grid>
+                  <Grid item xs={12}>
+                    <LoadingButton
+                      variant="contained"
+                      onClick={submit}
+                      fullWidth
+                      loading={isLoading}
+                    >
+                      Confirm
+                    </LoadingButton>
+                  </Grid>
+                </Grid>
+              </Box>
+            </Paper>
           </Box>
-        </Paper>
-      </Box>
-    </Container>
+        </Container>
+      )}
+    </>
   )
 }
 

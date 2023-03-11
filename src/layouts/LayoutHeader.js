@@ -179,12 +179,7 @@ const LayoutHeader = ({ open, children }) => {
                         justifyContent: 'center',
                       }}
                     >
-                      <img
-                        src={Logo}
-                        width="30px"
-                        height="30px"
-                        alt="sourceonlogo"
-                      />
+                      <img src={Logo} width="30px" height="30px" alt="logo" />
                     </Box>
                   }
                   color="primary"
@@ -200,7 +195,7 @@ const LayoutHeader = ({ open, children }) => {
                     textTransform="none"
                     sx={{ opacity: open ? 1 : 0 }}
                   >
-                    <b>SourceOn</b>
+                    <b>Write Release</b>
                   </Typography>
                 </Button>
               </Toolbar>
@@ -217,12 +212,7 @@ const LayoutHeader = ({ open, children }) => {
                   disableRipple
                   // maxWidth="100%"
                 >
-                  <img
-                    src={Logo}
-                    width="30px"
-                    height="30px"
-                    alt="sourceonlogo"
-                  />
+                  <img src={Logo} width="30px" height="30px" alt="logo" />
                 </IconButton>
               </Box>
             )}
@@ -295,8 +285,8 @@ const LayoutHeader = ({ open, children }) => {
         )}
         {/* <Box component="main" sx={{ flexGrow: 1 }}>
           <Box component="main" sx={{ flexGrow: 1 }}> */}
-            <Outlet />
-          {/* </Box>
+        <Outlet />
+        {/* </Box>
         </Box> */}
       </Box>
     </>

@@ -3,7 +3,7 @@ import { Container, Box, Grid, Typography, Button } from '@mui/material'
 import { useUserStore } from 'hooks/store/use-user-store'
 import { useSession } from 'hooks/use-session'
 import TextFielder from 'components/TextFielder'
-import HeaderViews from 'components/Header'
+import Header from 'components/Header'
 import DialogDeleteAcccount from './components/DialogDeleteAccount'
 
 const Account = () => {
@@ -18,7 +18,7 @@ const Account = () => {
         open={deleteDialogIsOpen}
         onClose={() => setDeleteDialogIsOpen(false)}
       />
-      <HeaderViews showCreateButton showAvatar />
+      <Header logoTo={'/releases'} showCreateButton showAvatar />
       <Container maxWidth="xs">
         {fetchStatus === 'succeeded' && (
           <Grid container justifyContent="center" spacing={2}>

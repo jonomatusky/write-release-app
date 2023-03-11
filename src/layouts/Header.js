@@ -10,7 +10,6 @@ import { Toolbar } from '@mui/material'
 // import ButtonCopy from 'components/ButtonCopy'
 // import { useSession } from 'hooks/use-session'
 import ScrollToTop from 'components/ScrollToTop'
-// import Logo from 'assets/images/sourceon_logo.svg'
 // import ButtonReportBug from 'components/ButtonReportBug'
 // import useIndividualsStore from 'hooks/store/use-individuals-store'
 // import useInquiriesStore from 'hooks/store/use-inquiries-store'
@@ -37,57 +36,7 @@ const Header = () => {
   return (
     <>
       <ScrollToTop />
-      {/* <ButtonReportBug /> */}
-      {/* <AppBar
-        color="inherit"
-        position="fixed"
-        sx={{ zIndex: theme => theme.zIndex.drawer + 1 }}
-      >
-        <Toolbar variant="dense">
-          <Box display="flex" width="100%" alignItems="center">
-            <Box flexGrow={1}>
-              <Button
-                startIcon={
-                  <img
-                    src={Logo}
-                    width="20px"
-                    height="20px"
-                    alt="sourceonlogo"
-                  />
-                }
-                color="inherit"
-                component={Link}
-                to="/"
-              >
-                <Typography variant="h6" textTransform="none">
-                  <b>SourceOn</b>
-                </Typography>
-              </Button>
-            </Box>
-            <Box flexGrow={0}>
-              {id && (
-                <ButtonCopy
-                  variant="outlined"
-                  color="inherit"
-                  fontSize="small"
-                  size="small"
-                  text={REACT_APP_PUBLIC_URL + pathname}
-                  endIcon={<ContentCopy />}
-                  sx={{ borderRadius: 28, paddingRight: 2, paddingLeft: 2 }}
-                >
-                  Copy Link
-                </ButtonCopy>
-              )}
-              {!id && (
-                <Button color="inherit" size="small" onClick={logout}>
-                  Log Out
-                </Button>
-              )}
 
-            </Box>
-          </Box>
-        </Toolbar>
-      </AppBar> */}
       <main>
         <Toolbar variant="dense" />
         <Outlet />

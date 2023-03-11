@@ -15,6 +15,7 @@ import useSession from 'hooks/use-session'
 import SearchBar from 'components/SearchBar'
 import { AccountCircle } from '@mui/icons-material'
 import Logo from 'assets/images/writerelease_logo_simple.png'
+import Mark from 'assets/images/writerelease_mark.png'
 
 const Header = ({
   hideLogo,
@@ -70,23 +71,49 @@ const Header = ({
           >
             <Box display="flex" height="100%" alignItems="center">
               {!hideLogo && (
-                <Box
-                  component={!!logoHref ? MuiLink : !!logoTo ? Link : null}
-                  to={logoTo}
-                  href={logoHref}
-                  display="flex"
-                  alignItems="center"
-                  height="32px"
-                  pb="4px"
-                  sx={{ textDecoration: 'none' }}
-                >
-                  <img src={Logo} alt="WriteRelease" height="100%" />
-                </Box>
+                <>
+                  <Box
+                    component={!!logoHref ? MuiLink : !!logoTo ? Link : null}
+                    to={logoTo}
+                    href={logoHref}
+                    display="flex"
+                    alignItems="center"
+                    height="32px"
+                    pb="4px"
+                    sx={{
+                      textDecoration: 'none',
+                      display: { xs: 'none', md: 'block' },
+                    }}
+                  >
+                    <img src={Logo} alt="WriteRelease" height="100%" />
+                  </Box>
+                  <Box
+                    component={!!logoHref ? MuiLink : !!logoTo ? Link : null}
+                    to={logoTo}
+                    href={logoHref}
+                    display="flex"
+                    alignItems="center"
+                    height="32px"
+                    pb="4px"
+                    sx={{
+                      textDecoration: 'none',
+                      display: { xs: 'block', md: 'none' },
+                    }}
+                  >
+                    <img src={Mark} alt="WriteRelease" height="100%" />
+                  </Box>
+                </>
               )}
             </Box>
             <Box display="flex" flexGrow={1} justifyContent="flex-end">
               {showSearch && (
-                <Box width="350px" flexShrink={1}>
+                <Box
+                  width="350px"
+                  flexShrink={1}
+                  sx={{
+                    display: { xs: 'none', md: 'block' },
+                  }}
+                >
                   <SearchBar
                     size="small"
                     value={searchValue}
@@ -99,7 +126,7 @@ const Header = ({
                   <Button
                     fullWidth
                     component={Link}
-                    to="/create"
+                    to="/releases/new"
                     variant="contained"
                     // size="large"
                     sx={{ height: '40px' }}
