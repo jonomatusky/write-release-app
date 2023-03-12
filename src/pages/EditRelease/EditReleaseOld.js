@@ -1,22 +1,11 @@
 import React, { useCallback, useEffect, useState } from 'react'
-import {
-  Box,
-  Slide,
-  Fade,
-  Typography,
-  Link,
-  Container,
-  IconButton,
-} from '@mui/material'
+import { Box, Slide, Fade } from '@mui/material'
 import StepGetStarted from './components/StepChooseHeadline'
 import { use100vh } from 'hooks/use-100-vh'
-import Emoji from 'components/Emoji'
 import useSession from 'hooks/use-session'
 import Loading from 'pages/Loading/Loading'
-import { Navigate, useParams } from 'react-router'
+import { useParams } from 'react-router'
 import Verify from './components/Verify'
-import Logo from 'assets/images/writerelease_mark.png'
-import useContentStore from 'hooks/store/use-content-store'
 import useGetContent from 'hooks/use-get-content'
 import NotFound from 'pages/NotFound/NotFound'
 import HeaderEdit from 'layouts/HeaderEdit'

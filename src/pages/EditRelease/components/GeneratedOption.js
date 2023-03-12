@@ -30,7 +30,7 @@ const GeneratedOption = ({ generation, selected, onSelected }) => {
         <Box display="flex" alignItems="center" p={1} pl={2}>
           <Box flexGrow={1} mr={1}>
             <Typography variant="body2" sx={{ whiteSpace: 'pre-line' }}>
-              {generation.text.trim()}
+              {generation}
             </Typography>
           </Box>
           <Box

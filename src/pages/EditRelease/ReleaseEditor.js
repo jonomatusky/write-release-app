@@ -10,6 +10,7 @@ import { use100vh } from 'hooks/use-100-vh'
 import DialogHeadline from './components/DialogHeadline'
 import Loading from 'pages/Loading/Loading'
 import NotFound from 'pages/NotFound/NotFound'
+import { Loop, Save } from '@mui/icons-material'
 
 const ReleaseEditor = () => {
   const { id } = useParams()
@@ -21,31 +22,41 @@ const ReleaseEditor = () => {
 
   const [selectedText, setSelectedText] = useState(0)
 
-  const {
-    generate: generateText,
-    options: textOptions,
-    status: textStatus,
-  } = useGenerate()
+  const { generate: generateText, options, status: textStatus } = useGenerate()
 
-  const scrollToBottom = () => {
-    textEndRef.current &&
-      textEndRef.current.scrollTo({
-        left: 0,
-        top: textEndRef.current.scrollHeight,
-        behavior: 'smooth',
-      })
-  }
+  const optionsText = options.map(option => option.text)
+
+  const textOptions =
+    !content.titleOptions || content.titleOptions?.length === 0
+      ? optionsText
+      : content.titleOptions
+
+  // const scrollToBottom = () => {
+  //   textEndRef.current &&
+  //     textEndRef.current.scrollTo({
+  //       left: 0,
+  //       top: textEndRef.current.scrollHeight,
+  //       behavior: 'smooth',
+  //     })
+  // }
+
+  const readyToSave =
+    !!textOptions && textOptions.length > 0 && selectedText !== null
+
+  const isComplete = !!content.title && !!content.text
 
   const handleGenerate = async () => {
-    if (!!textOptions && textOptions.length > 0 && selectedText !== null) {
-      const text = content.text || ''
-      const newText = text + textOptions[selectedText]?.text + '\n\n'
-      await update({ id, text: newText })
-      scrollToBottom()
+    if (!isComplete) {
+      if (readyToSave) {
+        const newText = textOptions[selectedText]
+        await update({ id, text: newText })
+        // scrollToBottom()
+      } else {
+        await generateText(id, 'text')
+        await update({ id, textOptions: optionsText })
+        // scrollToBottom()
+      }
     }
-
-    await generateText(id, 'text')
-    scrollToBottom()
   }
 
   const handleRewrite = () => {
@@ -55,7 +66,7 @@ const ReleaseEditor = () => {
       setSelectedText(selectedText + 1)
     }
 
-    scrollToBottom()
+    // scrollToBottom()
   }
 
   const height = use100vh()
@@ -67,117 +78,125 @@ const ReleaseEditor = () => {
   } else {
     return (
       <>
-        <DialogHeadline
-          open={status === 'succeeded' && !content.title}
-          id={id}
-        />
-        <HeaderEdit />
-        <Box
-          position="relative"
-          width="100%"
-          display="flex"
-          justifyContent="center"
-          height={height}
-        >
-          <Box
-            maxWidth="sm"
-            width="100%"
-            height={height}
-            pl={2}
-            pr={2}
-            overflow="hidden"
-          >
-            <Box height="calc(100% - 100px)" pt={8}>
-              <Paper
-                ref={textEndRef}
-                variant="outlined"
-                sx={{
-                  p: 2,
-                  pt: 3,
-                  display: 'flex',
-                  flexDirection: 'column',
-                  height: '100%',
-                  overflow: 'scroll',
-                }}
+        {!!content && (
+          <>
+            <DialogHeadline
+              open={status === 'succeeded' && !content.title}
+              content={content}
+              id={id}
+            />
+            <HeaderEdit />
+            <Box
+              position="relative"
+              width="100%"
+              display="flex"
+              justifyContent="center"
+              height={height}
+            >
+              <Box
+                maxWidth="sm"
+                width="100%"
+                height={height}
+                pl={2}
+                pr={2}
+                overflow="hidden"
               >
-                {content.title && (
-                  <Typography gutterBottom pb={2} whiteSpace="pre-line">
-                    <b>{content.title}</b>
-                  </Typography>
-                )}
-                {!!content.text && (
-                  <Typography gutterBottom pb={2} whiteSpace="pre-line">
-                    {content.text?.trim() || ''}
-                  </Typography>
-                )}
-                {!!textOptions && textOptions.length > 0 && (
-                  <Typography
-                    color="primary"
-                    gutterBottom
-                    pb={1}
-                    whiteSpace="pre-line"
-                  >
-                    {textOptions[selectedText]?.text?.trim() || ''}
-                  </Typography>
-                )}
-                {textStatus === 'loading' && (
-                  <>
-                    <Typography>
-                      <Skeleton variant="text" />
-                    </Typography>
-                    <Typography>
-                      <Skeleton variant="text" />
-                    </Typography>
-                    <Typography>
-                      <Skeleton variant="text" />
-                    </Typography>
-                    <Typography>
-                      <Skeleton variant="text" width="65%" />
-                    </Typography>
-                  </>
-                )}
-                <div ref={textEndRef} />
-              </Paper>
-            </Box>
-            <Box height="100px" display="flex" alignItems="center">
-              <Grid container spacing={2}>
-                <Grid item xs={6}>
-                  <Button
-                    onClick={handleRewrite}
-                    fullWidth
+                <Box height="calc(100% - 100px)" pt={8}>
+                  <Paper
+                    ref={textEndRef}
                     variant="outlined"
-                    size="large"
-                    disabled={!textOptions || textOptions.length === 0}
                     sx={{
-                      height: 56,
+                      p: 2,
+                      pt: 3,
+                      display: 'flex',
+                      flexDirection: 'column',
+                      height: '100%',
+                      overflow: 'scroll',
                     }}
                   >
-                    <Typography variant="h6" fontWeight="bold" component="p">
-                      Rewrite
-                    </Typography>
-                  </Button>
-                </Grid>
-                <Grid item xs={6}>
-                  <LoadingButton
-                    fullWidth
-                    variant="contained"
-                    size="large"
-                    onClick={handleGenerate}
-                    loading={textStatus === 'loading'}
-                    pb={1}
-                    sx={{
-                      height: 56,
-                    }}
-                  >
-                    <Typography variant="h6" fontWeight="bold" component="p">
-                      Write More
-                    </Typography>
-                  </LoadingButton>
-                </Grid>
-              </Grid>
+                    {content.title && (
+                      <Typography gutterBottom pb={2} whiteSpace="pre-line">
+                        <b>{content.title}</b>
+                      </Typography>
+                    )}
+                    {!!content.text && (
+                      <Typography gutterBottom pb={2} whiteSpace="pre-line">
+                        {content.text || ''}
+                      </Typography>
+                    )}
+                    {!content.text &&
+                      !!textOptions &&
+                      textOptions.length > 0 && (
+                        <Typography
+                          color="primary"
+                          gutterBottom
+                          pb={1}
+                          whiteSpace="pre-line"
+                        >
+                          {textOptions[selectedText] || ''}
+                        </Typography>
+                      )}
+                    {textStatus === 'loading' && (
+                      <>
+                        <Typography>
+                          <Skeleton variant="text" />
+                        </Typography>
+                        <Typography>
+                          <Skeleton variant="text" />
+                        </Typography>
+                        <Typography>
+                          <Skeleton variant="text" />
+                        </Typography>
+                        <Typography>
+                          <Skeleton variant="text" width="65%" />
+                        </Typography>
+                      </>
+                    )}
+                    <div ref={textEndRef} />
+                  </Paper>
+                </Box>
+                <Box height="100px" display="flex" alignItems="center">
+                  <Grid container spacing={2}>
+                    <Grid item xs={6}>
+                      <Button
+                        onClick={handleRewrite}
+                        fullWidth
+                        variant="outlined"
+                        size="large"
+                        disabled={
+                          !textOptions || textOptions.length === 0 || isComplete
+                        }
+                        sx={{
+                          height: 56,
+                        }}
+                        startIcon={<Loop />}
+                      >
+                        Rewrite
+                      </Button>
+                    </Grid>
+                    <Grid item xs={6}>
+                      <LoadingButton
+                        fullWidth
+                        variant="contained"
+                        size="large"
+                        onClick={handleGenerate}
+                        loading={textStatus === 'loading'}
+                        pb={1}
+                        sx={{
+                          height: 56,
+                        }}
+                        disabled={isComplete}
+                        startIcon={readyToSave ? <Save /> : 'Write Release'}
+                      >
+                        {readyToSave ? 'Save' : 'Write Release'}
+                      </LoadingButton>
+                    </Grid>
+                  </Grid>
+                </Box>
+              </Box>
             </Box>
-          </Box>
-        </Box>
+          </>
+        )}
       </>
     )
   }

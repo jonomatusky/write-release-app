@@ -1,16 +1,22 @@
 import React, { useState } from 'react'
-import { Grid, Typography, Link } from '@mui/material'
+import { Grid, Typography } from '@mui/material'
 import FormSignIn from 'components/FormSignIn'
 import useContentStore from 'hooks/store/use-content-store'
 import { setError } from 'redux/alertSlice'
 import GridButtons from './GridButtons'
 import Emoji from 'components/Emoji'
 
-const StepVerify = ({ answers, verificationType, onBack, onNext, onAnswer }) => {
+const StepVerify = ({
+  answers,
+  verificationType,
+  onBack,
+  onNext,
+  onAnswer,
+}) => {
   const { create } = useContentStore()
   const [redirectUrl, setRedirectUrl] = useState('/')
 
-  const handleSubmit = async ({method}) => {
+  const handleSubmit = async ({ method }) => {
     try {
       const content = await create(answers)
       onAnswer({ method })
@@ -33,7 +39,9 @@ const StepVerify = ({ answers, verificationType, onBack, onNext, onAnswer }) => 
       </Grid>
       <Grid item xs={12} mb={1}>
         <Typography>
-          We just need you to verify your email to make sure you're not a bot. There can only be one bot, and that's us <Emoji symbol="🤖" label="robot" />
+          We just need you to verify your email to make sure you're not a bot.
+          There can only be one bot, and that's us{' '}
+          <Emoji symbol="🤖" label="robot" />
         </Typography>
       </Grid>
       <Grid item xs={12}>

@@ -8,7 +8,6 @@ import {
   Link as MuiLink,
   IconButton,
 } from '@mui/material'
-import usePageTitle from 'hooks/use-page-title'
 import FormSignIn from 'components/FormSignIn'
 import { Link } from 'react-router-dom'
 import Header from 'components/Header'

@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from 'react'
+import React, { useCallback, useState } from 'react'
 import { Box, Slide, Fade, Typography, Link } from '@mui/material'
 import StepGetStarted from './components/StepGetStarted'
 import StepType from './components/StepType'
