@@ -7,11 +7,14 @@ import useFormHelper from 'hooks/use-form-helper'
 import Form from 'components/Form/Form'
 import useAlertStore from 'hooks/store/use-alert-store'
 import { LoadingButton } from '@mui/lab'
+import { useSearchParams } from 'react-router-dom'
 
 const VerifyEmail = ({ component: ReactComponent }) => {
   const isEmailLink = firebase
     .auth()
     .isSignInWithEmailLink(window.location.href)
+
+    const [, setSearchParams] = useSearchParams()
 
   let email = window.localStorage.getItem('email')
 
@@ -25,6 +28,7 @@ const VerifyEmail = ({ component: ReactComponent }) => {
     setIsLoading(true)
     try {
       await firebase.auth().signInWithEmailLink(email, window.location.href)
+      setSearchParams({})
     } catch (err) {
       setError({
         message: 'Sorry, something went wrong. Please try signing in instead.',

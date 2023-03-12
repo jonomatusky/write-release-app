@@ -25,8 +25,6 @@ const VerifyRoute = ({ component: ReactComponent, redirectPath }) => {
       await firebase.auth().signInWithEmailLink(email, window.location.href)
       window.localStorage.removeItem('email')
       // remove firebase query params from url
-      setSearchParams({})
-      setIsLoadingEmailUser(false)
     }
 
     if (isEmailLink && !!email) {
@@ -34,9 +32,9 @@ const VerifyRoute = ({ component: ReactComponent, redirectPath }) => {
         signIn(email)
       } catch (err) {
         window.localStorage.removeItem('email')
-        window.history.replaceState({}, document.title, '/')
-        setIsLoadingEmailUser(false)
       }
+      setIsLoadingEmailUser(false)
+      setSearchParams({})
     }
   }, [email, isEmailLink, setSearchParams])
 

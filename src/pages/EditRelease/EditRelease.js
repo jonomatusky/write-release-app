@@ -1,7 +1,5 @@
 import React from 'react'
-import {
-  Box,
-} from '@mui/material'
+import { Box } from '@mui/material'
 import { use100vh } from 'hooks/use-100-vh'
 import useSession from 'hooks/use-session'
 import Loading from 'pages/Loading/Loading'

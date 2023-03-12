@@ -22,7 +22,6 @@ import NewRelease from 'pages/NewRelease/NewRelease'
 import Account from 'pages/Account/Account'
 import EditRelease from 'pages/EditRelease/EditRelease'
 import ViewReleases from 'pages/ViewReleases/ViewReleases'
-import VerifyEmail from 'pages/VerifyEmail/VerifyEmail'
 import VerifyRoute from 'routes/VerifyRoute'
 
 const { REACT_APP_POSTHOG_KEY } = process.env
@@ -49,7 +48,7 @@ const App = () => {
         <AlertBar />
         <DialogContactForm />
         <Routes>
-          <Route path="/" element={<VerifyEmail component={Outlet} />}>
+          <Route path="/" element={<VerifyRoute component={Outlet} />}>
             <Route
               path="/try-it"
               element={<NewRelease requireVerification />}
@@ -57,15 +56,14 @@ const App = () => {
             <Route path="/login" element={<Login isLogin />} />
             <Route path="/signup" element={<Login />} />
             {/* <Route path="/" element={<Navigate replace to="/try-it" />} /> */}
-            <Route path="/" element={<VerifyRoute component={Outlet} />}>
-              <Route path="/releases/:id" element={<EditRelease />} />
-              <Route path="/" element={<PrivateRoute component={Outlet} />}>
-                <Route path="/" element={<Navigate replace to="/releases" />} />
-                <Route path="/account" element={<Account />} />
-                <Route path="/releases/new" element={<NewRelease />} />
-                <Route path="/releases" element={<ViewReleases />} />
-                <Route path="*" element={<NotFound />} />
-              </Route>
+
+            <Route path="/releases/:id" element={<EditRelease />} />
+            <Route path="/" element={<PrivateRoute component={Outlet} />}>
+              <Route path="/" element={<Navigate replace to="/releases" />} />
+              <Route path="/account" element={<Account />} />
+              <Route path="/releases/new" element={<NewRelease />} />
+              <Route path="/releases" element={<ViewReleases />} />
+              <Route path="*" element={<NotFound />} />
             </Route>
 
             <Route path="*" element={<NotFound />} />
