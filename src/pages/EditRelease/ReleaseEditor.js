@@ -10,7 +10,7 @@ import { use100vh } from 'hooks/use-100-vh'
 import DialogHeadline from './components/DialogHeadline'
 import Loading from 'pages/Loading/Loading'
 import NotFound from 'pages/NotFound/NotFound'
-import { Loop, Save } from '@mui/icons-material'
+import { Edit, Loop, Save } from '@mui/icons-material'
 
 const ReleaseEditor = () => {
   const { id } = useParams()
@@ -27,9 +27,9 @@ const ReleaseEditor = () => {
   const optionsText = options.map(option => option.text)
 
   const textOptions =
-    !content.titleOptions || content.titleOptions?.length === 0
+    !content.textOptions || content.textOptions?.length === 0
       ? optionsText
-      : content.titleOptions
+      : content.textOptions
 
   // const scrollToBottom = () => {
   //   textEndRef.current &&
@@ -53,7 +53,7 @@ const ReleaseEditor = () => {
         // scrollToBottom()
       } else {
         await generateText(id, 'text')
-        await update({ id, textOptions: optionsText })
+        // await update({ id, textOptions: optionsText })
         // scrollToBottom()
       }
     }
@@ -186,9 +186,9 @@ const ReleaseEditor = () => {
                           height: 56,
                         }}
                         disabled={isComplete}
-                        startIcon={readyToSave ? <Save /> : 'Write Release'}
+                        startIcon={readyToSave ? <Save /> : <Edit />}
                       >
-                        {readyToSave ? 'Save' : 'Write Release'}
+                        {readyToSave ? 'Save' : 'Write'}
                       </LoadingButton>
                     </Grid>
                   </Grid>

@@ -29,7 +29,8 @@ export const useContentStore = () => {
 
   const _update = useCallback(
     async ({ id, ...data }) => {
-      await dispatchThunk(update, { id, ...data })
+      const updated = await dispatchThunk(update, { id, ...data })
+      return updated
     },
     [dispatchThunk]
   )

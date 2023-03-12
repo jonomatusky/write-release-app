@@ -22,7 +22,7 @@ const DialogHeadline = ({ id, content, open }) => {
 
   const handleGenerate = async () => {
     await generate(id, 'title')
-    await update({ id, titleOptions: optionsText })
+    // await update({ id, titleOptions: optionsText })
   }
 
   const handleSelectHeadline = i => {
@@ -30,7 +30,7 @@ const DialogHeadline = ({ id, content, open }) => {
   }
 
   const handleSubmit = async () => {
-    await update({ id, title: optionsText[index] })
+    await update({ id, title: headlineOptions[index] })
   }
 
   return (
