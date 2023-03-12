@@ -20,7 +20,7 @@ const StepQuoted = ({
 }) => {
   const [editingIndividual, setEditingIndividual] = useState(null)
 
-  const [showError, setShowError] = useState(false)
+  // const [showError, setShowError] = useState(false)
 
   const individuals = answers.individuals || []
 
@@ -31,7 +31,7 @@ const StepQuoted = ({
 
   const handleAddIndividual = values => {
     onAnswer({ individuals: [...individuals, values] })
-    setShowError(false)
+    // setShowError(false)
     setEditingIndividual(individuals.length)
     setEditingIndividual(null)
   }
@@ -47,7 +47,7 @@ const StepQuoted = ({
     const newIndividuals = [...individuals]
     newIndividuals[index] = individual
     setEditingIndividual(null)
-    setShowError(false)
+    // setShowError(false)
   }
 
   const [newIndividualDialogOpen, setNewIndividualDialogOpen] = useState(false)
@@ -61,12 +61,12 @@ const StepQuoted = ({
   }
 
   const handleNext = () => {
-    if (individuals.length === 0) {
-      setShowError(true)
-    } else {
-      setShowError(false)
-      onNext()
-    }
+    // if (individuals.length === 0) {
+    //   setShowError(true)
+    // } else {
+    //   setShowError(false)
+    onNext()
+    // }
   }
 
   return (
@@ -134,11 +134,11 @@ const StepQuoted = ({
                 <Add fontSize="medium" />
               </Box>
             </Button>
-            {showError && (
+            {/* {showError && (
               <Typography color="error" pt={1}>
                 Please add at least one person
               </Typography>
-            )}
+            )} */}
           </Grid>
 
           <Grid item xs={12}>
