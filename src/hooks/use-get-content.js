@@ -9,22 +9,19 @@ const useGetContent = id => {
 
   const content = select(id)
 
-  const getContent = useCallback(
-    async id => {
-      try {
-        await get(id)
-      } catch (err) {}
-    },
-    [get]
-  )
+  const getContent = useCallback(async () => {
+    try {
+      await get(id)
+    } catch (err) {}
+  }, [get, id])
 
   useEffect(() => {
     if (getStatus === 'idle' && !!id && !initializing) {
-      getContent(id)
+      getContent()
     }
   }, [getContent, id, getStatus, initializing])
 
-  return { content, status: getStatus }
+  return { content, status: getStatus, get: getContent }
 }
 
 export default useGetContent

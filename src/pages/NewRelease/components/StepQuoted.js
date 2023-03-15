@@ -87,7 +87,7 @@ const StepQuoted = ({
             firstName: '',
             lastName: '',
             title: '',
-            company: answers.company,
+            company: answers.subject,
           }}
         />
         <Grid container spacing={3}>

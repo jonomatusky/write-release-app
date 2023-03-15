@@ -37,6 +37,7 @@ const TemplateLongQuestion = ({
       placeholder,
       validation,
       type: 'textarea',
+      autoFocus: true,
     },
   ]
 

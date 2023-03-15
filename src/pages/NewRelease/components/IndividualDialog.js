@@ -25,6 +25,7 @@ const IndividualDialog = ({
       name: 'firstName',
       label: 'First Name',
       validation: Yup.string().required('Please enter a first name'),
+      autoFocus: true,
     },
     {
       name: 'lastName',

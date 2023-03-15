@@ -1,5 +1,5 @@
-import React, { useRef, useState } from 'react'
-import { Box, Typography, Button, Grid, Paper, Skeleton } from '@mui/material'
+import React, { useCallback, useEffect, useState } from 'react'
+import { Box, Typography, Grid, Paper, Skeleton } from '@mui/material'
 import useContentStore from 'hooks/store/use-content-store'
 import useGetContent from 'hooks/use-get-content'
 import HeaderEdit from 'layouts/HeaderEdit'
@@ -7,22 +7,23 @@ import useGenerate from 'hooks/use-generate'
 import { LoadingButton } from '@mui/lab'
 import { useParams } from 'react-router'
 import { use100vh } from 'hooks/use-100-vh'
-import DialogHeadline from './components/DialogHeadline'
 import Loading from 'pages/Loading/Loading'
 import NotFound from 'pages/NotFound/NotFound'
-import { Edit, Loop, Save } from '@mui/icons-material'
+import { IosShare, Loop } from '@mui/icons-material'
+import DialogShare from './components/DialogShare'
+import HeadlineOptions from './components/HeadlineOptions'
 
 const ReleaseEditor = () => {
   const { id } = useParams()
-  const { content, status } = useGetContent(id)
+  const { content, status, get } = useGetContent(id)
 
   const { update } = useContentStore()
 
-  const textEndRef = useRef(null)
+  // const textEndRef = useRef(null)
 
-  const [selectedText, setSelectedText] = useState(0)
+  // const [selectedText, setSelectedText] = useState(0)
 
-  const { generate: generateText, options, status: textStatus } = useGenerate()
+  const { generate: generateText, options } = useGenerate()
 
   const optionsText = options.map(option => option.text)
 
@@ -40,36 +41,71 @@ const ReleaseEditor = () => {
   //     })
   // }
 
-  const readyToSave =
-    !!textOptions && textOptions.length > 0 && selectedText !== null
-
-  const isComplete = !!content.title && !!content.text
-
-  const handleGenerate = async () => {
-    if (!isComplete) {
-      if (readyToSave) {
-        const newText = textOptions[selectedText]
-        await update({ id, text: newText })
-        // scrollToBottom()
-      } else {
-        await generateText(id, 'text')
-        // await update({ id, textOptions: optionsText })
-        // scrollToBottom()
-      }
-    }
-  }
-
-  const handleRewrite = () => {
-    if (selectedText >= textOptions.length - 1) {
-      setSelectedText(0)
-    } else {
-      setSelectedText(selectedText + 1)
-    }
-
-    // scrollToBottom()
-  }
+  // const readyToSave =
+  //   !!textOptions && textOptions.length > 0 && selectedText !== null
 
   const height = use100vh()
+
+  const [showShare, setShowShare] = useState(false)
+  const [isWriting, setIsWriting] = useState(false)
+  const [timerIsRunning, setTimerIsRunning] = useState(false)
+
+  const textIsLoading = timerIsRunning || isWriting
+  const isComplete = !!content.title && !!content.text
+
+  // const handleGenerate = async () => {
+  //   if (!isComplete) {
+  //     if (readyToSave) {
+  //       const newText = textOptions[selectedText]
+  //       await update({ id, text: newText })
+  //       // scrollToBottom()
+  //     } else {
+  //       await generateText(id, 'text')
+  //       // await update({ id, textOptions: optionsText })
+  //       // scrollToBottom()
+  //     }
+  //   }
+  // }
+
+  const handleGenerate = async () => {
+    if ((content.textOptions || []).length === 0) {
+      setIsWriting(true)
+      setTimerIsRunning(true)
+      await generateText(id, 'text')
+      await get()
+      setIsWriting(false)
+    }
+  }
+
+  const handleRewrite = useCallback(async () => {
+    if (content.textOptions) {
+      setIsWriting(true)
+      setTimerIsRunning(true)
+      const currentIndex = content.textOptionsIndex
+      const newIndex =
+        currentIndex >= textOptions.length - 1 ? 0 : currentIndex + 1
+
+      try {
+        await update({
+          id,
+          textOptionsIndex: newIndex,
+          text: content.textOptions[newIndex],
+        })
+      } catch (error) {}
+
+      setIsWriting(false)
+    }
+  }, [content, id, textOptions, update])
+
+  useEffect(() => {
+    if (timerIsRunning) {
+      const timer = setTimeout(() => {
+        setTimerIsRunning(false)
+      }, 2000)
+
+      return () => clearTimeout(timer)
+    }
+  }, [timerIsRunning, setTimerIsRunning])
 
   if (status === 'failed') {
     return <NotFound />
@@ -80,10 +116,10 @@ const ReleaseEditor = () => {
       <>
         {!!content && (
           <>
-            <DialogHeadline
-              open={status === 'succeeded' && !content.title}
+            <DialogShare
+              open={showShare}
+              onClose={() => setShowShare(false)}
               content={content}
-              id={id}
             />
             <HeaderEdit />
             <Box
@@ -103,92 +139,85 @@ const ReleaseEditor = () => {
               >
                 <Box height="calc(100% - 100px)" pt={8}>
                   <Paper
-                    ref={textEndRef}
+                    // ref={textEndRef}
                     variant="outlined"
                     sx={{
                       p: 2,
-                      pt: 3,
+                      pt: 4,
                       display: 'flex',
                       flexDirection: 'column',
                       height: '100%',
                       overflow: 'scroll',
                     }}
                   >
+                    {status === 'succeeded' && (
+                      <HeadlineOptions
+                        content={content}
+                        id={id}
+                        onComplete={handleGenerate}
+                      />
+                    )}
                     {content.title && (
                       <Typography gutterBottom pb={2} whiteSpace="pre-line">
                         <b>{content.title}</b>
                       </Typography>
                     )}
-                    {!!content.text && (
+                    {!!content.text && !textIsLoading && (
                       <Typography gutterBottom pb={2} whiteSpace="pre-line">
                         {content.text || ''}
                       </Typography>
                     )}
-                    {!content.text &&
-                      !!textOptions &&
-                      textOptions.length > 0 && (
-                        <Typography
-                          color="primary"
-                          gutterBottom
-                          pb={1}
-                          whiteSpace="pre-line"
-                        >
-                          {textOptions[selectedText] || ''}
-                        </Typography>
-                      )}
-                    {textStatus === 'loading' && (
-                      <>
-                        <Typography>
-                          <Skeleton variant="text" />
-                        </Typography>
-                        <Typography>
-                          <Skeleton variant="text" />
-                        </Typography>
-                        <Typography>
-                          <Skeleton variant="text" />
-                        </Typography>
-                        <Typography>
-                          <Skeleton variant="text" width="65%" />
-                        </Typography>
-                      </>
-                    )}
-                    <div ref={textEndRef} />
+                    {textIsLoading &&
+                      [1, 1, 1, 1, 1, 1].map((item, index) => (
+                        <Box pb={2} key={index}>
+                          <Typography>
+                            <Skeleton variant="text" />
+                          </Typography>
+                          <Typography>
+                            <Skeleton variant="text" />
+                          </Typography>
+                          <Typography>
+                            <Skeleton variant="text" />
+                          </Typography>
+                          <Typography>
+                            <Skeleton variant="text" width="65%" />
+                          </Typography>
+                        </Box>
+                      ))}
                   </Paper>
                 </Box>
                 <Box height="100px" display="flex" alignItems="center">
                   <Grid container spacing={2}>
                     <Grid item xs={6}>
-                      <Button
+                      <LoadingButton
                         onClick={handleRewrite}
                         fullWidth
                         variant="outlined"
                         size="large"
-                        disabled={
-                          !textOptions || textOptions.length === 0 || isComplete
-                        }
+                        disabled={(textOptions || []).length === 0}
                         sx={{
                           height: 56,
                         }}
                         startIcon={<Loop />}
+                        loading={textIsLoading}
                       >
                         Rewrite
-                      </Button>
+                      </LoadingButton>
                     </Grid>
                     <Grid item xs={6}>
                       <LoadingButton
                         fullWidth
                         variant="contained"
                         size="large"
-                        onClick={handleGenerate}
-                        loading={textStatus === 'loading'}
+                        onClick={() => setShowShare(true)}
                         pb={1}
                         sx={{
                           height: 56,
                         }}
-                        disabled={isComplete}
-                        startIcon={readyToSave ? <Save /> : <Edit />}
+                        disabled={!isComplete}
+                        endIcon={<IosShare />}
                       >
-                        {readyToSave ? 'Save' : 'Write'}
+                        Share
                       </LoadingButton>
                     </Grid>
                   </Grid>

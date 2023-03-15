@@ -35,6 +35,7 @@ const TemplateSingleQuestion = ({
       name,
       placeholder,
       validation,
+      autoFocus: true,
     },
   ]
 

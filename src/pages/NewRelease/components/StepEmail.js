@@ -40,6 +40,7 @@ const StepVerify = ({ onBack, onNext, onAnswer, answers }) => {
       validation: Yup.string()
         .email('Invalid email address')
         .required('Please enter your email address'),
+      autoFocus: true,
     },
   ]
 

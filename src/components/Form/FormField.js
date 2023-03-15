@@ -25,6 +25,7 @@ const FormField = ({
   AddDialog,
   addDialogProps,
   disabled,
+  autoFocus
 }) => {
   const renderField = ({ field, fieldState }) => {
     const { onChange, onBlur, value } = field
@@ -69,6 +70,7 @@ const FormField = ({
               }}
               disabled={disabled}
               helpText={helpText}
+              autoFocus={autoFocus}
             />
           </>
         )
@@ -88,6 +90,7 @@ const FormField = ({
               type="tel"
               disabled={disabled}
               helpText={helpText}
+              autoFocus={autoFocus}
             />
           </>
         )
@@ -125,6 +128,7 @@ const FormField = ({
               // minRows={4}
               disabled={disabled}
               helpText={helpText}
+              autoFocus={autoFocus}
             />
           </>
         )
@@ -144,6 +148,7 @@ const FormField = ({
               addDialogProps={addDialogProps}
               disabled={disabled}
               helpText={helpText}
+              autoFocus={autoFocus}
             />
           </>
         )
@@ -160,6 +165,7 @@ const FormField = ({
               type={type}
               disabled={disabled}
               helpText={helpText}
+              autoFocus={autoFocus}
             />
           </>
         )

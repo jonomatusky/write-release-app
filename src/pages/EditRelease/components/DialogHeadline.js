@@ -6,7 +6,7 @@ import useContentStore from 'hooks/store/use-content-store'
 import LayoutDialogEdit from 'layouts/LayoutDialogEdit'
 import useGenerate from 'hooks/use-generate'
 
-const DialogHeadline = ({ id, content, open }) => {
+const DialogHeadline = ({ id, content, open, onClose }) => {
   const [index, setIndex] = useState(0)
 
   const { generate, options, status } = useGenerate()
@@ -31,6 +31,7 @@ const DialogHeadline = ({ id, content, open }) => {
 
   const handleSubmit = async () => {
     await update({ id, title: headlineOptions[index] })
+    onClose()
   }
 
   return (

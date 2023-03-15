@@ -53,7 +53,12 @@ const TemplateStepList = ({
             </Typography>
           </Box>
           <Box>
-            <SearchBar value={search} setValue={setSearch} fullWidth />
+            <SearchBar
+              value={search}
+              setValue={setSearch}
+              fullWidth
+              autoFocus
+            />
           </Box>
           <Box
             flexGrow={1}
