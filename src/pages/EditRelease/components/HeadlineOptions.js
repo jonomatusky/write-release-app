@@ -28,7 +28,9 @@ const HeadlineOptions = ({ id, content, onComplete }) => {
     setIndex(i)
   }
 
-  const [showHeadline, setShowHeadline] = useState(!content.title)
+  const [showHeadline, setShowHeadline] = useState(
+    (content.textOptions || []).length === 0
+  )
 
   const handleSubmit = async () => {
     await update({ id, title: headlineOptions[index] })
@@ -38,7 +40,7 @@ const HeadlineOptions = ({ id, content, onComplete }) => {
 
   return (
     <>
-      {showHeadline && (
+      {showHeadline ? (
         <Box display="flex" alignItems="center">
           <Grid container spacing={3}>
             {(headlineOptions || []).length > 0 && (
@@ -97,6 +99,10 @@ const HeadlineOptions = ({ id, content, onComplete }) => {
             )}
           </Grid>
         </Box>
+      ) : (
+        <Typography gutterBottom pb={2} whiteSpace="pre-line">
+          <b>{content.title}</b>
+        </Typography>
       )}
     </>
   )

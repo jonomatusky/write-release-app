@@ -159,11 +159,6 @@ const ReleaseEditor = () => {
                         onComplete={handleGenerate}
                       />
                     )}
-                    {content.title && (
-                      <Typography gutterBottom pb={2} whiteSpace="pre-line">
-                        <b>{content.title}</b>
-                      </Typography>
-                    )}
                     {!!content.text && !textIsLoading && (
                       <Typography gutterBottom pb={2} whiteSpace="pre-line">
                         {content.text || ''}
