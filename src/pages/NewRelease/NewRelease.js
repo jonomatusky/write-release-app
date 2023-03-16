@@ -65,6 +65,17 @@ const NewRelease = ({ requireVerification }) => {
 
   const { summary, significance, fit } = contentType
 
+  const handleCreate = async values => {
+    const answersToSubmit = { ...answers, ...values }
+    console.log('answersToSubmit', answersToSubmit)
+    try {
+      const newRelease = await create(answersToSubmit)
+      if (newRelease) {
+        navigate(`/releases/${newRelease.id}`)
+      }
+    } catch (err) {}
+  }
+
   const StepRenderer = props => {
     const { name } = props
 
@@ -102,7 +113,7 @@ const NewRelease = ({ requireVerification }) => {
         {name === 'fit' && (
           <TemplateLongQuestion
             name="fit"
-            subtitle="Is it a new direction? A first for the company? A continuation of their ongoing mission?"
+            subtitle="Is it a new direction? A first for the company? A continuation of its ongoing mission?"
             // placeholder="The more detail, the better. Sentence fragments - fine."
             value={answers.fit}
             {...fit}
@@ -131,6 +142,7 @@ const NewRelease = ({ requireVerification }) => {
                 : answers.aboutCompany
             }
             {...props}
+            onNext={handleCreate}
             name={!!answers.hasBoilerplate ? 'boilerplate' : 'aboutCompany'}
           />
         )}
@@ -141,17 +153,12 @@ const NewRelease = ({ requireVerification }) => {
   const handleSetStep = useCallback(
     async newStep => {
       if (newStep < 0) return
-      if (newStep + 1 > steps.length) {
-        const newRelease = await create(answers)
-        if (newRelease) {
-          navigate(`/releases/${newRelease.id}`)
-        }
-      }
+      if (newStep + 1 > steps.length) return
 
       setPrevStep(step)
       setStep(newStep)
     },
-    [step, steps.length, answers, create, navigate]
+    [step, steps.length]
   )
 
   const handleNext = () => {

@@ -13,7 +13,7 @@ const StepBreakLongQuestions = ({ step, onAnswer, onNext, onBack }) => {
         </Grid>
         <Grid item xs={12}>
           <Typography variant="h5" component="h1" gutterBottom>
-            Do't worry about grammar, typos, or full sentences.
+            Don't worry about grammar, typos, or full sentences.
           </Typography>
         </Grid>
         <Grid item xs={12} pb={2}>

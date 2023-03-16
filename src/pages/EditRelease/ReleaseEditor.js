@@ -53,6 +53,8 @@ const ReleaseEditor = () => {
   const textIsLoading = timerIsRunning || isWriting
   const isComplete = !!content.title && !!content.text
 
+  console.log('refreshing')
+
   // const handleGenerate = async () => {
   //   if (!isComplete) {
   //     if (readyToSave) {
@@ -217,7 +219,7 @@ const ReleaseEditor = () => {
                         disabled={!isComplete}
                         endIcon={<IosShare />}
                       >
-                        Share
+                        Export
                       </LoadingButton>
                     </Grid>
                   </Grid>

@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { Box, Grid, Typography } from '@mui/material'
 import * as Yup from 'yup'
 import GridButtons from './GridButtons'
@@ -18,11 +18,15 @@ const TemplateLongQuestion = ({
   autofill,
   name,
 }) => {
-  const handleAnswer = values => {
+  const [isLoading, setIsLoading] = useState(false)
+
+  const handleAnswer = async values => {
+    setIsLoading(true)
     try {
-      onAnswer(values)
-      onNext()
+      await onAnswer(values)
+      await onNext(values)
     } catch (err) {}
+    return () => setIsLoading(false)
   }
 
   let validation = Yup.string().max(1000, 'Must be under 1000 characters')
@@ -70,7 +74,12 @@ const TemplateLongQuestion = ({
           <Form control={control} formFields={formFields} submit={submit} />
         </Grid>
         <Grid item xs={12}>
-          <GridButtons onNext={submit} onBack={onBack} showSkip={showSkip} />
+          <GridButtons
+            onNext={submit}
+            onBack={onBack}
+            showSkip={showSkip}
+            loading={isLoading}
+          />
         </Grid>
       </Grid>
     </Box>
