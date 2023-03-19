@@ -165,7 +165,8 @@ const ReleaseEditor = () => {
                       display: 'flex',
                       flexDirection: 'column',
                       height: '100%',
-                      overflow: 'scroll',
+                      overflowY: 'scroll',
+                      overflowX: 'hidden',
                     }}
                   >
                     {status === 'succeeded' && (
