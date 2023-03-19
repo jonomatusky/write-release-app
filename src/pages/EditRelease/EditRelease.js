@@ -7,10 +7,13 @@ import { useParams } from 'react-router'
 import Verify from './components/Verify'
 import HeaderEdit from 'layouts/HeaderEdit'
 import ReleaseEditor from './ReleaseEditor'
+import AddAccountInfoDialog from 'components/AddAccountInfoDialog'
+import useUserStore from 'hooks/store/use-user-store'
 
 const EditRelease = () => {
   const { id } = useParams()
   const { user, initializing } = useSession()
+  const { item: userFromStore, fetchStatus } = useUserStore()
 
   const height = use100vh()
 
@@ -37,7 +40,16 @@ const EditRelease = () => {
       </Box>
     )
   } else {
-    return <ReleaseEditor />
+    if (fetchStatus === 'loading') {
+      return <Loading />
+    } else {
+      return (
+        <>
+          {userFromStore?.id && <AddAccountInfoDialog />}
+          <ReleaseEditor />
+        </>
+      )
+    }
   }
 }
 

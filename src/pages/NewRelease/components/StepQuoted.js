@@ -30,10 +30,12 @@ const StepQuoted = ({
   //     : individuals
 
   const handleAddIndividual = values => {
-    onAnswer({ individuals: [...individuals, values] })
-    // setShowError(false)
-    setEditingIndividual(individuals.length)
-    setEditingIndividual(null)
+    if (individuals.length < 2) {
+      onAnswer({ individuals: [...individuals, values] })
+      // setShowError(false)
+      setEditingIndividual(individuals.length)
+      setEditingIndividual(null)
+    }
   }
 
   const handleRemoveIndividual = index => {

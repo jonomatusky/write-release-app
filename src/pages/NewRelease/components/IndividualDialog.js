@@ -18,6 +18,8 @@ const IndividualDialog = ({
     } else {
       submitIndividual(values)
     }
+    onClose()
+    reset()
   }
 
   const formFields = [
@@ -53,8 +55,8 @@ const IndividualDialog = ({
   })
 
   const handleClose = () => {
+    onClose()
     reset()
-    onClose(null)
   }
 
   return (

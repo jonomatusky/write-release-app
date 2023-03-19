@@ -4,9 +4,12 @@ import { useSession } from 'hooks/use-session'
 import Loading from 'pages/Loading/Loading'
 import VerifyEmail from 'pages/VerifyEmail/VerifyEmail'
 import firebase from 'config/firebase'
+import AddAccountInfoDialog from 'components/AddAccountInfoDialog'
+import useUserStore from 'hooks/store/use-user-store'
 
 const PrivateRoute = ({ component: ReactComponent, redirectPath }) => {
   const { user, initializing } = useSession()
+  const { item: userFromStore, fetchStatus } = useUserStore()
   let location = useLocation()
 
   const isEmailLink = firebase
@@ -41,7 +44,16 @@ const PrivateRoute = ({ component: ReactComponent, redirectPath }) => {
   } else if (showVerify) {
     return <VerifyEmail />
   } else if (!!user) {
-    return <ReactComponent />
+    if (fetchStatus === 'loading') {
+      return <Loading />
+    } else {
+      return (
+        <>
+          {userFromStore?.id && <AddAccountInfoDialog />}
+          <ReactComponent />
+        </>
+      )
+    }
   } else {
     return (
       <Navigate

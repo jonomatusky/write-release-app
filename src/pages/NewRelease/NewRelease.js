@@ -1,35 +1,21 @@
 import React, { useCallback, useState } from 'react'
 import { Box, Slide, Fade, Typography, Link } from '@mui/material'
-import StepGetStarted from './components/StepGetStarted'
-import StepType from './components/StepType'
-import StepTone from './components/StepTone'
 import { use100vh } from 'hooks/use-100-vh'
 import { useSearchParams } from 'react-router-dom'
-import StepWho from './components/StepWho'
-import StepWhere from './components/StepWhere'
-import StepVerify from './components/StepEmail'
 import Emoji from 'components/Emoji'
 import useSession from 'hooks/use-session'
 import Loading from 'pages/Loading/Loading'
-import { Navigate, useNavigate } from 'react-router'
-import StepBreakLongQuestions from './components/StepBreakLongQuestions'
-import TemplateLongQuestion from './components/TemplateLongQuestion'
-import useContentTypesStore from 'hooks/store/use-content-types-store'
-import StepQuoted from './components/StepQuoted'
-import StepHaveBoilerplate from './components/StepHaveBoilerplate'
-import useContentStore from 'hooks/store/use-content-store'
+import { Navigate } from 'react-router'
 import HeaderClose from 'layouts/HeaderClose'
+import StepRenderer from './components/StepRenderer'
+import useRequest from 'hooks/use-request'
 
 const NewRelease = ({ requireVerification }) => {
+  const { request } = useRequest()
   const { user, initializing } = useSession()
   const [answers, setAnswers] = useState({})
   const [prevStep, setPrevStep] = useState(-1)
   const [searchParams] = useSearchParams()
-  const { create } = useContentStore()
-  const navigate = useNavigate()
-
-  const { select } = useContentTypesStore()
-  const contentType = select(answers.type) || {}
 
   const s = searchParams.get('s')
 
@@ -62,93 +48,6 @@ const NewRelease = ({ requireVerification }) => {
   )
 
   const [step, setStep] = useState(startStep)
-
-  const { summary, significance, fit } = contentType
-
-  const handleCreate = async values => {
-    const answersToSubmit = { ...answers, ...values }
-    console.log('answersToSubmit', answersToSubmit)
-    try {
-      const newRelease = await create(answersToSubmit)
-      if (newRelease) {
-        navigate(`/releases/${newRelease.id}`)
-      }
-    } catch (err) {}
-  }
-
-  const StepRenderer = props => {
-    const { name } = props
-
-    return (
-      <>
-        {name === 'start' && <StepGetStarted {...props} />}
-        {name === 'type' && <StepType {...props} />}
-        {name === 'tone' && <StepTone {...props} />}
-        {name === 'subject' && <StepWho {...props} />}
-        {name === 'location' && <StepWhere {...props} />}
-        {name === 'verify' && <StepVerify {...props} />}
-        {name === 'startLongQuestions' && <StepBreakLongQuestions {...props} />}
-        {name === 'summary' && (
-          <TemplateLongQuestion
-            name="summary"
-            subtitle="What's the main story? What are the key points?"
-            placeholder="Write a short summary of the release. The more detail, the better. Sentence fragments - fine."
-            value={answers.summary}
-            {...summary}
-            label="What's this release about?"
-            {...props}
-          />
-        )}
-        {name === 'significance' && (
-          <TemplateLongQuestion
-            name="significance"
-            subtitle="What's unique or important about this news? Why will readers care? What's the impact?"
-            // placeholder="Tell us why this matters. The more detail, the better. Sentence fragments - fine."
-            value={answers.significance}
-            {...significance}
-            label="Why does it matter?"
-            {...props}
-          />
-        )}
-        {name === 'fit' && (
-          <TemplateLongQuestion
-            name="fit"
-            subtitle="Is it a new direction? A first for the company? A continuation of its ongoing mission?"
-            // placeholder="The more detail, the better. Sentence fragments - fine."
-            value={answers.fit}
-            {...fit}
-            label="How does this fit into the company's mission, vision, or journey?"
-            {...props}
-          />
-        )}
-        {name === 'quoted' && <StepQuoted {...props} />}
-        {name === 'haveBoilerplate' && <StepHaveBoilerplate {...props} />}
-        {name === 'boilerplate' && (
-          <TemplateLongQuestion
-            label={
-              !!answers.hasBoilerplate
-                ? 'Enter the company’s boilerplate'
-                : 'Tell us a little about the company'
-            }
-            subtitle={
-              !!answers.hasBoilerplate
-                ? null
-                : "We'll use this to generate the boilerplate and improve the release."
-            }
-            placeholder="Acme Inc. is a leading provider of widgets and gizmos. The company was founded in 1984 and is headquartered in New York City."
-            value={
-              !!answers.hasBoilerplate
-                ? answers.boilerplate
-                : answers.aboutCompany
-            }
-            {...props}
-            onNext={handleCreate}
-            name={!!answers.hasBoilerplate ? 'boilerplate' : 'aboutCompany'}
-          />
-        )}
-      </>
-    )
-  }
 
   const handleSetStep = useCallback(
     async newStep => {
@@ -266,6 +165,7 @@ const NewRelease = ({ requireVerification }) => {
                           onNext={handleNext}
                           onBack={handleBack}
                           onAnswer={handleAnswer}
+                          request={request}
                         />
                       </Box>
                     </Fade>

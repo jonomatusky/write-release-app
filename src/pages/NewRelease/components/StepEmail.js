@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { Grid, Typography, Link } from '@mui/material'
 import * as Yup from 'yup'
 import GridButtons from './GridButtons'
@@ -6,8 +6,9 @@ import useAlertStore from 'hooks/store/use-alert-store'
 import useFormHelper from 'hooks/use-form-helper'
 import Form from 'components/Form/Form'
 
-const StepVerify = ({ onBack, onNext, onAnswer, answers }) => {
+const StepEmail = ({ onBack, onNext, onAnswer, answers, onSubmitEmail }) => {
   const { setError, clearError } = useAlertStore()
+  const [isLoading, setIsLoading] = useState(false)
 
   // const handleLoginWithGoogle = async () => {
   //   try {
@@ -17,18 +18,22 @@ const StepVerify = ({ onBack, onNext, onAnswer, answers }) => {
   // }
 
   const handleSaveEmail = async values => {
+    setIsLoading(true)
     clearError()
     try {
       window.localStorage.setItem('email', values.tempUserEmail)
     } catch (err) {}
 
+    onSubmitEmail(values)
+
     try {
-      onAnswer({ ...values })
+      onAnswer(values)
       onNext()
     } catch (err) {
       console.log(err)
       setError({ message: 'An error occurred. Please try again.' })
     }
+    return () => setIsLoading(false)
   }
 
   const formFields = [
@@ -110,7 +115,7 @@ const StepVerify = ({ onBack, onNext, onAnswer, answers }) => {
         </Grid>
       </Grid>
       <Grid item xs={12}>
-        <GridButtons onBack={onBack} onNext={submit} />
+        <GridButtons onBack={onBack} onNext={submit} loading={isLoading} />
       </Grid>
       <Grid item xs={12}>
         <Typography variant="body2">
@@ -130,4 +135,4 @@ const StepVerify = ({ onBack, onNext, onAnswer, answers }) => {
   )
 }
 
-export default StepVerify
+export default StepEmail
