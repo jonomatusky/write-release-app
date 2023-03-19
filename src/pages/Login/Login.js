@@ -83,6 +83,22 @@ const Login = ({ isLogin }) => {
                     <Grid item xs={12}>
                       <FormSignIn onSubmit={handleSubmit} redirectUrl={'/'} />
                     </Grid>
+                    <Grid item xs={12}>
+                      <Typography
+                        variant="caption"
+                        component="p"
+                        textAlign="center"
+                      >
+                        By using this service, you agree to our{' '}
+                        <Link
+                          href="https://writerelease.com/terms-conditions"
+                          target="_blank"
+                          rel="noreferrer"
+                        >
+                          Terms of Service and Privacy Policy
+                        </Link>
+                      </Typography>
+                    </Grid>
                   </>
                 )}
               </Grid>

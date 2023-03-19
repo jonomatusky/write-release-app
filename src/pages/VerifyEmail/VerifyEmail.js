@@ -14,7 +14,7 @@ const VerifyEmail = ({ component: ReactComponent }) => {
     .auth()
     .isSignInWithEmailLink(window.location.href)
 
-    const [, setSearchParams] = useSearchParams()
+  const [, setSearchParams] = useSearchParams()
 
   let email = window.localStorage.getItem('email')
 
@@ -49,7 +49,6 @@ const VerifyEmail = ({ component: ReactComponent }) => {
   }
 
   const handleSubmit = ({ email }) => {
-    console.log('submitting')
     try {
       signIn(email)
     } catch (err) {

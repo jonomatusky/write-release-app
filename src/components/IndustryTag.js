@@ -7,9 +7,6 @@ const IndustryTag = ({ id }) => {
   const { select } = useIndustriesStore()
   const industry = select(id)
 
-  console.log(id)
-  console.log(industry)
-
   return (
     <>
       {industry && industry.name !== 'Other' && (

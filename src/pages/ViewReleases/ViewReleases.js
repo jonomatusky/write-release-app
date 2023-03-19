@@ -72,7 +72,6 @@ const ViewReleases = () => {
   })
 
   const addMore = () => {
-    console.log('adding more')
     setChunkCount(chunkCount + 1)
   }
 

@@ -17,8 +17,6 @@ const StepSummary = ({ onNext, onBack, answers, onAnswer }) => {
   const { summaryQuestion } = contentType || {}
   const { label, subtitle } = summaryQuestion || {}
 
-  console.log(questions)
-
   const handleAnswer = values => {
     const newAnswers = answers.answers || []
     newAnswers[qIndex] = {

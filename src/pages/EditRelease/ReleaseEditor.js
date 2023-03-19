@@ -9,9 +9,10 @@ import { useParams } from 'react-router'
 import { use100vh } from 'hooks/use-100-vh'
 import Loading from 'pages/Loading/Loading'
 import NotFound from 'pages/NotFound/NotFound'
-import { IosShare, Loop } from '@mui/icons-material'
-import DialogShare from './components/DialogShare'
+import { Loop } from '@mui/icons-material'
+// import DialogShare from '../../components/DialogShare'
 import HeadlineOptions from './components/HeadlineOptions'
+import ButtonCopy from 'components/ButtonCopy'
 
 const ReleaseEditor = () => {
   const { id } = useParams()
@@ -46,12 +47,14 @@ const ReleaseEditor = () => {
 
   const height = use100vh()
 
-  const [showShare, setShowShare] = useState(false)
+  // const [showShare, setShowShare] = useState(false)
+  const [isRewriting, setIsRewriting] = useState(false)
   const [isWriting, setIsWriting] = useState(false)
   const [timerIsRunning, setTimerIsRunning] = useState(false)
 
   const textIsLoading = timerIsRunning || isWriting
-  const isComplete = !!content.title && !!content.text
+  const textIsReloading = timerIsRunning || isRewriting
+  // const isComplete = !!content.title && !!content.text
 
   // const handleGenerate = async () => {
   //   if (!isComplete) {
@@ -70,7 +73,7 @@ const ReleaseEditor = () => {
   const handleGenerate = async () => {
     if ((content.textOptions || []).length === 0) {
       setIsWriting(true)
-      setTimerIsRunning(true)
+      // setTimerIsRunning(true)
       await generateText(id, 'text')
       await get()
       setIsWriting(false)
@@ -79,7 +82,7 @@ const ReleaseEditor = () => {
 
   const handleRewrite = useCallback(async () => {
     if (content.textOptions) {
-      setIsWriting(true)
+      setIsRewriting(true)
       setTimerIsRunning(true)
       const currentIndex = content.textOptionsIndex
       const newIndex =
@@ -93,7 +96,7 @@ const ReleaseEditor = () => {
         })
       } catch (error) {}
 
-      setIsWriting(false)
+      setIsRewriting(false)
     }
   }, [content, id, textOptions, update])
 
@@ -107,21 +110,36 @@ const ReleaseEditor = () => {
     }
   }, [timerIsRunning, setTimerIsRunning])
 
-  if (status === 'failed') {
+  const releaseText =
+    !!content.title && !!content.text
+      ? (content.title || '') + '\n\n' + (content.text || '')
+      : null
+
+  const [firstLoadStatus, setFirstLoadStatus] = useState('loading')
+
+  useEffect(() => {
+    if (status === 'succeeded' && firstLoadStatus === 'loading') {
+      setFirstLoadStatus('succeeded')
+    } else if (status === 'failed' && firstLoadStatus === 'loading') {
+      setFirstLoadStatus('failed')
+    }
+  }, [firstLoadStatus, status])
+
+  if (firstLoadStatus === 'failed') {
     return <NotFound />
-  } else if (status !== 'succeeded') {
+  } else if (firstLoadStatus !== 'succeeded') {
     return <Loading />
   } else {
     return (
       <>
         {!!content && (
           <>
-            <DialogShare
+            {/* <DialogShare
               open={showShare}
               onClose={() => setShowShare(false)}
               content={content}
-            />
-            <HeaderEdit />
+            /> */}
+            <HeaderEdit text={releaseText} id={id} />
             <Box
               position="relative"
               width="100%"
@@ -157,13 +175,15 @@ const ReleaseEditor = () => {
                         onComplete={handleGenerate}
                       />
                     )}
-                    {!!content.text && !textIsLoading && (
-                      <Typography gutterBottom pb={2} whiteSpace="pre-line">
-                        {content.text || ''}
-                      </Typography>
-                    )}
+                    {!!content.text &&
+                      (content.textOptions || []).length > 0 &&
+                      !textIsLoading && (
+                        <Typography gutterBottom pb={2} whiteSpace="pre-line">
+                          {content.text || ''}
+                        </Typography>
+                      )}
                     {textIsLoading &&
-                      [1, 1, 1, 1, 1, 1].map((item, index) => (
+                      [1, 1, 1, 1, 1].map((item, index) => (
                         <Box pb={2} key={index}>
                           <Typography>
                             <Skeleton variant="text" />
@@ -194,13 +214,27 @@ const ReleaseEditor = () => {
                           height: 56,
                         }}
                         startIcon={<Loop />}
-                        loading={textIsLoading}
+                        loading={textIsReloading}
                       >
                         Rewrite
                       </LoadingButton>
                     </Grid>
                     <Grid item xs={6}>
-                      <LoadingButton
+                      <ButtonCopy
+                        fullWidth
+                        variant="contained"
+                        size="large"
+                        text={releaseText}
+                        sx={{
+                          height: 56,
+                        }}
+                        disabled={
+                          textIsLoading || (textOptions || []).length === 0
+                        }
+                      >
+                        Copy Text
+                      </ButtonCopy>
+                      {/* <LoadingButton
                         fullWidth
                         variant="contained"
                         size="large"
@@ -213,7 +247,7 @@ const ReleaseEditor = () => {
                         endIcon={<IosShare />}
                       >
                         Export
-                      </LoadingButton>
+                      </LoadingButton> */}
                     </Grid>
                   </Grid>
                 </Box>

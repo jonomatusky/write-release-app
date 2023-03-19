@@ -121,12 +121,12 @@ const StepEmail = ({ onBack, onNext, onAnswer, answers, onSubmitEmail }) => {
         <Typography variant="body2">
           We ask users to verify their email address to prevent abuse. By
           signing up, you agree to our{' '}
-          <Link href="/terms" target="_blank" rel="noreferrer">
-            Terms of Service
-          </Link>{' '}
-          and{' '}
-          <Link href="/privacy" target="_blank" rel="noreferrer">
-            Privacy Policy
+          <Link
+            href="https://writerelease.com/terms-conditions"
+            target="_blank"
+            rel="noreferrer"
+          >
+            Terms of Service and Privacy Policy
           </Link>
           . We'll occasionally send you account related emails.
         </Typography>

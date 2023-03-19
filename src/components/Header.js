@@ -178,6 +178,22 @@ const Header = ({
                     <MenuItem component={Link} to="/account">
                       My Account
                     </MenuItem>
+                    <MenuItem
+                      component={MuiLink}
+                      href="https://writerelease.com/contact"
+                      target="_blank"
+                      rel="noreferrer"
+                    >
+                      Contact
+                    </MenuItem>
+                    <MenuItem
+                      component={MuiLink}
+                      href="https://writerelease.com/feedback"
+                      target="_blank"
+                      rel="noreferrer"
+                    >
+                      Feedback
+                    </MenuItem>
                     <MenuItem onClick={logout}>Log Out</MenuItem>
                   </Menu>
                 </Box>

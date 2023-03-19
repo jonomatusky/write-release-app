@@ -116,7 +116,6 @@ const ViewIndexPage = ({ items, Item, type, mode, Dialog, Icon }) => {
       const s = searchParams.get('search') || ''
 
       if (sv === searchValue && sv !== s) {
-        console.log('setting search')
         let params = !!sv && sv !== '' ? [['search', sv]] : []
         if (!!c && c !== '') {
           params = [...params, ['company', c]]

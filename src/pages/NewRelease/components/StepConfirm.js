@@ -23,8 +23,13 @@ const StepGetStarted = ({ step, onAnswer, onNext }) => {
         <Grid item xs={12}>
           <Typography variant="caption" component="p" textAlign="center">
             By using this service, you agree to our{' '}
-            <Link href="#">Terms of Service</Link> and{' '}
-            <Link href="#">Privacy Policy</Link>.
+            <Link
+              href="https://writerelease.com/terms-conditions"
+              target="_blank"
+              rel="noreferrer"
+            >
+              Terms of Service and Privacy Policy
+            </Link>
           </Typography>
         </Grid>{' '}
       </Grid>

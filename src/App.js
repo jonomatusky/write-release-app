@@ -16,7 +16,6 @@ import Login from 'pages/Login/Login'
 import Fetch from 'components/Fetch'
 import AlertBar from 'components/AlertBar'
 import NotFound from 'pages/NotFound/NotFound'
-import DialogContactForm from 'components/DialogContactForm'
 // import { useMediaQuery } from '@mui/material'
 import NewRelease from 'pages/NewRelease/NewRelease'
 import Account from 'pages/Account/Account'
@@ -46,7 +45,6 @@ const App = () => {
       <Router>
         <Fetch />
         <AlertBar />
-        <DialogContactForm />
         <Routes>
           <Route path="/" element={<VerifyRoute component={Outlet} />}>
             <Route
