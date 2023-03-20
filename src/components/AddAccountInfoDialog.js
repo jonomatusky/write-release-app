@@ -13,7 +13,9 @@ const AddAccountInfoDialog = () => {
   const { item: user, update } = useUserStore()
   const { user: sessionUser } = useSession()
 
-  const [isOpen, setIsOpen] = useState(!!user && !user.hasCompletedAccountInfo)
+  const [isOpen, setIsOpen] = useState(
+    !!user.id && !user.hasCompletedAccountInfo
+  )
 
   const formFields = [
     {

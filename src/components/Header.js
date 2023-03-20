@@ -121,6 +121,20 @@ const Header = ({
                   />
                 </Box>
               )}
+              {showSignInButton && (
+                <Box pl={2}>
+                  <Button
+                    fullWidth
+                    component={Link}
+                    to="/login"
+                    // size="large"
+                    sx={{ height: '40px' }}
+                    elevation={0}
+                  >
+                    Sign In
+                  </Button>
+                </Box>
+              )}
               {showCreateButton && (
                 <Box pl={2}>
                   <Button

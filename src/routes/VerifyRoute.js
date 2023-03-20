@@ -3,11 +3,13 @@ import { useSession } from 'hooks/use-session'
 import Loading from 'pages/Loading/Loading'
 import VerifyEmail from 'pages/VerifyEmail/VerifyEmail'
 import firebase from 'config/firebase'
-import { useSearchParams } from 'react-router-dom'
+import { useNavigate, useSearchParams } from 'react-router-dom'
+import useAlertStore from 'hooks/store/use-alert-store'
 
-const VerifyRoute = ({ component: ReactComponent, redirectPath }) => {
+const VerifyRoute = ({ component: ReactComponent }) => {
   const { initializing } = useSession()
-  const [isLoadingEmailUser, setIsLoadingEmailUser] = useState(false)
+  const navigate = useNavigate()
+  const { setError } = useAlertStore()
 
   const [, setSearchParams] = useSearchParams()
 
@@ -19,29 +21,37 @@ const VerifyRoute = ({ component: ReactComponent, redirectPath }) => {
 
   const showVerify = isEmailLink && !email
 
+  const [isLoggingInWithEmailLink, setIsLoggingInWithEmailLink] =
+    useState(isEmailLink)
+
   useEffect(() => {
     const signIn = async email => {
-      setIsLoadingEmailUser(true)
-      await firebase.auth().signInWithEmailLink(email, window.location.href)
-      window.localStorage.removeItem('email')
-      // remove firebase query params from url
+      try {
+        await firebase.auth().signInWithEmailLink(email, window.location.href)
+        window.localStorage.removeItem('email')
+        setSearchParams({})
+        setIsLoggingInWithEmailLink(false)
+      } catch (err) {
+        setError({
+          message:
+            'Sorry, something went wrong. Please try signing in instead.',
+        })
+        window.localStorage.removeItem('email')
+        setSearchParams({})
+        setIsLoggingInWithEmailLink(false)
+        navigate('/login')
+      }
     }
 
     if (isEmailLink && !!email) {
-      try {
-        signIn(email)
-      } catch (err) {
-        window.localStorage.removeItem('email')
-      }
-      setIsLoadingEmailUser(false)
-      setSearchParams({})
+      signIn(email)
     }
-  }, [email, isEmailLink, setSearchParams])
+  }, [email, isEmailLink, setSearchParams, navigate, setError])
 
-  if (initializing || isLoadingEmailUser) {
+  if (showVerify) {
+    return <VerifyEmail onSubmit={() => setIsLoggingInWithEmailLink(false)} />
+  } else if (initializing || isLoggingInWithEmailLink) {
     return <Loading />
-  } else if (showVerify) {
-    return <VerifyEmail />
   } else {
     return <ReactComponent />
   }

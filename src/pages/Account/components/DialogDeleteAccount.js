@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState } from 'react'
 import * as Yup from 'yup'
 import {
   Button,
@@ -13,15 +13,24 @@ import {
 import useUserStore from 'hooks/store/use-user-store'
 import useFormHelper from 'hooks/use-form-helper'
 import Form from 'components/Form/Form'
+import useSession from 'hooks/use-session'
+import useAlertStore from 'hooks/store/use-alert-store'
+import { LoadingButton } from '@mui/lab'
 
 const DialogDeleteAcccount = ({ open, onClose }) => {
   const { remove } = useUserStore()
+  const { logout } = useSession()
+  const { setMessage } = useAlertStore()
+  const [isLoading, setIsLoading] = useState(false)
 
   const handleSubmit = async values => {
+    setIsLoading(true)
     try {
       await remove()
+      setMessage({ message: 'Your account has been deleted' })
+      logout()
     } catch (err) {}
-    onClose()
+    return () => setIsLoading(false)
   }
 
   const formFields = [
@@ -56,7 +65,9 @@ const DialogDeleteAcccount = ({ open, onClose }) => {
         </Grid>
       </DialogContent>
       <DialogActions>
-        <Button onClick={submit}>Delete</Button>
+        <LoadingButton onClick={submit} loading={isLoading}>
+          Delete
+        </LoadingButton>
         <Button onClick={onClose}>Cancel</Button>
       </DialogActions>
     </Dialog>

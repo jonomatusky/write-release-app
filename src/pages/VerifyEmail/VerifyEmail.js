@@ -7,20 +7,15 @@ import useFormHelper from 'hooks/use-form-helper'
 import Form from 'components/Form/Form'
 import useAlertStore from 'hooks/store/use-alert-store'
 import { LoadingButton } from '@mui/lab'
-import { useSearchParams } from 'react-router-dom'
+import { useNavigate, useSearchParams } from 'react-router-dom'
+import Header from 'components/Header'
 
-const VerifyEmail = ({ component: ReactComponent }) => {
-  const isEmailLink = firebase
-    .auth()
-    .isSignInWithEmailLink(window.location.href)
+const VerifyEmail = ({ onSubmit }) => {
+  const navigate = useNavigate()
 
   const [, setSearchParams] = useSearchParams()
 
-  let email = window.localStorage.getItem('email')
-
   const { setError } = useAlertStore()
-
-  const showPage = isEmailLink && !email
 
   const [isLoading, setIsLoading] = useState(false)
 
@@ -28,24 +23,19 @@ const VerifyEmail = ({ component: ReactComponent }) => {
     setIsLoading(true)
     try {
       await firebase.auth().signInWithEmailLink(email, window.location.href)
+      window.localStorage.removeItem('email')
       setSearchParams({})
+      onSubmit()
     } catch (err) {
       setError({
         message: 'Sorry, something went wrong. Please try signing in instead.',
-        // message: (
-        //   <span>
-        //     Sorry, something went wrong. Try{' '}
-        //     <Link href="/login" color="inherit">
-        //       signing in
-        //     </Link>{' '}
-        //     instead.
-        //   </span>
-        // ),
       })
+      window.localStorage.removeItem('email')
+      setSearchParams({})
+      onSubmit()
+      navigate('/login')
     }
-
-    window.localStorage.removeItem('email')
-    setIsLoading(false)
+    return () => setIsLoading(false)
   }
 
   const handleSubmit = ({ email }) => {
@@ -75,41 +65,39 @@ const VerifyEmail = ({ component: ReactComponent }) => {
 
   return (
     <>
-      {!showPage && <ReactComponent />}
-      {showPage && (
-        <Container maxWidth="xs">
-          <Box mt={10}>
-            <Paper variant="outlined">
-              <Box p={4}>
-                <Grid container justifyContent="center" spacing={3}>
-                  <Grid item xs={12} mt={2}>
-                    <Typography variant="h5">
-                      <b>Confirm your Email Address</b>
-                    </Typography>
-                  </Grid>
-                  <Grid item xs={12}>
-                    <Form
-                      control={control}
-                      formFields={formFields}
-                      submit={submit}
-                    />
-                  </Grid>
-                  <Grid item xs={12}>
-                    <LoadingButton
-                      variant="contained"
-                      onClick={submit}
-                      fullWidth
-                      loading={isLoading}
-                    >
-                      Confirm
-                    </LoadingButton>
-                  </Grid>
+      <Header showSignInButton logoHref="https://www.writerelease.com" />
+      <Container maxWidth="xs">
+        <Box mt={10}>
+          <Paper variant="outlined">
+            <Box p={4}>
+              <Grid container justifyContent="center" spacing={3}>
+                <Grid item xs={12} mt={2}>
+                  <Typography variant="h5">
+                    <b>Confirm your Email Address</b>
+                  </Typography>
                 </Grid>
-              </Box>
-            </Paper>
-          </Box>
-        </Container>
-      )}
+                <Grid item xs={12}>
+                  <Form
+                    control={control}
+                    formFields={formFields}
+                    submit={submit}
+                  />
+                </Grid>
+                <Grid item xs={12}>
+                  <LoadingButton
+                    variant="contained"
+                    onClick={submit}
+                    fullWidth
+                    loading={isLoading}
+                  >
+                    Confirm
+                  </LoadingButton>
+                </Grid>
+              </Grid>
+            </Box>
+          </Paper>
+        </Box>
+      </Container>
     </>
   )
 }

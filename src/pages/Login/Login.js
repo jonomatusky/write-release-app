@@ -25,7 +25,7 @@ const Login = ({ isLogin }) => {
   return (
     <>
       <Header
-        showTryItButton={isLogin}
+        showTryItButton
         logoHref={isLogin ? 'https://www.writerelease.com' : null}
       />
       <Container maxWidth="xs">

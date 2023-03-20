@@ -45,7 +45,7 @@ const userSlice = createSlice({
       state.fetchStatus = 'idle'
       state.createStatus = 'idle'
       state.updateStatus = 'idle'
-      state.user = {}
+      state.item = {}
       state.error = null
     },
   },
@@ -67,7 +67,7 @@ const userSlice = createSlice({
     },
     [update.fulfilled]: (state, action) => {
       state.updateStatus = 'idle'
-      state.user = action.payload
+      state.item = action.payload
     },
     [update.rejected]: (state, action) => {
       state.updateStatus = 'failed'
