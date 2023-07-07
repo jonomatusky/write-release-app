@@ -1,6 +1,8 @@
 const { useCallback, useState } = require('react')
 const { default: useRequest } = require('./use-request')
 
+const sleep = (ms) => new Promise(resolve => setTimeout(resolve, ms))
+
 const useGenerate = () => {
   const [status, setStatus] = useState('idle')
   const [options, setOptions] = useState([])
@@ -16,7 +18,7 @@ const useGenerate = () => {
 
       try {
         cancel()
-        const res = await request({
+        let res = await request({
           url: `/generator`,
           method: 'POST',
           data: {
@@ -26,6 +28,15 @@ const useGenerate = () => {
           },
           timeout: 30000,
         })
+        const { id: generationId } = res.data
+
+        while (res.data.status !== 'COMPLETED') {
+          await sleep(3000)
+          res = await request({
+            url: `/generator/${generationId}/check-status`,
+            method: 'GET',
+          })
+        }
 
         const { message, options } = res.data
 
