@@ -76,7 +76,7 @@ export const allFields = [
   {
     name: 'email',
     label: 'Contact Email',
-    placeHolder: 'client@gregoryfca.com',
+    placeHolder: 'newsie@newsprint.com',
     type: 'email',
     helpText:
       'This is the email journalists will use to reach out to you. It is shown publicly.',
@@ -84,12 +84,6 @@ export const allFields = [
     // .required('Email is required'),
     category: 'settings',
   },
-  // {
-  //   name: 'isPrivate',
-  //   label: `Hide from Gregory FCA's internal list of contacts`,
-  //   type: 'boolean',
-  //   helpText: `The profile will remain publicly available via direct link. Check this box if you don't want any other teams to reach out about this contact, or if they is no long a client.`,
-  // },
 ]
 
 export const getFields = category => {

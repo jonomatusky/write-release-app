@@ -50,7 +50,7 @@
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
-    "deploy": "firebase deploy --only hosting:writerelease"
+    "deploy": "firebase deploy --only hosting"
   },
   "eslintConfig": {
     "extends": [

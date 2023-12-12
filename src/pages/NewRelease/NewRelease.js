@@ -196,11 +196,11 @@ const NewRelease = ({ requireVerification }) => {
               <Typography variant="body2">
                 Created with <Emoji label="heart" symbol="❤️" /> by the team at{' '}
                 <Link
-                  href="https://www.gregoryfca.com"
+                  href="https://newsprint.com?utm_source=writerelease&utm_medium=referral&utm_campaign=wr_site"
                   target="_blank"
                   underline="hover"
                 >
-                  Gregory FCA
+                  Newsprint
                   {/* {' '} */}
                   {/* <span
                 style={{
